@@ -1,5 +1,6 @@
 import { ThemeProvider } from '@/lib/providers/themeProvider'
 import '@/styles/globals.css'
+import { SessionProvider } from 'next-auth/react'
 import type { AppProps } from 'next/app'
 
 import { Inter } from 'next/font/google'
@@ -12,7 +13,7 @@ export const inter = Inter({
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <main className={`${inter.variable} font-sans`}>
+    <SessionProvider session={pageProps.session}>
       <ThemeProvider
         attribute="class"
         defaultTheme="system"
@@ -21,6 +22,6 @@ export default function App({ Component, pageProps }: AppProps) {
       >
         <Component {...pageProps} />
       </ThemeProvider>
-    </main>
+    </SessionProvider>
   )
 }
