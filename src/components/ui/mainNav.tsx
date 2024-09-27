@@ -7,11 +7,11 @@ import { Button } from '@/components/ui/button'
 const links = [
   {
     label: 'Hochschulsport',
-    href: '/dashboard/sports',
+    href: '/sports',
   },
   {
     label: 'Ankündigungen',
-    href: '/dashboard/announcements',
+    href: '/announcements',
   },
 ]
 

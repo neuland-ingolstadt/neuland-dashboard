@@ -37,7 +37,7 @@ export default function NavBar() {
     <div className="border-b">
       <div className="container flex h-16 items-center">
         <Link
-          href="/dashboard"
+          href="/"
           passHref
         >
           <Image

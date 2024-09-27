@@ -10,6 +10,7 @@ import { GetServerSideProps } from 'next'
 import { getSportsEvents } from '@/lib/backend/client'
 import { useDialogs } from '@/lib/providers/dialogsProvider'
 import ConfirmDeleteDialog from '@/components/ui/dialog/confirmDeletionDialog'
+import Head from 'next/head'
 
 interface EditSportsEventPageProps {
   event: SportsEvent
@@ -43,7 +44,7 @@ export default function EditSportsEventPage({
     }
 
     setLoading(false)
-    router.replace('/dashboard/sports')
+    router.replace('/sports')
   }, [event.id, openErrorDialog, router, setLoading])
 
   const handleEdit = useCallback(
@@ -68,7 +69,7 @@ export default function EditSportsEventPage({
       }
 
       setLoading(false)
-      router.replace('/dashboard/sports')
+      router.replace('/sports')
     },
     [event.id, openErrorDialog, router, setLoading]
   )
@@ -77,6 +78,10 @@ export default function EditSportsEventPage({
 
   return (
     <div>
+      <Head>
+        <title>Event bearbeiten</title>
+      </Head>
+
       <ConfirmDeleteDialog
         open={confirmDeleteOpen}
         setOpen={() => setConfirmDeleteOpen(false)}

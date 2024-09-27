@@ -1,4 +1,5 @@
 import { Badge } from '@/components/ui/badge'
+import { DataTableColumnHeader } from '@/components/ui/dataTable/columnHeader'
 import { DataTable } from '@/components/ui/dataTable/dataTable'
 import { SportsEvent } from '@/lib/backend/sportEvents'
 import { weekdays } from '@/lib/utils'
@@ -11,6 +12,49 @@ const columns: ColumnDef<SportsEvent>[] = [
     accessorKey: 'id',
     header: 'ID',
     size: 1,
+    cell({
+      cell: {
+        row: {
+          original: { id },
+        },
+      },
+    }) {
+      return <p className="text-muted-foreground">{id}</p>
+    },
+  },
+  {
+    filterFn: 'arrIncludesSome',
+    accessorKey: 'weekday',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Wochentag"
+      />
+    ),
+    sortingFn: ({ original: { weekday: a } }, { original: { weekday: b } }) => {
+      return weekdays[a].order - weekdays[b].order
+    },
+    size: 1,
+    cell({
+      cell: {
+        row: {
+          original: { weekday },
+        },
+      },
+    }) {
+      return (
+        <Badge
+          variant="outline"
+          className="flex w-fit flex-row items-center"
+        >
+          <Calendar
+            className="mr-2"
+            size={12}
+          />
+          <p>{weekdays[weekday].de}</p>
+        </Badge>
+      )
+    },
   },
   {
     accessorKey: 'title.de',
@@ -41,32 +85,6 @@ const columns: ColumnDef<SportsEvent>[] = [
       )
     },
   },
-  {
-    filterFn: 'arrIncludesSome',
-    accessorKey: 'weekday',
-    header: 'Wochentag',
-    size: 1,
-    cell({
-      cell: {
-        row: {
-          original: { weekday },
-        },
-      },
-    }) {
-      return (
-        <Badge
-          variant="outline"
-          className="flex w-fit flex-row items-center"
-        >
-          <Calendar
-            className="mr-2"
-            size={12}
-          />
-          <p>{weekdays[weekday].de}</p>
-        </Badge>
-      )
-    },
-  },
 ]
 
 interface SportsEventsTableProps {
@@ -78,24 +96,16 @@ export default function SportsEventsTable({ events }: SportsEventsTableProps) {
 
   return (
     <DataTable
-      onClick={({ id }) => router.push(`/dashboard/sports/edit?id=${id}`)}
+      onClick={({ id }) => router.push(`/sports/edit?id=${id}`)}
       columns={columns}
       enableFilter
+      enablePagination
       filterOptions={{
         searchFilter: {
           column: 'title_de',
           title: 'Name',
         },
         selectFilters: [
-          {
-            column: 'campus',
-            title: 'Campus',
-            mode: 'single',
-            options: [
-              { label: 'Ingolstadt', value: 'Ingolstadt' },
-              { label: 'Neuburg', value: 'Neuburg' },
-            ],
-          },
           {
             column: 'weekday',
             title: 'Wochentag',
@@ -104,6 +114,15 @@ export default function SportsEventsTable({ events }: SportsEventsTableProps) {
               label: de,
               value: key,
             })),
+          },
+          {
+            column: 'campus',
+            title: 'Campus',
+            mode: 'single',
+            options: [
+              { label: 'Ingolstadt', value: 'Ingolstadt' },
+              { label: 'Neuburg', value: 'Neuburg' },
+            ],
           },
         ],
       }}

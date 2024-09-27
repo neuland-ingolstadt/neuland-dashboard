@@ -1,25 +1,13 @@
-import { Button } from '@/components/ui/button'
 import NavBar from '@/components/ui/navBar'
-import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/router'
-import { useMemo } from 'react'
+import PathBreadcrumbs from '@/components/ui/pathBreadcrumbs'
 
 export default function Home() {
-  const { query } = useRouter()
-  const callbackUrl = useMemo(() => {
-    if (typeof query.callbackUrl === 'string') {
-      return query.callbackUrl
-    }
-    return '/dashboard'
-  }, [query.callbackUrl])
-
   return (
     <div>
       <NavBar />
-
-      <Button onClick={() => signIn('authentik', { callbackUrl })}>
-        Sign In
-      </Button>
+      <div className="container my-4 flex flex-col gap-3">
+        <PathBreadcrumbs />
+      </div>
     </div>
   )
 }

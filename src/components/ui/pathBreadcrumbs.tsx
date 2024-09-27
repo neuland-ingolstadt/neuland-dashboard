@@ -10,11 +10,11 @@ import { useRouter } from 'next/router'
 import { Fragment, useMemo } from 'react'
 
 const pathnames: Record<string, string> = {
-  '/dashboard': 'Dashboard',
-  '/dashboard/sports': 'Hochschulsport',
-  '/dashboard/sports/new': 'Neue Veranstaltung',
-  '/dashboard/sports/edit': 'Veranstaltung bearbeiten',
-  '/dashboard/announcements': 'Ankündigungen',
+  '/': 'Dashboard',
+  '/sports': 'Hochschulsport',
+  '/sports/new': 'Neue Veranstaltung',
+  '/sports/edit': 'Veranstaltung bearbeiten',
+  '/announcements': 'Ankündigungen',
 }
 
 export default function PathBreadcrumbs() {
@@ -24,14 +24,22 @@ export default function PathBreadcrumbs() {
     const pathname = router.pathname
     const parts = pathname.split('/').filter(Boolean)
 
-    return parts.map((_, index) => {
-      const href = `/${parts.slice(0, index + 1).join('/')}`
-      return {
-        href,
-        label: pathnames[href] || 'Unknown',
-      }
-    })
+    return [
+      {
+        href: '/',
+        label: 'Dashboard',
+      },
+      ...parts.map((_, index) => {
+        const href = `/${parts.slice(0, index + 1).join('/')}`
+        return {
+          href,
+          label: pathnames[href] || 'Unknown',
+        }
+      }),
+    ]
   }, [router.pathname])
+
+  console.log(links)
 
   return (
     <Breadcrumb>
@@ -41,7 +49,7 @@ export default function PathBreadcrumbs() {
             <BreadcrumbItem>
               <BreadcrumbLink
                 href={link.href}
-                className={cn('text-xs capitalize', {
+                className={cn('text-xs', {
                   'font-bold': index === links.length - 1,
                 })}
               >

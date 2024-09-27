@@ -3,6 +3,10 @@ import AuthentikProvider from 'next-auth/providers/authentik'
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.AUTH_SECRET!,
+  pages: {
+    signIn: '/auth/signIn',
+    error: '/auth/error',
+  },
   providers: [
     AuthentikProvider({
       clientId: process.env.AUTHENTIK_ID!,
@@ -12,6 +16,14 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    signIn({ profile }) {
+      if (!profile) {
+        return false
+      }
+
+      const groups = profile.groups || []
+      return groups.includes('Neuland Next')
+    },
     async jwt({ token, profile }) {
       if (profile?.groups) {
         token.groups = profile.groups

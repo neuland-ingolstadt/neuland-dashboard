@@ -7,6 +7,7 @@ import { useCallback, useRef } from 'react'
 import { useRouter } from 'next/router'
 import SportsForm, { SportsFormRef } from '@/components/ui/sportsForm'
 import { useDialogs } from '@/lib/providers/dialogsProvider'
+import Head from 'next/head'
 
 export default function NewSportsEventPage() {
   const { setLoading, openErrorDialog } = useDialogs()
@@ -31,7 +32,7 @@ export default function NewSportsEventPage() {
       }
 
       setLoading(false)
-      router.replace('/dashboard/sports')
+      router.replace('/sports')
     },
     [openErrorDialog, router, setLoading]
   )
@@ -40,6 +41,10 @@ export default function NewSportsEventPage() {
 
   return (
     <div>
+      <Head>
+        <title>Neue Veranstaltung</title>
+      </Head>
+
       <NavBar />
       <div className="container my-4 flex flex-col gap-3">
         <PathBreadcrumbs />

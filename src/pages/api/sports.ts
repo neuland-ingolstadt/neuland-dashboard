@@ -3,7 +3,7 @@ import {
   deleteSportsEvent,
   updateSportsEvent,
 } from '@/lib/backend/client'
-import { checkPermissions } from '@/lib/backend/groups'
+import { checkApiPermissions } from '@/lib/backend/groups'
 import {
   newSportsEventSchema,
   updateSportsEventSchema,
@@ -14,9 +14,9 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const authorized = await checkPermissions(req, res, 'sports')
+  const authorized = await checkApiPermissions(req, res, 'sports')
   if (!authorized) {
-    return res.status(403).end()
+    return res.status(403).json({ message: 'Not authorized!' })
   }
 
   // return res.status(405).json({ message: 'Method not allowed!' })

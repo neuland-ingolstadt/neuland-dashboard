@@ -8,12 +8,15 @@ export function cn(...inputs: ClassValue[]) {
 
 type Weekday = SportsEvent['weekday']
 
-export const weekdays: Record<Weekday, { de: string; en: string }> = {
-  Monday: { de: 'Montag', en: 'Monday' },
-  Tuesday: { de: 'Dienstag', en: 'Tuesday' },
-  Wednesday: { de: 'Mittwoch', en: 'Wednesday' },
-  Thursday: { de: 'Donnerstag', en: 'Thursday' },
-  Friday: { de: 'Freitag', en: 'Friday' },
-  Saturday: { de: 'Samstag', en: 'Saturday' },
-  Sunday: { de: 'Sonntag', en: 'Sunday' },
+export const weekdays: Record<
+  Weekday,
+  { de: string; en: string; order: number }
+> = {
+  Monday: { de: 'Montag', en: 'Monday', order: 1 },
+  Tuesday: { de: 'Dienstag', en: 'Tuesday', order: 2 },
+  Wednesday: { de: 'Mittwoch', en: 'Wednesday', order: 3 },
+  Thursday: { de: 'Donnerstag', en: 'Thursday', order: 4 },
+  Friday: { de: 'Freitag', en: 'Friday', order: 5 },
+  Saturday: { de: 'Samstag', en: 'Saturday', order: 6 },
+  Sunday: { de: 'Sonntag', en: 'Sunday', order: 7 },
 } as const

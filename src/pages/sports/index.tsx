@@ -3,9 +3,10 @@ import { Button } from '@/components/ui/button'
 import NavBar from '@/components/ui/navBar'
 import PathBreadcrumbs from '@/components/ui/pathBreadcrumbs'
 import { getSportsEvents } from '@/lib/backend/client'
+import { checkServerSidePermissions } from '@/lib/backend/groups'
 import { SportsEvent } from '@/lib/backend/sportEvents'
 import { GetServerSideProps } from 'next'
-import { getSession } from 'next-auth/react'
+import Head from 'next/head'
 import Link from 'next/link'
 
 interface SportsPageProps {
@@ -15,6 +16,10 @@ interface SportsPageProps {
 export default function SportsPage({ events }: SportsPageProps) {
   return (
     <div>
+      <Head>
+        <title>Hochschulsport</title>
+      </Head>
+
       <NavBar />
       <div className="container my-4 flex flex-col gap-3">
         <PathBreadcrumbs />
@@ -25,7 +30,7 @@ export default function SportsPage({ events }: SportsPageProps) {
           </h1>
 
           <Link
-            href="/dashboard/sports/new"
+            href="/sports/new"
             passHref
           >
             <Button>Neue Veranstaltung</Button>
@@ -41,12 +46,11 @@ export default function SportsPage({ events }: SportsPageProps) {
 export const getServerSideProps: GetServerSideProps<SportsPageProps> = async (
   ctx
 ) => {
-  const session = await getSession(ctx)
-
-  if (!session) {
+  const authorized = await checkServerSidePermissions(ctx, 'sports')
+  if (!authorized) {
     return {
       redirect: {
-        destination: '/',
+        destination: '/auth/signIn',
         permanent: false,
       },
     }
