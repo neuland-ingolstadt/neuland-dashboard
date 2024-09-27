@@ -1,10 +1,12 @@
-import SportsEventsTable from '@/components/tables/sportsEvents'
-import NavBar from '@/components/ui/nav-bar'
-import PathBreadcrumbs from '@/components/ui/path-breadcrumbs'
-import { getSportEvents } from '@/lib/backend/client'
+import SportsEventsTable from '@/components/tables/sportsEventsTable'
+import { Button } from '@/components/ui/button'
+import NavBar from '@/components/ui/navBar'
+import PathBreadcrumbs from '@/components/ui/pathBreadcrumbs'
+import { getSportsEvents } from '@/lib/backend/client'
 import { SportsEvent } from '@/lib/backend/sportEvents'
 import { GetServerSideProps } from 'next'
 import { getSession } from 'next-auth/react'
+import Link from 'next/link'
 
 interface SportsPageProps {
   events: SportsEvent[]
@@ -17,9 +19,18 @@ export default function SportsPage({ events }: SportsPageProps) {
       <div className="container my-4 flex flex-col gap-3">
         <PathBreadcrumbs />
 
-        <h1 className="mt-3 text-4xl font-bold tracking-tight">
-          Hochschulsport
-        </h1>
+        <div className="flex flex-row items-center">
+          <h1 className="mt-3 flex-1 text-4xl font-bold tracking-tight">
+            Hochschulsport
+          </h1>
+
+          <Link
+            href="/dashboard/sports/new"
+            passHref
+          >
+            <Button>Neue Veranstaltung</Button>
+          </Link>
+        </div>
 
         <SportsEventsTable events={events} />
       </div>
@@ -32,8 +43,6 @@ export const getServerSideProps: GetServerSideProps<SportsPageProps> = async (
 ) => {
   const session = await getSession(ctx)
 
-  console.log(session)
-
   if (!session) {
     return {
       redirect: {
@@ -43,7 +52,7 @@ export const getServerSideProps: GetServerSideProps<SportsPageProps> = async (
     }
   }
 
-  const events = await getSportEvents()
+  const events = await getSportsEvents()
 
   return {
     props: {

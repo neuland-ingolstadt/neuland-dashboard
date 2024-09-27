@@ -1,3 +1,4 @@
+import { DialogsProvider } from '@/lib/providers/dialogsProvider'
 import { ThemeProvider } from '@/lib/providers/themeProvider'
 import '@/styles/globals.css'
 import { SessionProvider } from 'next-auth/react'
@@ -20,7 +21,9 @@ export default function App({ Component, pageProps }: AppProps) {
         enableSystem
         disableTransitionOnChange
       >
-        <Component {...pageProps} />
+        <DialogsProvider>
+          <Component {...pageProps} />
+        </DialogsProvider>
       </ThemeProvider>
     </SessionProvider>
   )

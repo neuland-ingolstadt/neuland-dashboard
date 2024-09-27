@@ -6,16 +6,21 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { MainNav } from '@/components/ui/main-nav'
+} from '@/components/ui/dropdownMenu'
+import { MainNav } from '@/components/ui/mainNav'
 import Logo from '@/components/images/logo.webp'
-import { CircleUser, LogOut } from 'lucide-react'
+import { CircleUser, LogOut, Palette } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useMemo } from 'react'
+import { useTheme } from 'next-themes'
 
 export default function NavBar() {
   const { data } = useSession()
@@ -25,6 +30,8 @@ export default function NavBar() {
     const [firstName, lastName] = data.user.name.split(' ')
     return `${firstName.charAt(0)}${lastName ? lastName.charAt(0) : ''}`
   }, [data])
+
+  const { setTheme } = useTheme()
 
   return (
     <div className="border-b">
@@ -39,6 +46,7 @@ export default function NavBar() {
             priority
             width={40}
             height={40}
+            className="cursor-pointer dark:invert dark:filter"
           />
         </Link>
         <MainNav className="mx-6 flex-1" />
@@ -83,6 +91,29 @@ export default function NavBar() {
                   <p>Account</p>
                 </DropdownMenuItem>
               </Link>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                  <Palette className="mr-2 h-4 w-4" />
+                  <p>Design</p>
+                </DropdownMenuSubTrigger>
+                <DropdownMenuPortal>
+                  <DropdownMenuSubContent>
+                    <DropdownMenuItem onClick={() => setTheme('light')}>
+                      Hell
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setTheme('dark')}>
+                      Dunkel
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => setTheme('system')}>
+                      System
+                    </DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuPortal>
+              </DropdownMenuSub>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => signOut()}>

@@ -5,7 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '@/components/ui/dropdownMenu'
 import { cn } from '@/lib/utils'
 import { Column } from '@tanstack/react-table'
 import { ArrowUpDown, MoveDown, MoveUp } from 'lucide-react'

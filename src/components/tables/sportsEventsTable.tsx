@@ -4,6 +4,7 @@ import { SportsEvent } from '@/lib/backend/sportEvents'
 import { weekdays } from '@/lib/utils'
 import { ColumnDef } from '@tanstack/react-table'
 import { Calendar, School } from 'lucide-react'
+import { useRouter } from 'next/router'
 
 const columns: ColumnDef<SportsEvent>[] = [
   {
@@ -73,8 +74,11 @@ interface SportsEventsTableProps {
 }
 
 export default function SportsEventsTable({ events }: SportsEventsTableProps) {
+  const router = useRouter()
+
   return (
     <DataTable
+      onClick={({ id }) => router.push(`/dashboard/sports/edit?id=${id}`)}
       columns={columns}
       enableFilter
       filterOptions={{

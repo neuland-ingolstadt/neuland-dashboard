@@ -1,13 +1,17 @@
-import { parseSportEvents } from '@/lib/backend/sportEvents'
+import { NewSportsEvent, SportsEvent } from '@/lib/backend/sportEvents'
 import { gql, GraphQLClient } from 'graphql-request'
 
 const endpoint =
   process.env.NEXT_PUBLIC_GRAPHQL_URL || 'https://api.neuland.app/graphql'
 
-console.log('endpoint', endpoint)
 export const graphqlClient = new GraphQLClient(endpoint)
 
-export async function getSportEvents() {
+interface SportsEventData {
+  universitySports: SportsEvent[]
+  error?: unknown
+}
+
+export async function getSportsEvents() {
   const query = gql`
     query {
       universitySports {
@@ -34,14 +38,45 @@ export async function getSportEvents() {
     }
   `.replace(/\s+/g, ' ')
 
-  const data: {
-    universitySports: unknown
-    error: unknown
-  } = await graphqlClient.request(query)
+  const data = await graphqlClient.request<SportsEventData>(query)
 
   if (!data.universitySports) {
     throw new Error('No data returned from API')
   }
 
-  return parseSportEvents(data.universitySports)
+  return data.universitySports
+}
+
+export async function createSportsEvent(event: NewSportsEvent) {
+  const mutation = gql`
+    mutation UpsertUniversitySport($event: UniversitySportsInput!) {
+      upsertUniversitySport(input: $event) {
+        id
+      }
+    }
+  `.replace(/\s+/g, ' ')
+
+  await graphqlClient.request(mutation, { event })
+}
+
+export async function updateSportsEvent(event: NewSportsEvent, id: string) {
+  const mutation = gql`
+    mutation UpsertUniversitySport($event: UniversitySportsInput!, $id: ID!) {
+      upsertUniversitySport(input: $event, id: $id) {
+        id
+      }
+    }
+  `.replace(/\s+/g, ' ')
+
+  await graphqlClient.request(mutation, { event, id })
+}
+
+export async function deleteSportsEvent(id: string) {
+  const mutation = gql`
+    mutation DeleteUniversitySport($id: ID!) {
+      deleteUniversitySport(id: $id)
+    }
+  `.replace(/\s+/g, ' ')
+
+  await graphqlClient.request(mutation, { id })
 }

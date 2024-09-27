@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import NavBar from '@/components/ui/nav-bar'
+import NavBar from '@/components/ui/navBar'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
@@ -12,8 +12,6 @@ export default function Home() {
     }
     return '/dashboard'
   }, [query.callbackUrl])
-
-  console.log(query)
 
   return (
     <div>

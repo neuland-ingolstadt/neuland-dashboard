@@ -9,19 +9,28 @@ import { cn } from '@/lib/utils'
 import { useRouter } from 'next/router'
 import { Fragment, useMemo } from 'react'
 
+const pathnames: Record<string, string> = {
+  '/dashboard': 'Dashboard',
+  '/dashboard/sports': 'Hochschulsport',
+  '/dashboard/sports/new': 'Neue Veranstaltung',
+  '/dashboard/sports/edit': 'Veranstaltung bearbeiten',
+  '/dashboard/announcements': 'Ankündigungen',
+}
+
 export default function PathBreadcrumbs() {
   const router = useRouter()
 
   const links = useMemo(() => {
-    const pathParts = router.pathname.split('/').filter(Boolean)
-    const links = pathParts.map((part, index) => {
-      const href = '/' + pathParts.slice(0, index + 1).join('/')
+    const pathname = router.pathname
+    const parts = pathname.split('/').filter(Boolean)
+
+    return parts.map((_, index) => {
+      const href = `/${parts.slice(0, index + 1).join('/')}`
       return {
-        label: part,
         href,
+        label: pathnames[href] || 'Unknown',
       }
     })
-    return links
   }, [router.pathname])
 
   return (
