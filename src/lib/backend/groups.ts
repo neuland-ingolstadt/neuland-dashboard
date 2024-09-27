@@ -26,8 +26,6 @@ export async function checkApiPermissions(
     return false
   }
 
-  console.log(session.user.groups)
-
   return requiredGroups.every((group) =>
     session.user.groups.includes(groups[group])
   )
@@ -42,8 +40,6 @@ export async function checkServerSidePermissions(
   if (!session) {
     return false
   }
-
-  console.log(session.user.groups)
 
   return requiredGroups.every((group) =>
     session.user.groups.includes(groups[group])

@@ -39,8 +39,6 @@ export default function PathBreadcrumbs() {
     ]
   }, [router.pathname])
 
-  console.log(links)
-
   return (
     <Breadcrumb>
       <BreadcrumbList>

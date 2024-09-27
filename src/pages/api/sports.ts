@@ -40,7 +40,6 @@ export default async function handler(
 
     const result = await updateSportsEventSchema.safeParseAsync(eventData)
     if (result.error) {
-      console.log(result.error)
       return res.status(400).json({ message: 'Invalid data!' })
     }
 
