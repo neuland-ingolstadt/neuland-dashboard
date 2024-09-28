@@ -13,15 +13,20 @@ export default function SignInPage() {
   }, [query.callbackUrl])
 
   return (
-    <div className="flex h-screen flex-col items-center justify-center">
-      <h1 className="text-4xl font-bold">Sign In</h1>
-      <p className="mt-2 text-muted-foreground">
-        This is a temporary sign in page.
-      </p>
+    <div className="flex h-screen flex-col items-center justify-center ">
+      <div className="w-full max-w-md space-y-8 rounded-lg p-8 shadow-md">
+        <h1 className="text-center text-4xl font-bold">Welcome back!</h1>
+        <p className="mt-2 text-center text-muted-foreground">
+          Melde dich mit deinem Neuland Account an.
+        </p>
 
-      <Button onClick={() => signIn('authentik', { callbackUrl })}>
-        Sign In
-      </Button>
+        <Button
+          onClick={() => signIn('authentik', { callbackUrl })}
+          className="mt-6 w-full"
+        >
+          Mit SSO fortfahren
+        </Button>
+      </div>
     </div>
   )
 }
