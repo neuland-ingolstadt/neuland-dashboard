@@ -1,4 +1,4 @@
-# TODO: PASS ALL ENVS
+# TODO: PASS ALL ENVS and switch to Bun
 
 FROM node:20-alpine AS base
 
