@@ -19,8 +19,6 @@ export default async function handler(
     return res.status(403).json({ message: 'Not authorized!' })
   }
 
-  // return res.status(405).json({ message: 'Method not allowed!' })
-
   // create new sport event
   if (req.method === 'POST') {
     const eventData = req.body
