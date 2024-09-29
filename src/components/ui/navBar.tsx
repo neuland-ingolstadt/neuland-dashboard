@@ -24,6 +24,7 @@ import { useTheme } from 'next-themes'
 
 export default function NavBar() {
   const { data } = useSession()
+  console.log(data)
 
   const getInitials = useMemo(() => {
     if (!data?.user?.name) return null
@@ -44,9 +45,9 @@ export default function NavBar() {
             src={Logo}
             alt="Neuland e.V. Logo"
             priority
-            width={40}
-            height={40}
-            className="cursor-pointer dark:invert dark:filter"
+            width={35}
+            height={35}
+            className="cursor-pointer"
           />
         </Link>
         <MainNav className="mx-6 flex-1" />

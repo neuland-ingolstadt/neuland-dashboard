@@ -59,9 +59,11 @@ export async function createSportsEvent(
     }
   `.replace(/\s+/g, ' ')
 
-  graphqlClient.setHeader('Authorization', `Bearer ${accessToken}`)
-  await graphqlClient.request(mutation, { event })
-  graphqlClient.setHeader('Authorization', '')
+  await graphqlClient.request(
+    mutation,
+    { event },
+    { Authorization: `Bearer ${accessToken}` }
+  )
 }
 
 export async function updateSportsEvent(
@@ -77,9 +79,11 @@ export async function updateSportsEvent(
     }
   `.replace(/\s+/g, ' ')
 
-  graphqlClient.setHeader('Authorization', `Bearer ${accessToken}`)
-  await graphqlClient.request(mutation, { event, id })
-  graphqlClient.setHeader('Authorization', '')
+  await graphqlClient.request(
+    mutation,
+    { event, id },
+    { Authorization: `Bearer ${accessToken}` }
+  )
 }
 
 export async function deleteSportsEvent(id: string, accessToken: string) {
@@ -89,7 +93,9 @@ export async function deleteSportsEvent(id: string, accessToken: string) {
     }
   `.replace(/\s+/g, ' ')
 
-  graphqlClient.setHeader('Authorization', `Bearer ${accessToken}`)
-  await graphqlClient.request(mutation, { id })
-  graphqlClient.setHeader('Authorization', '')
+  await graphqlClient.request(
+    mutation,
+    { id },
+    { Authorization: `Bearer ${accessToken}` }
+  )
 }

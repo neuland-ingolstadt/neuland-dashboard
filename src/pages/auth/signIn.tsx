@@ -2,6 +2,8 @@ import { Button } from '@/components/ui/button'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
+import Image from 'next/image'
+import Logo from '@/components/images/logo.webp'
 
 export default function SignInPage() {
   const { query } = useRouter()
@@ -13,10 +15,20 @@ export default function SignInPage() {
   }, [query.callbackUrl])
 
   return (
-    <div className="flex h-screen flex-col items-center justify-center ">
-      <div className="w-full max-w-md space-y-8 rounded-lg p-8 shadow-md">
-        <h1 className="text-center text-4xl font-bold">Welcome back!</h1>
-        <p className="mt-2 text-center text-muted-foreground">
+    <div className="flex h-screen flex-col items-center justify-center bg-gray-100 dark:bg-gray-900">
+      <div className="w-full max-w-md space-y-8 rounded-lg bg-white p-8 shadow-md dark:bg-gray-800 dark:shadow-lg">
+        <Image
+          src={Logo}
+          alt="Neuland e.V. Logo"
+          priority
+          width={200}
+          height={200}
+          className="mx-auto"
+        />
+        <h1 className="text-center text-4xl font-bold text-gray-900 dark:text-white">
+          Willkommen zurück!
+        </h1>
+        <p className="mt-2 text-center text-gray-600 dark:text-gray-300">
           Melde dich mit deinem Neuland Account an.
         </p>
 
