@@ -1,3 +1,4 @@
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Form,
   FormControl,
@@ -20,9 +21,8 @@ import TimePicker from '@/components/ui/timePicker'
 import { NewSportsEvent, newSportsEventSchema } from '@/lib/backend/sportEvents'
 import { weekdays } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
-import { Checkbox } from '@/components/ui/checkbox'
+import { useForm } from 'react-hook-form'
 
 interface SportsFormProps {
   onSubmit: (data: NewSportsEvent) => void

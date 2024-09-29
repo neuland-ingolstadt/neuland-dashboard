@@ -1,3 +1,4 @@
+import Logo from '@/components/images/logo.webp'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -14,13 +15,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdownMenu'
 import { MainNav } from '@/components/ui/mainNav'
-import Logo from '@/components/images/logo.webp'
 import { CircleUser, LogOut, Palette } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
+import { useTheme } from 'next-themes'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useMemo } from 'react'
-import { useTheme } from 'next-themes'
 
 export default function NavBar() {
   const { data } = useSession()

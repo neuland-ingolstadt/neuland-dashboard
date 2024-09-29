@@ -1,16 +1,16 @@
+import { Button } from '@/components/ui/button'
+import ConfirmDeleteDialog from '@/components/ui/dialog/confirmDeletionDialog'
 import NavBar from '@/components/ui/navBar'
 import PathBreadcrumbs from '@/components/ui/pathBreadcrumbs'
-import { NewSportsEvent, SportsEvent } from '@/lib/backend/sportEvents'
-import { Button } from '@/components/ui/button'
-import { Save, Trash } from 'lucide-react'
-import { useCallback, useRef, useState } from 'react'
-import { useRouter } from 'next/router'
 import SportsForm, { SportsFormRef } from '@/components/ui/sportsForm'
-import { GetServerSideProps } from 'next'
 import { getSportsEvents } from '@/lib/backend/client'
+import { NewSportsEvent, SportsEvent } from '@/lib/backend/sportEvents'
 import { useDialogs } from '@/lib/providers/dialogsProvider'
-import ConfirmDeleteDialog from '@/components/ui/dialog/confirmDeletionDialog'
+import { Save, Trash } from 'lucide-react'
+import { GetServerSideProps } from 'next'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
+import { useCallback, useRef, useState } from 'react'
 
 interface EditSportsEventPageProps {
   event: SportsEvent

@@ -6,6 +6,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Column, Table } from '@tanstack/react-table'
 import { X } from 'lucide-react'
+
 interface SearchFilter {
   column: string
   title: string

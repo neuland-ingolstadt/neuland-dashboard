@@ -3,7 +3,6 @@ import { ThemeProvider } from '@/lib/providers/themeProvider'
 import '@/styles/globals.css'
 import { SessionProvider } from 'next-auth/react'
 import type { AppProps } from 'next/app'
-
 import { Inter } from 'next/font/google'
 
 export const inter = Inter({

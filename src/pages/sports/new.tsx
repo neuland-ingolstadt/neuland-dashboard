@@ -1,13 +1,13 @@
+import { Button } from '@/components/ui/button'
 import NavBar from '@/components/ui/navBar'
 import PathBreadcrumbs from '@/components/ui/pathBreadcrumbs'
-import { NewSportsEvent } from '@/lib/backend/sportEvents'
-import { Button } from '@/components/ui/button'
-import { Save } from 'lucide-react'
-import { useCallback, useRef } from 'react'
-import { useRouter } from 'next/router'
 import SportsForm, { SportsFormRef } from '@/components/ui/sportsForm'
+import { NewSportsEvent } from '@/lib/backend/sportEvents'
 import { useDialogs } from '@/lib/providers/dialogsProvider'
+import { Save } from 'lucide-react'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
+import { useCallback, useRef } from 'react'
 
 export default function NewSportsEventPage() {
   const { setLoading, openErrorDialog } = useDialogs()
