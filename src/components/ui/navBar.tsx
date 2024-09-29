@@ -24,7 +24,6 @@ import { useMemo } from 'react'
 
 export default function NavBar() {
   const { data } = useSession()
-  console.log(data)
 
   const getInitials = useMemo(() => {
     if (!data?.user?.name) return null

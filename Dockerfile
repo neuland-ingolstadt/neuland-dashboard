@@ -1,44 +1,14 @@
-# TODO: PASS ALL ENVS and switch to Bun
-
-FROM node:20-alpine AS base
-
+FROM oven/bun AS builder
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
-RUN apk add --no-cache libc6-compat
-
-COPY package.json pnpm-lock.yaml ./
-
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
-
-FROM base AS builder
-
-WORKDIR /app
+COPY package*.json ./
+RUN bun install
 
 COPY . .
+RUN bun run build
 
-RUN pnpm run build
-
-FROM base AS production-deps
-
-RUN pnpm prune --prod
-
-FROM node:20-alpine AS production
-
+FROM oven/bun
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
-
-COPY --from=production-deps /app/node_modules ./node_modules
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/next.config.js ./next.config.js
-COPY --from=builder /app/package.json ./package.json
-
-EXPOSE 3000
-
-CMD ["pnpm", "start"]
+COPY --from=builder /app /app
+CMD ["bun", "run", "start"]
