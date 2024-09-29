@@ -86,7 +86,7 @@ export default function EditSportsEventPage({
         open={confirmDeleteOpen}
         setOpen={() => setConfirmDeleteOpen(false)}
         onConfirm={handleDelete}
-        title="Veranstaltung löschen"
+        title="Veranstaltung löschen?"
       />
 
       <NavBar />

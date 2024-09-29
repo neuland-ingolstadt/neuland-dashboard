@@ -8,7 +8,9 @@ import {
   newSportsEventSchema,
   updateSportsEventSchema,
 } from '@/lib/backend/sportEvents'
+import { authOptions } from '@/pages/api/auth/[...nextauth]'
 import { NextApiRequest, NextApiResponse } from 'next'
+import { getServerSession } from 'next-auth'
 
 export default async function handler(
   req: NextApiRequest,
@@ -19,6 +21,8 @@ export default async function handler(
     return res.status(403).json({ message: 'Not authorized!' })
   }
 
+  const session = (await getServerSession(req, res, authOptions))!
+
   // create new sport event
   if (req.method === 'POST') {
     const eventData = req.body
@@ -28,7 +32,7 @@ export default async function handler(
       return res.status(400).json({ message: 'Invalid data!' })
     }
 
-    await createSportsEvent(result.data)
+    await createSportsEvent(result.data, session.accessToken)
     return res.status(201).json({ message: 'Event created!' })
   }
 
@@ -44,7 +48,7 @@ export default async function handler(
     // get data without id
     const { id, ...data } = result.data
 
-    await updateSportsEvent(data, id)
+    await updateSportsEvent(data, id, session.accessToken)
     return res.status(200).json({ message: 'Event updated!' })
   }
 
@@ -52,7 +56,7 @@ export default async function handler(
   if (req.method === 'DELETE') {
     const { id } = req.body
 
-    await deleteSportsEvent(id)
+    await deleteSportsEvent(id, session.accessToken)
     return res.status(200).json({ message: 'Event deleted!' })
   }
 

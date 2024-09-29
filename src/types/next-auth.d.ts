@@ -2,6 +2,7 @@ import { DefaultSession } from 'next-auth'
 
 declare module 'next-auth' {
   export interface Session {
+    accessToken: string
     user: {
       groups: string[]
     } & DefaultSession['user']
@@ -10,10 +11,19 @@ declare module 'next-auth' {
   export interface Profile {
     groups?: string[]
   }
+
+  export interface Account {
+    access_token: string
+    expires_at: number
+    refresh_token: string
+  }
 }
 
 declare module 'next-auth/jwt' {
   export interface JWT {
     groups?: string[]
+    accessToken?: string
+    accessTokenExpires?: number
+    refreshToken?: string
   }
 }

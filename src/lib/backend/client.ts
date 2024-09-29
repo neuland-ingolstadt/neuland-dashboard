@@ -47,7 +47,10 @@ export async function getSportsEvents() {
   return data.universitySports
 }
 
-export async function createSportsEvent(event: NewSportsEvent) {
+export async function createSportsEvent(
+  event: NewSportsEvent,
+  accessToken: string
+) {
   const mutation = gql`
     mutation UpsertUniversitySport($event: UniversitySportsInput!) {
       upsertUniversitySport(input: $event) {
@@ -56,10 +59,16 @@ export async function createSportsEvent(event: NewSportsEvent) {
     }
   `.replace(/\s+/g, ' ')
 
+  graphqlClient.setHeader('Authorization', `Bearer ${accessToken}`)
   await graphqlClient.request(mutation, { event })
+  graphqlClient.setHeader('Authorization', '')
 }
 
-export async function updateSportsEvent(event: NewSportsEvent, id: string) {
+export async function updateSportsEvent(
+  event: NewSportsEvent,
+  id: string,
+  accessToken: string
+) {
   const mutation = gql`
     mutation UpsertUniversitySport($event: UniversitySportsInput!, $id: ID!) {
       upsertUniversitySport(input: $event, id: $id) {
@@ -68,15 +77,19 @@ export async function updateSportsEvent(event: NewSportsEvent, id: string) {
     }
   `.replace(/\s+/g, ' ')
 
+  graphqlClient.setHeader('Authorization', `Bearer ${accessToken}`)
   await graphqlClient.request(mutation, { event, id })
+  graphqlClient.setHeader('Authorization', '')
 }
 
-export async function deleteSportsEvent(id: string) {
+export async function deleteSportsEvent(id: string, accessToken: string) {
   const mutation = gql`
     mutation DeleteUniversitySport($id: ID!) {
       deleteUniversitySport(id: $id)
     }
   `.replace(/\s+/g, ' ')
 
+  graphqlClient.setHeader('Authorization', `Bearer ${accessToken}`)
   await graphqlClient.request(mutation, { id })
+  graphqlClient.setHeader('Authorization', '')
 }

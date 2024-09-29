@@ -28,7 +28,7 @@ export default function NavBar() {
   const getInitials = useMemo(() => {
     if (!data?.user?.name) return null
     const [firstName, lastName] = data.user.name.split(' ')
-    return `${firstName.charAt(0)}${lastName ? lastName.charAt(0) : ''}`
+    return `${firstName.charAt(0)}${lastName ? lastName.charAt(0) : ''}`.toUpperCase()
   }, [data])
 
   const { setTheme } = useTheme()

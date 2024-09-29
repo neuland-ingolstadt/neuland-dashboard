@@ -43,12 +43,7 @@ export const sportsEventSchema = z.object({
   endTime: z.string().nullable(),
   requiresRegistration: z.boolean().default(true),
   invitationLink: z.string().nullable(),
-  eMail: z
-    .string()
-    .email({
-      message: 'Bitte geben Sie eine gültige E-Mail-Adresse ein',
-    })
-    .nullable(),
+  eMail: z.union([z.string().email(), z.null(), z.literal('')]),
   createdAt: z.string(),
   updatedAt: z.string(),
 })

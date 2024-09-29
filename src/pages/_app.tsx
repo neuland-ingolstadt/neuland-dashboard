@@ -14,7 +14,11 @@ export const inter = Inter({
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <SessionProvider session={pageProps.session}>
+    <SessionProvider
+      session={pageProps.session}
+      refetchInterval={300}
+      refetchOnWindowFocus={true}
+    >
       <ThemeProvider
         attribute="class"
         defaultTheme="system"
