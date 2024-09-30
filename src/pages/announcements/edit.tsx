@@ -137,10 +137,9 @@ export const getServerSideProps: GetServerSideProps<
     }
   }
 
-  // Fetch the event from the backend
   const announcements = await getAnnouncements()
   const announcement = announcements.find(
-    (announcement) => announcement.id === Number(id)
+    (announcement) => announcement.id === id
   )
 
   if (!announcement) {

@@ -6,23 +6,21 @@ const isNotPastDate = (date: Date) => {
 }
 
 export const announcementSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   title: z.object({
     de: z.string({ required_error: 'Bitte geben Sie einen Titel ein' }),
     en: z.string({ required_error: 'Bitte geben Sie einen Titel ein' }),
   }),
-  description: z
-    .object({
-      de: z.string({
-        required_error: 'Bitte geben Sie eine Beschreibung ein',
-        invalid_type_error: 'Bitte geben Sie eine Beschreibung ein',
-      }),
-      en: z.string({
-        required_error: 'Bitte geben Sie eine Beschreibung ein',
-        invalid_type_error: 'Bitte geben Sie eine Beschreibung ein',
-      }),
-    })
-    .nullable(),
+  description: z.object({
+    de: z.string({
+      required_error: 'Bitte geben Sie eine Beschreibung ein',
+      invalid_type_error: 'Bitte geben Sie eine Beschreibung ein',
+    }),
+    en: z.string({
+      required_error: 'Bitte geben Sie eine Beschreibung ein',
+      invalid_type_error: 'Bitte geben Sie eine Beschreibung ein',
+    }),
+  }),
   startDateTime: z.preprocess(
     (val) => {
       if (typeof val === 'string' || val instanceof Date) {
@@ -58,7 +56,7 @@ export const announcementSchema = z.object({
       invalid_type_error: 'Bitte geben Sie eine Priorität ein',
     })
     .default(0),
-  url: z.string().optional(),
+  url: z.string().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
 })

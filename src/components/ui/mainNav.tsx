@@ -12,6 +12,11 @@ const links = [
     label: 'Ankündigungen',
     href: '/announcements',
   },
+  {
+    label: 'Analytics',
+    href: 'https://analytics.neuland.app',
+    target: '_blank',
+  },
 ]
 
 export function MainNav({
@@ -29,6 +34,7 @@ export function MainNav({
         <Link
           key={index}
           href={link.href}
+          target={link.target}
           passHref
         >
           <Button

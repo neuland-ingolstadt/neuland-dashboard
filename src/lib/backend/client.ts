@@ -13,7 +13,7 @@ interface SportsEventData {
 }
 
 interface AnnouncementsData {
-  announcements: Announcement[]
+  appAnnouncements: Announcement[]
   error?: unknown
 }
 
@@ -132,11 +132,11 @@ export async function getAnnouncements() {
   const data = await graphqlClient.request<AnnouncementsData>(query)
   console.warn('data', data)
 
-  if (!data.announcements) {
+  if (!data.appAnnouncements) {
     throw new Error('No data returned from API')
   }
 
-  return data.announcements
+  return data.appAnnouncements
 }
 
 export async function createAnnouncement(
