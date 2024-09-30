@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 import { add, format } from 'date-fns'
-import { type Locale, enUS } from 'date-fns/locale'
+import { enUS } from 'date-fns/locale'
 import {
   Calendar as CalendarIcon,
   ChevronLeft,
@@ -49,6 +49,8 @@ function isValidMinuteOrSecond(value: string) {
 }
 
 type GetValidNumberConfig = { max: number; min?: number; loop?: boolean }
+type TimePickerType = 'minutes' | 'seconds' | 'hours' | '12hours'
+type Period = 'AM' | 'PM'
 
 function getValidNumber(
   value: string,
@@ -140,9 +142,6 @@ function set12Hours(date: Date, value: string, period: Period) {
   return date
 }
 
-type TimePickerType = 'minutes' | 'seconds' | 'hours' | '12hours'
-type Period = 'AM' | 'PM'
-
 function setDateByType(
   date: Date,
   value: string,
@@ -228,47 +227,14 @@ function display12HourValue(hours: number) {
   return `0${hours % 12}`
 }
 
-function genMonths(
-  locale: Pick<Locale, 'options' | 'localize' | 'formatLong'>
-) {
-  return Array.from({ length: 12 }, (_, i) => ({
-    value: i,
-    label: format(new Date(2021, i), 'MMMM', { locale }),
-  }))
-}
-
-function genYears(yearRange = 50) {
-  const today = new Date()
-  return Array.from({ length: yearRange * 2 + 1 }, (_, i) => ({
-    value: today.getFullYear() - yearRange + i,
-    label: (today.getFullYear() - yearRange + i).toString(),
-  }))
-}
-
 // ---------- utils end ----------
 
 function Calendar({
   className,
   classNames,
   showOutsideDays = true,
-  yearRange = 50,
   ...props
 }: CalendarProps & { yearRange?: number }) {
-  const MONTHS = React.useMemo(() => {
-    let locale: Pick<Locale, 'options' | 'localize' | 'formatLong'> = enUS
-    const { options, localize, formatLong } = props.locale || {}
-    if (options && localize && formatLong) {
-      locale = {
-        options,
-        localize,
-        formatLong,
-      }
-    }
-    return genMonths(locale)
-  }, [])
-
-  const YEARS = React.useMemo(() => genYears(yearRange), [])
-
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
@@ -308,8 +274,8 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
-        IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
+        IconLeft: () => <ChevronLeft className="h-4 w-4" />,
+        IconRight: () => <ChevronRight className="h-4 w-4" />,
       }}
       {...props}
     />
@@ -503,6 +469,7 @@ const TimePickerInput = React.forwardRef<
 
 TimePickerInput.displayName = 'TimePickerInput'
 
+type Granularity = 'day' | 'hour' | 'minute' | 'second'
 interface TimePickerProps {
   date?: Date | null
   onChange?: (date: Date | undefined) => void
@@ -608,8 +575,6 @@ const TimePicker = React.forwardRef<TimePickerRef, TimePickerProps>(
   }
 )
 TimePicker.displayName = 'TimePicker'
-
-type Granularity = 'day' | 'hour' | 'minute' | 'second'
 
 type DateTimePickerProps = {
   value?: Date
