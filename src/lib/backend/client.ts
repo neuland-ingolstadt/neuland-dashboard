@@ -1,3 +1,4 @@
+import { Announcement, NewAnnouncement } from '@/lib/backend/announcements'
 import { NewSportsEvent, SportsEvent } from '@/lib/backend/sportEvents'
 import { gql, GraphQLClient } from 'graphql-request'
 
@@ -8,6 +9,11 @@ export const graphqlClient = new GraphQLClient(endpoint)
 
 interface SportsEventData {
   universitySports: SportsEvent[]
+  error?: unknown
+}
+
+interface AnnouncementsData {
+  announcements: Announcement[]
   error?: unknown
 }
 
@@ -90,6 +96,95 @@ export async function deleteSportsEvent(id: string, accessToken: string) {
   const mutation = gql`
     mutation DeleteUniversitySport($id: ID!) {
       deleteUniversitySport(id: $id)
+    }
+  `.replace(/\s+/g, ' ')
+
+  await graphqlClient.request(
+    mutation,
+    { id },
+    { Authorization: `Bearer ${accessToken}` }
+  )
+}
+
+export async function getAnnouncements() {
+  const query = gql`
+    query {
+      appAnnouncements {
+        id
+        title {
+          de
+          en
+        }
+        description {
+          de
+          en
+        }
+        startDateTime
+        endDateTime
+        priority
+        url
+        createdAt
+        updatedAt
+      }
+    }
+  `.replace(/\s+/g, ' ')
+
+  const data = await graphqlClient.request<AnnouncementsData>(query)
+  console.warn('data', data)
+
+  if (!data.announcements) {
+    throw new Error('No data returned from API')
+  }
+
+  return data.announcements
+}
+
+export async function createAnnouncement(
+  announcement: NewAnnouncement,
+  accessToken: string
+) {
+  const mutation = gql`
+    mutation UpsertAppAnnouncement($announcement: AnnouncementInput!) {
+      upsertAppAnnouncement(input: $announcement) {
+        id
+      }
+    }
+  `.replace(/\s+/g, ' ')
+
+  await graphqlClient.request(
+    mutation,
+    { announcement },
+    { Authorization: `Bearer ${accessToken}` }
+  )
+}
+
+export async function updateAnnouncement(
+  announcement: NewAnnouncement,
+  id: number,
+  accessToken: string
+) {
+  const mutation = gql`
+    mutation UpsertAppAnnouncement(
+      $announcement: AnnouncementInput!
+      $id: ID!
+    ) {
+      upsertAppAnnouncement(input: $announcement, id: $id) {
+        id
+      }
+    }
+  `.replace(/\s+/g, ' ')
+
+  await graphqlClient.request(
+    mutation,
+    { announcement, id },
+    { Authorization: `Bearer ${accessToken}` }
+  )
+}
+
+export async function deleteAnnouncement(id: string, accessToken: string) {
+  const mutation = gql`
+    mutation DeleteAppAnnouncement($id: ID!) {
+      deleteAppnnouncement(id: $id)
     }
   `.replace(/\s+/g, ' ')
 
