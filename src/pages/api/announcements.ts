@@ -25,13 +25,10 @@ export default async function handler(
 
   // create new announcement
   if (req.method === 'POST') {
-    console.log('req POST', req)
-    console.log('req.body', req.body)
     const announcementData = req.body
 
     const result = await newAnnouncementSchema.safeParseAsync(announcementData)
     if (result.error) {
-      console.log('result.error', result.error)
       return res.status(400).json({ message: 'Invalid data!' })
     }
 

@@ -3,6 +3,7 @@ import { DefaultSession } from 'next-auth'
 declare module 'next-auth' {
   export interface Session {
     accessToken: string
+    accessTokenExpires: number
     user: {
       groups: string[]
     } & DefaultSession['user']

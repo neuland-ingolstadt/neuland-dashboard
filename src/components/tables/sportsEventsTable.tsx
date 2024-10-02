@@ -9,20 +9,6 @@ import { useRouter } from 'next/router'
 
 const columns: ColumnDef<SportsEvent>[] = [
   {
-    accessorKey: 'id',
-    header: 'ID',
-    size: 1,
-    cell({
-      cell: {
-        row: {
-          original: { id },
-        },
-      },
-    }) {
-      return <p className="text-muted-foreground">{id}</p>
-    },
-  },
-  {
     filterFn: 'arrIncludesSome',
     accessorKey: 'weekday',
     header: ({ column }) => (

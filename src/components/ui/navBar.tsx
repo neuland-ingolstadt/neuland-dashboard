@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdownMenu'
 import { MainNav } from '@/components/ui/mainNav'
+import SessionExpiration from '@/components/ui/sessionExpiration'
 import { CircleUser, LogOut, Palette } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
 import { useTheme } from 'next-themes'
@@ -50,6 +51,8 @@ export default function NavBar() {
           />
         </Link>
         <MainNav className="mx-6 flex-1" />
+
+        <SessionExpiration />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

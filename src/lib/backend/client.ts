@@ -130,7 +130,6 @@ export async function getAnnouncements() {
   `.replace(/\s+/g, ' ')
 
   const data = await graphqlClient.request<AnnouncementsData>(query)
-  console.warn('data', data)
 
   if (!data.appAnnouncements) {
     throw new Error('No data returned from API')
@@ -160,7 +159,7 @@ export async function createAnnouncement(
 
 export async function updateAnnouncement(
   announcement: NewAnnouncement,
-  id: number,
+  id: string,
   accessToken: string
 ) {
   const mutation = gql`
@@ -183,8 +182,8 @@ export async function updateAnnouncement(
 
 export async function deleteAnnouncement(id: string, accessToken: string) {
   const mutation = gql`
-    mutation DeleteAppAnnouncement($id: ID!) {
-      deleteAppnnouncement(id: $id)
+    mutation deleteAppAnnouncement($id: ID!) {
+      deleteAppAnnouncement(id: $id)
     }
   `.replace(/\s+/g, ' ')
 

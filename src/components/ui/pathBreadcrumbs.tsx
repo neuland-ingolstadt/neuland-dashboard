@@ -15,6 +15,8 @@ const pathnames: Record<string, string> = {
   '/sports/new': 'Neue Veranstaltung',
   '/sports/edit': 'Veranstaltung bearbeiten',
   '/announcements': 'Ankündigungen',
+  '/announcements/new': 'Neue Ankündigung',
+  '/announcements/edit': 'Ankündigung bearbeiten',
 }
 
 export default function PathBreadcrumbs() {

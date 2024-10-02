@@ -2,133 +2,15 @@ import { Badge } from '@/components/ui/badge'
 import { DataTableColumnHeader } from '@/components/ui/dataTable/columnHeader'
 import { DataTable } from '@/components/ui/dataTable/dataTable'
 import { Announcement } from '@/lib/backend/announcements'
+import {
+  announcementStatus,
+  useAnnouncementsUtils,
+} from '@/lib/hooks/annoucmentsHook'
+import { cn } from '@/lib/utils'
 import { ColumnDef } from '@tanstack/react-table'
+import { format } from 'date-fns'
 import { useRouter } from 'next/router'
-
-const columns: ColumnDef<Announcement>[] = [
-  {
-    accessorKey: 'id',
-    header: 'ID',
-    size: 1,
-    cell({
-      cell: {
-        row: {
-          original: { id },
-        },
-      },
-    }) {
-      return <p className="text-muted-foreground">{id}</p>
-    },
-  },
-  {
-    accessorKey: 'title.de',
-    header: 'Title',
-  },
-  {
-    accessorKey: 'status',
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Status"
-      />
-    ),
-    cell({
-      cell: {
-        row: {
-          original: { startDateTime, endDateTime },
-        },
-      },
-    }) {
-      const now = new Date()
-      const start = new Date(startDateTime)
-      const end = new Date(endDateTime)
-      let status = 'Active'
-      if (now < start) {
-        status = 'Upcoming'
-      } else if (now > end) {
-        status = 'Past'
-      }
-
-      return (
-        <Badge
-          variant="outline"
-          className="flex w-fit flex-row items-center"
-        >
-          {status}
-        </Badge>
-      )
-    },
-    sortingFn: (
-      { original: { startDateTime: a } },
-      { original: { startDateTime: b } }
-    ) => {
-      return new Date(a).getTime() - new Date(b).getTime()
-    },
-    filterFn: (row, columnId, filterValue) => {
-      const now = new Date()
-      const start = new Date(row.original.startDateTime)
-      const end = new Date(row.original.endDateTime)
-      let status = 'Active'
-      if (now < start) {
-        status = 'Upcoming'
-      } else if (now > end) {
-        status = 'Past'
-      }
-      return filterValue.includes(status)
-    },
-  },
-  {
-    accessorKey: 'timespan',
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Timespan"
-      />
-    ),
-    sortingFn: (
-      { original: { startDateTime: a } },
-      { original: { startDateTime: b } }
-    ) => {
-      return new Date(a).getTime() - new Date(b).getTime()
-    },
-    cell({
-      cell: {
-        row: {
-          original: { startDateTime, endDateTime },
-        },
-      },
-    }) {
-      const formatDate = (date: Date) => {
-        const day = date.getDate().toString().padStart(2, '0')
-        const month = (date.getMonth() + 1).toString().padStart(2, '0')
-        const year = date.getFullYear()
-        return `${day}.${month}.${year}`
-      }
-
-      const start = formatDate(new Date(startDateTime))
-      const end = formatDate(new Date(endDateTime))
-
-      return <p>{`${start} - ${end}`}</p>
-    },
-  },
-  {
-    filterFn: 'arrIncludesSome',
-    accessorKey: 'priority',
-    size: 1,
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Priority"
-      />
-    ),
-    sortingFn: (
-      { original: { priority: a } },
-      { original: { priority: b } }
-    ) => {
-      return a - b
-    },
-  },
-]
+import { useMemo } from 'react'
 
 interface AnnouncementsTableProps {
   announcement: Announcement[]
@@ -138,6 +20,88 @@ export default function AnnouncementsTable({
   announcement,
 }: AnnouncementsTableProps) {
   const router = useRouter()
+  const { getStatus, getStatusClasses } = useAnnouncementsUtils()
+  const columns: ColumnDef<Announcement>[] = useMemo(
+    () => [
+      {
+        accessorKey: 'status',
+        size: 1,
+        header: 'Status',
+        cell({
+          cell: {
+            row: { original },
+          },
+        }) {
+          return (
+            <Badge
+              variant="outline"
+              className={cn(
+                'flex w-fit flex-row items-center text-white',
+                getStatusClasses(getStatus(original))
+              )}
+            >
+              {announcementStatus[getStatus(original)]}
+            </Badge>
+          )
+        },
+        sortingFn: (
+          { original: { startDateTime: a } },
+          { original: { startDateTime: b } }
+        ) => {
+          return a.getTime() - b.getTime()
+        },
+        filterFn: (row, _, filterValue) => {
+          const status = getStatus(row.original)
+          return filterValue.includes(status)
+        },
+      },
+      {
+        accessorKey: 'title.de',
+        header: 'Title',
+      },
+      {
+        id: 'timespan',
+        size: 250,
+        header: 'Zeitraum',
+        sortingFn: (
+          { original: { startDateTime: a } },
+          { original: { startDateTime: b } }
+        ) => {
+          return new Date(a).getTime() - new Date(b).getTime()
+        },
+        cell({
+          cell: {
+            row: {
+              original: { startDateTime, endDateTime },
+            },
+          },
+        }) {
+          const start = format(startDateTime, 'dd.MM.yyyy')
+          const end = format(endDateTime, 'dd.MM.yyyy')
+
+          return <p>{`${start} - ${end}`}</p>
+        },
+      },
+      {
+        filterFn: 'arrIncludesSome',
+        accessorKey: 'priority',
+        size: 1,
+        header: ({ column }) => (
+          <DataTableColumnHeader
+            column={column}
+            title="Priorität"
+          />
+        ),
+        sortingFn: (
+          { original: { priority: a } },
+          { original: { priority: b } }
+        ) => {
+          return a - b
+        },
+      },
+    ],
+    [getStatus, getStatusClasses]
+  )
 
   return (
     <DataTable
@@ -154,20 +118,12 @@ export default function AnnouncementsTable({
           {
             column: 'status',
             title: 'Status',
-            options: [
-              {
-                label: 'Active',
-                value: 'Active',
-              },
-              {
-                label: 'Upcoming',
-                value: 'Upcoming',
-              },
-              {
-                label: 'Past',
-                value: 'Past',
-              },
-            ],
+            options: Object.entries(announcementStatus).map(
+              ([value, label]) => ({
+                value,
+                label,
+              })
+            ),
           },
         ],
       }}

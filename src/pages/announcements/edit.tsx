@@ -97,7 +97,7 @@ export default function EditAnnouncementEventPage({
 
         <div className="flex flex-row items-center gap-3">
           <h1 className="mt-3 flex-1 text-4xl font-bold tracking-tight">
-            Veranstaltung bearbeiten
+            Ankündigung bearbeiten
           </h1>
 
           <Button

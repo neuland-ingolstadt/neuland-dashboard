@@ -11,6 +11,7 @@ export const groups = {
   next: 'Neuland Next',
   sports: 'Neuland Next Hochschulsport',
   announcements: 'Neuland Next Announcements',
+  admin: 'Neuland Next Admin',
 } as const
 
 export type Group = keyof typeof groups
