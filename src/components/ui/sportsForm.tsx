@@ -19,7 +19,7 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import TimePicker from '@/components/ui/timePicker'
 import { NewSportsEvent, newSportsEventSchema } from '@/lib/backend/sportEvents'
-import { weekdays } from '@/lib/utils'
+import { cn, weekdays } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -124,7 +124,11 @@ const SportsForm = forwardRef<SportsFormRef, SportsFormProps>(
                     value={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger
+                        className={cn({
+                          'text-muted-foreground': !field.value,
+                        })}
+                      >
                         <SelectValue placeholder="Wochentag" />
                       </SelectTrigger>
                     </FormControl>
@@ -202,7 +206,11 @@ const SportsForm = forwardRef<SportsFormRef, SportsFormProps>(
                     value={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger
+                        className={cn({
+                          'text-muted-foreground': !field.value,
+                        })}
+                      >
                         <SelectValue placeholder="Campus" />
                       </SelectTrigger>
                     </FormControl>

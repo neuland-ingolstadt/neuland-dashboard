@@ -15,7 +15,7 @@ import {
   newAnnouncementSchema,
 } from '@/lib/backend/announcements'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
+import { forwardRef, useImperativeHandle } from 'react'
 import { useForm } from 'react-hook-form'
 
 interface AnnouncementFormProps {
@@ -33,6 +33,7 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
       resolver: zodResolver(newAnnouncementSchema),
       defaultValues: {
         ...defaultValues,
+        url: defaultValues?.url ?? null,
       },
     })
 
@@ -41,16 +42,6 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
         form.handleSubmit(onSubmit)()
       },
     }))
-
-    useEffect(() => {
-      const description = defaultValues?.description
-      if (description?.de === null && description?.en === null) {
-        form.setValue('description', null)
-        setDisableDescription(true)
-      }
-    }, [defaultValues, form])
-
-    const [disableDescription, setDisableDescription] = useState(false)
 
     return (
       <Form {...form}>
@@ -164,7 +155,6 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
                   <FormControl>
                     <Textarea
                       {...field}
-                      disabled={disableDescription}
                       value={field.value ?? ''}
                     />
                   </FormControl>
@@ -184,7 +174,6 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
 
                   <FormControl>
                     <Textarea
-                      disabled={disableDescription}
                       {...field}
                       value={field.value ?? ''}
                     />
@@ -198,7 +187,7 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
               control={form.control}
               name="url"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="col-span-2">
                   <FormLabel>Link</FormLabel>
 
                   <FormControl>

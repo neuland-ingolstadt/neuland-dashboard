@@ -12,11 +12,13 @@ type AnnouncementStatus = keyof typeof announcementStatus
 export function useAnnouncementsUtils() {
   const getStatus = useCallback(
     (announcement: Announcement): AnnouncementStatus => {
+      const startDate = new Date(announcement.startDateTime)
+      const endDate = new Date(announcement.endDateTime)
       const now = new Date()
 
-      if (now < announcement.startDateTime) {
+      if (now < startDate) {
         return 'upcoming'
-      } else if (now > announcement.endDateTime) {
+      } else if (now > endDate) {
         return 'past'
       } else {
         return 'active'

@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 import { add, format } from 'date-fns'
-import { enUS } from 'date-fns/locale'
+import { de } from 'date-fns/locale'
 import {
   Calendar as CalendarIcon,
   ChevronLeft,
@@ -616,7 +616,7 @@ const DateTimePicker = React.forwardRef<
 >(
   (
     {
-      locale = enUS,
+      locale = de,
       value,
       onChange,
       hourCycle = 24,
@@ -624,7 +624,7 @@ const DateTimePicker = React.forwardRef<
       disabled = false,
       displayFormat,
       granularity = 'second',
-      placeholder = 'Pick a date',
+      placeholder = 'Datum und Uhrzeit auswählen',
       className,
       ...props
     },
@@ -668,11 +668,11 @@ const DateTimePicker = React.forwardRef<
         `PP hh:mm${!granularity || granularity === 'second' ? ':ss' : ''} b`,
     }
 
-    let loc = enUS
+    let loc = de
     const { options, localize, formatLong } = locale
     if (options && localize && formatLong) {
       loc = {
-        ...enUS,
+        ...de,
         options,
         localize,
         formatLong,
