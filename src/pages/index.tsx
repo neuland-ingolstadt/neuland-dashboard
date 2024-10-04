@@ -28,49 +28,65 @@ interface IndexCard {
   groups: [Group, ...Group[]]
 }
 
-const indexCards: IndexCard[] = [
+interface Section {
+  title: string
+  cards: IndexCard[]
+}
+
+const indexCards: Section[] = [
   {
-    title: 'Hochschulsport',
-    description:
-      'Hochschulsportangebote und -kurse, des Veranstaltungsmanagement.',
-    href: '/sports',
-    icon: Calendar,
-    groups: ['sports'],
+    title: 'Neuland Next',
+    cards: [
+      {
+        title: 'Hochschulsport',
+        description:
+          'Hochschulsportangebote und -kurse, des Veranstaltungsmanagement.',
+        href: '/sports',
+        icon: Calendar,
+        groups: ['sports'],
+      },
+      {
+        title: 'Ankündigungen',
+        description: 'In-App Ankündigungen und Neuigkeiten.',
+        href: '/announcements',
+        icon: Megaphone,
+        groups: ['announcements'],
+      },
+    ],
   },
   {
-    title: 'Ankündigungen',
-    description: 'In-App Ankündigungen und Neuigkeiten.',
-    href: '/announcements',
-    icon: Megaphone,
-    groups: ['announcements'],
-  },
-  {
-    title: 'Analytics',
-    description: 'Analytics und Statistiken der Neuland Next App.',
-    href: 'https://analytics.neuland.app',
-    icon: LineChart,
-    external: true,
-    groups: ['admin'],
-  },
-  {
-    title: 'Status Seite',
-    description: 'Statusseite aller Neuland Next Services.',
-    href: 'https://status.neuland.app/dashboard',
-    icon: ActivitySquare,
-    external: true,
-    groups: ['admin'],
+    title: 'Links',
+    cards: [
+      {
+        title: 'Analytics',
+        description: 'Analytics und Statistiken der Neuland Next App.',
+        href: 'https://analytics.neuland.app',
+        icon: LineChart,
+        external: true,
+        groups: ['admin'],
+      },
+      {
+        title: 'Status Seite',
+        description: 'Statusseite aller Neuland Next Services.',
+        href: 'https://status.neuland.app/dashboard',
+        icon: ActivitySquare,
+        external: true,
+        groups: ['admin'],
+      },
+    ],
   },
 ]
 
 export default function Home() {
   const { userGroups } = useUserGroups()
-  const userCards = useMemo(
+  const userSections = useMemo(
     () =>
-      indexCards.filter(
-        (card) =>
-          !card.groups ||
+      indexCards.map((section) => ({
+        ...section,
+        cards: section.cards.filter((card) =>
           card.groups.some((group) => userGroups.includes(group))
-      ),
+        ),
+      })),
     [userGroups]
   )
 
@@ -81,29 +97,39 @@ export default function Home() {
         <PathBreadcrumbs />
       </div>
 
-      <div className="container my-4 grid grid-cols-3 gap-3 auto-rows-fr">
-        {userCards.map((card, idx) => (
-          <Link
+      <div className="container my-4 flex flex-col gap-6">
+        {userSections.map((section, idx) => (
+          <div
             key={idx}
-            href={card.href}
-            passHref
-            target={card.external ? '_blank' : undefined}
+            className="flex flex-col gap-2"
           >
-            <Card className="h-full">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  {React.createElement(card.icon, {
-                    className: 'h-6 w-6',
-                  })}
-                  <span className="flex-1">{card.title}</span>
-                  {card.external && (
-                    <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </CardTitle>
-                <CardDescription>{card.description}</CardDescription>
-              </CardHeader>
-            </Card>
-          </Link>
+            <h2 className="font-semibold text-lg">{section.title}</h2>
+            <div className="grid grid-cols-2 gap-3 auto-rows-fr">
+              {section.cards.map((card, idx) => (
+                <Link
+                  key={idx}
+                  href={card.href}
+                  passHref
+                  target={card.external ? '_blank' : undefined}
+                >
+                  <Card className="h-full">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        {React.createElement(card.icon, {
+                          className: 'h-6 w-6',
+                        })}
+                        <span className="flex-1">{card.title}</span>
+                        {card.external && (
+                          <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                        )}
+                      </CardTitle>
+                      <CardDescription>{card.description}</CardDescription>
+                    </CardHeader>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          </div>
         ))}
       </div>
     </div>

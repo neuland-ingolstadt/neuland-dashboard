@@ -26,13 +26,6 @@ const links: Link[] = [
     href: '/announcements',
     groups: ['announcements'],
   },
-  {
-    label: 'Analytics',
-    href: 'https://analytics.neuland.app',
-    target: '_blank',
-    external: true,
-    groups: ['admin'],
-  },
 ]
 
 export function MainNav({
