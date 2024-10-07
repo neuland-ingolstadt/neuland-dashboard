@@ -3,7 +3,7 @@ import { NewSportsEvent, SportsEvent } from '@/lib/backend/sportEvents'
 import { gql, GraphQLClient } from 'graphql-request'
 
 const endpoint =
-  process.env.NEXT_PUBLIC_GRAPHQL_URL || 'https://api.neuland.app/graphql'
+  process.env.NEXT_PUBLIC_GRAPHQL_URL || 'https://api.dev.neuland.app/graphql'
 
 export const graphqlClient = new GraphQLClient(endpoint)
 

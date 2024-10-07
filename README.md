@@ -1,27 +1,20 @@
-# Next.js Template
+# Neuland Dashboard
 
-## Getting Started
+## Description
 
-First, run the development server:
+This is a dashboard for the [neuland.app](https://neuland.app) and [Neuland Next](https://next.neuland.app) app.
+Here you can manage the university sports courses and in-app announcements.
 
-```bash
-bun dev
-```
+## Installation
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. Clone the repository
+2. Create a `.env.local` file in the root directory and add the variables seen in the `.env.example` file
+3. Run `bun install`
+4. Run `bun dev` to start the development server
+5. Visit `http://localhost:3000`
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Notice
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Add UI Components
-
-This project uses [shadcn/ui](https://ui.shadcn.com/) to add UI components. You can add UI components by using their [CLI](https://ui.shadcn.com/docs/cli) or by using the [UI components](https://ui.shadcn.com/docs/components) directly.
-
-## Icons
-
-This project uses [Lucide](https://lucide.dev/) for icons. You can find the list of icons [here](https://lucide.dev/icons).
+> [!CAUTION]
+> Bun does not fully support this project. That's why the `Dockerfile` does still use `npm` and not `bun`.
+> Please use `bun` for development and `npm` for production!

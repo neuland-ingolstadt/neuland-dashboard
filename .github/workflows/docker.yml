@@ -46,3 +46,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            NEXT_PUBLIC_GRAPHQL_URL=${{ env.NEXT_PUBLIC_GRAPHQL_URL }}
