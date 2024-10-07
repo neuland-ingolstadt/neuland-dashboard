@@ -12,15 +12,23 @@ import { Save, Trash } from 'lucide-react'
 import { GetServerSideProps } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 
 interface EditAnnouncementPageProps {
-  announcement: Announcement
+  initialAnnouncement: Announcement
 }
 
 export default function EditAnnouncementEventPage({
-  announcement,
+  initialAnnouncement,
 }: EditAnnouncementPageProps) {
+  const announcement = useMemo(
+    () => ({
+      ...initialAnnouncement,
+      startDateTime: new Date(initialAnnouncement.startDateTime),
+      endDateTime: new Date(initialAnnouncement.endDateTime),
+    }),
+    [initialAnnouncement]
+  )
   const { setLoading, openErrorDialog } = useDialogs()
   const router = useRouter()
 
@@ -150,7 +158,7 @@ export const getServerSideProps: GetServerSideProps<
 
   return {
     props: {
-      announcement,
+      initialAnnouncement: announcement,
     },
   }
 }
