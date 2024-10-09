@@ -1,6 +1,7 @@
 import Logo from '@/components/images/logo.webp'
 import { Button } from '@/components/ui/button'
 import { signIn } from 'next-auth/react'
+import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
@@ -16,6 +17,10 @@ export default function SignInPage() {
 
   return (
     <div className="flex h-screen flex-col items-center justify-center bg-gray-100 dark:bg-gray-900">
+      <Head>
+        <title>Neuland e.V. - Anmelden</title>
+      </Head>
+
       <div className="w-full max-w-md space-y-8 rounded-lg bg-white p-8 shadow-md dark:bg-gray-800 dark:shadow-lg">
         <Image
           src={Logo}

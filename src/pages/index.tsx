@@ -16,6 +16,7 @@ import {
   LucideIcon,
   Megaphone,
 } from 'lucide-react'
+import Head from 'next/head'
 import Link from 'next/link'
 import React, { useMemo } from 'react'
 
@@ -92,6 +93,10 @@ export default function Home() {
 
   return (
     <div>
+      <Head>
+        <title>Neuland Dashboard</title>
+      </Head>
+
       <NavBar />
       <div className="container my-4 flex flex-col gap-3">
         <PathBreadcrumbs />

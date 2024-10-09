@@ -1,10 +1,15 @@
 import { Button } from '@/components/ui/button'
 import { CircleX } from 'lucide-react'
+import Head from 'next/head'
 import Link from 'next/link'
 
 export default function AuthErrorPage() {
   return (
     <div className="flex h-screen flex-col items-center justify-center">
+      <Head>
+        <title>Authentifizierung fehlgeschlagen</title>
+      </Head>
+
       <CircleX className="text-error-foreground h-16 w-16" />
       <h1 className="mt-4 text-4xl font-bold">
         Authentifizierung fehlgeschlagen
