@@ -82,12 +82,14 @@ export default function Home() {
   const { userGroups } = useUserGroups()
   const userSections = useMemo(
     () =>
-      indexCards.map((section) => ({
-        ...section,
-        cards: section.cards.filter((card) =>
-          card.groups.some((group) => userGroups.includes(group))
-        ),
-      })),
+      indexCards
+        .map((section) => ({
+          ...section,
+          cards: section.cards.filter((card) =>
+            card.groups.some((group) => userGroups.includes(group))
+          ),
+        }))
+        .filter((section) => section.cards.length > 0),
     [userGroups]
   )
 
