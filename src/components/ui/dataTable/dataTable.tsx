@@ -31,6 +31,7 @@ type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   onClick?: (item: TData) => void
+  initialSorting?: SortingState
 } & (
   | {
       enableFilter: true
@@ -55,6 +56,7 @@ export function DataTable<TData, TValue>({
   enableFilter = false,
   filterOptions,
   initialPageSize,
+  initialSorting,
 }: DataTableProps<TData, TValue>) {
   const tableStateKey = useMemo(() => `tableState-${tableId}`, [tableId])
   const [isClient, setIsClient] = useState(false)
@@ -70,9 +72,7 @@ export function DataTable<TData, TValue>({
     return tableState ? JSON.parse(tableState) : {}
   }, [tableStateKey])
 
-  const [sorting, setSorting] = useState<SortingState>(
-    initialState?.sorting ?? []
-  )
+  const [sorting, setSorting] = useState<SortingState>(initialSorting || [])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
     initialState?.columnFilters ?? []
   )

@@ -44,7 +44,12 @@ const columns: ColumnDef<SportsEvent>[] = [
   },
   {
     accessorKey: 'title.de',
-    header: 'Name',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Name"
+      />
+    ),
   },
   {
     accessorKey: 'campus',
@@ -86,6 +91,12 @@ export default function SportsEventsTable({ events }: SportsEventsTableProps) {
       columns={columns}
       enableFilter
       enablePagination
+      initialSorting={[
+        {
+          id: 'title_de',
+          desc: false,
+        },
+      ]}
       filterOptions={{
         searchFilter: {
           column: 'title_de',
