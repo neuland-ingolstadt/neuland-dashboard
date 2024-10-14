@@ -19,7 +19,7 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import TimePicker from '@/components/ui/timePicker'
 import { NewSportsEvent, newSportsEventSchema } from '@/lib/backend/sportEvents'
-import { cn, weekdays } from '@/lib/utils'
+import { cn, friendlySportsCategories, weekdays } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -149,7 +149,6 @@ const SportsForm = forwardRef<SportsFormRef, SportsFormProps>(
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="startTime"
@@ -191,7 +190,7 @@ const SportsForm = forwardRef<SportsFormRef, SportsFormProps>(
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-3 gap-3">
             <FormField
               control={form.control}
               name="campus"
@@ -238,6 +237,47 @@ const SportsForm = forwardRef<SportsFormRef, SportsFormProps>(
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="sportsCategory"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Sportart <RequiredLabel />
+                  </FormLabel>
+
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger
+                        className={cn({
+                          'text-muted-foreground': !field.value,
+                        })}
+                      >
+                        <SelectValue placeholder="Sonstige Sportart" />
+                      </SelectTrigger>
+                    </FormControl>
+
+                    <SelectContent>
+                      {Object.entries(friendlySportsCategories).map(
+                        ([key, value], idx) => (
+                          <SelectItem
+                            key={idx}
+                            value={key}
+                          >
+                            {value}
+                          </SelectItem>
+                        )
+                      )}
+                    </SelectContent>
+                  </Select>
 
                   <FormMessage />
                 </FormItem>

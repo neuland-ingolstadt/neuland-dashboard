@@ -38,6 +38,7 @@ export async function getSportsEvents() {
         requiresRegistration
         invitationLink
         eMail
+        sportsCategory
         createdAt
         updatedAt
       }

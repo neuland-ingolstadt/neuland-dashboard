@@ -1,3 +1,4 @@
+import { sportsCategories } from '@/lib/utils'
 import { z } from 'zod'
 
 export const sportsEventSchema = z.object({
@@ -44,6 +45,10 @@ export const sportsEventSchema = z.object({
   requiresRegistration: z.boolean().default(true),
   invitationLink: z.string().nullable(),
   eMail: z.union([z.string().email(), z.null(), z.literal('')]),
+  sportsCategory: z.enum(sportsCategories, {
+    required_error:
+      'Bitte wählen Sie eine Sportart oder wählen Sie "Sonstiges"',
+  }),
   createdAt: z.string(),
   updatedAt: z.string(),
 })
