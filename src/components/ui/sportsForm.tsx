@@ -1,4 +1,13 @@
+import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command'
 import {
   Form,
   FormControl,
@@ -8,6 +17,11 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import RequiredLabel from '@/components/ui/required'
 import {
   Select,
@@ -19,9 +33,10 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import TimePicker from '@/components/ui/timePicker'
 import { NewSportsEvent, newSportsEventSchema } from '@/lib/backend/sportEvents'
-import { cn, friendlySportsCategories, weekdays } from '@/lib/utils'
+import { cn, sportsCategories, weekdays } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
+import { ChevronsUpDown, Check } from 'lucide-react'
+import { forwardRef, useImperativeHandle } from 'react'
 import { useForm } from 'react-hook-form'
 
 interface SportsFormProps {
@@ -41,6 +56,10 @@ const SportsForm = forwardRef<SportsFormRef, SportsFormProps>(
         endTime: null,
         eMail: null,
         invitationLink: null,
+        description: {
+          de: defaultValues?.description?.de ?? '',
+          en: defaultValues?.description?.en ?? '',
+        },
         ...defaultValues,
       },
     })
@@ -50,16 +69,6 @@ const SportsForm = forwardRef<SportsFormRef, SportsFormProps>(
         form.handleSubmit(onSubmit)()
       },
     }))
-
-    useEffect(() => {
-      const description = defaultValues?.description
-      if (description?.de === null && description?.en === null) {
-        form.setValue('description', null)
-        setDisableDescription(true)
-      }
-    }, [defaultValues, form])
-
-    const [disableDescription, setDisableDescription] = useState(false)
 
     return (
       <Form {...form}>
@@ -246,39 +255,65 @@ const SportsForm = forwardRef<SportsFormRef, SportsFormProps>(
               control={form.control}
               name="sportsCategory"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-col w-full gap-2">
                   <FormLabel>
                     Sportart <RequiredLabel />
                   </FormLabel>
 
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger
-                        className={cn({
-                          'text-muted-foreground': !field.value,
-                        })}
-                      >
-                        <SelectValue placeholder="Sonstige Sportart" />
-                      </SelectTrigger>
-                    </FormControl>
-
-                    <SelectContent>
-                      {Object.entries(friendlySportsCategories).map(
-                        ([key, value], idx) => (
-                          <SelectItem
-                            key={idx}
-                            value={key}
-                          >
-                            {value}
-                          </SelectItem>
-                        )
-                      )}
-                    </SelectContent>
-                  </Select>
-
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            'justify-between',
+                            !field.value && 'text-muted-foreground'
+                          )}
+                        >
+                          {field.value
+                            ? sportsCategories.find(
+                                (sport) => sport.value === field.value
+                              )?.label
+                            : 'Sportart auswählen'}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-full p-0"
+                      align="start"
+                    >
+                      <Command>
+                        <CommandInput placeholder="Sportart suchen" />
+                        <CommandList>
+                          <CommandEmpty>Keine Sportarten gefunden</CommandEmpty>
+                          <CommandGroup>
+                            {sportsCategories.map(({ value, label }) => (
+                              <CommandItem
+                                value={label}
+                                key={value}
+                                className="w-full max-w-full"
+                                onSelect={() => {
+                                  form.setValue('sportsCategory', value)
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    'mr-2 h-4 w-4',
+                                    value === field.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0'
+                                  )}
+                                />
+                                {label}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                   <FormMessage />
                 </FormItem>
               )}
@@ -294,14 +329,11 @@ const SportsForm = forwardRef<SportsFormRef, SportsFormProps>(
               name="description.de"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Beschreibung (Deutsch) <RequiredLabel />
-                  </FormLabel>
+                  <FormLabel>Beschreibung (Deutsch)</FormLabel>
 
                   <FormControl>
                     <Textarea
                       {...field}
-                      disabled={disableDescription}
                       value={field.value ?? ''}
                     />
                   </FormControl>
@@ -315,13 +347,10 @@ const SportsForm = forwardRef<SportsFormRef, SportsFormProps>(
               name="description.en"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Beschreibung (Englisch) <RequiredLabel />
-                  </FormLabel>
+                  <FormLabel>Beschreibung (Englisch)</FormLabel>
 
                   <FormControl>
                     <Textarea
-                      disabled={disableDescription}
                       {...field}
                       value={field.value ?? ''}
                     />
@@ -331,34 +360,17 @@ const SportsForm = forwardRef<SportsFormRef, SportsFormProps>(
                 </FormItem>
               )}
             />
-          </div>
 
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem className="mt-2 flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
-                <FormControl>
-                  <Checkbox
-                    checked={disableDescription}
-                    onCheckedChange={(value) => {
-                      if (value) {
-                        field.onChange(null)
-                        setDisableDescription(true)
-                      } else {
-                        field.onChange({
-                          de: null,
-                          en: null,
-                        })
-                        setDisableDescription(false)
-                      }
-                    }}
-                  />
-                </FormControl>
-                <FormLabel>Keine Beschreibung</FormLabel>
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="description"
+              render={() => (
+                <FormItem>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
           <h2 className="mt-6 text-xl font-bold tracking-tight">Anmeldung</h2>
           <FormField

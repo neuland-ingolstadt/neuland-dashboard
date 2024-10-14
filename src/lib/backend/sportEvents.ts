@@ -1,4 +1,4 @@
-import { sportsCategories } from '@/lib/utils'
+import { sportsCategoriesKeys } from '@/lib/utils'
 import { z } from 'zod'
 
 export const sportsEventSchema = z.object({
@@ -9,16 +9,25 @@ export const sportsEventSchema = z.object({
   }),
   description: z
     .object({
-      de: z.string({
-        required_error: 'Bitte geben Sie eine Beschreibung ein',
-        invalid_type_error: 'Bitte geben Sie eine Beschreibung ein',
-      }),
-      en: z.string({
-        required_error: 'Bitte geben Sie eine Beschreibung ein',
-        invalid_type_error: 'Bitte geben Sie eine Beschreibung ein',
-      }),
+      de: z
+        .string({
+          required_error: 'Bitte geben Sie eine Beschreibung ein',
+          invalid_type_error: 'Bitte geben Sie eine Beschreibung ein',
+        })
+        .optional(),
+      en: z
+        .string({
+          required_error: 'Bitte geben Sie eine Beschreibung ein',
+          invalid_type_error: 'Bitte geben Sie eine Beschreibung ein',
+        })
+        .optional(),
     })
-    .nullable(),
+    .partial()
+    .refine((data) => (data.de && data.en) || (!data.de && !data.en), {
+      message:
+        'Bitte geben Sie entweder beide Beschreibungen oder keine Beschreibung an',
+      path: [''],
+    }),
   campus: z.enum(['Ingolstadt', 'Neuburg'], {
     required_error: 'Bitte wählen sie einen Campus',
   }),
@@ -45,7 +54,7 @@ export const sportsEventSchema = z.object({
   requiresRegistration: z.boolean().default(true),
   invitationLink: z.string().nullable(),
   eMail: z.union([z.string().email(), z.null(), z.literal('')]),
-  sportsCategory: z.enum(sportsCategories, {
+  sportsCategory: z.enum(sportsCategoriesKeys, {
     required_error:
       'Bitte wählen Sie eine Sportart oder wählen Sie "Sonstiges"',
   }),
