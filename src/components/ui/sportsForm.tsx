@@ -255,65 +255,69 @@ const SportsForm = forwardRef<SportsFormRef, SportsFormProps>(
               control={form.control}
               name="sportsCategory"
               render={({ field }) => (
-                <FormItem className="flex flex-col w-full gap-2">
+                <FormItem>
                   <FormLabel>
                     Sportart <RequiredLabel />
                   </FormLabel>
+                  <div>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className={cn(
+                              'justify-between w-full',
+                              !field.value && 'text-muted-foreground'
+                            )}
+                          >
+                            {field.value
+                              ? sportsCategories.find(
+                                  (sport) => sport.value === field.value
+                                )?.label
+                              : 'Sportart auswählen'}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className="w-full p-0"
+                        align="start"
+                      >
+                        <Command>
+                          <CommandInput placeholder="Sportart suchen" />
+                          <CommandList>
+                            <CommandEmpty>
+                              Keine Sportarten gefunden
+                            </CommandEmpty>
+                            <CommandGroup>
+                              {sportsCategories.map(({ value, label }) => (
+                                <CommandItem
+                                  value={label}
+                                  key={value}
+                                  className="w-full max-w-full"
+                                  onSelect={() => {
+                                    form.setValue('sportsCategory', value)
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      'mr-2 h-4 w-4',
+                                      value === field.value
+                                        ? 'opacity-100'
+                                        : 'opacity-0'
+                                    )}
+                                  />
+                                  {label}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
 
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          className={cn(
-                            'justify-between',
-                            !field.value && 'text-muted-foreground'
-                          )}
-                        >
-                          {field.value
-                            ? sportsCategories.find(
-                                (sport) => sport.value === field.value
-                              )?.label
-                            : 'Sportart auswählen'}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="w-full p-0"
-                      align="start"
-                    >
-                      <Command>
-                        <CommandInput placeholder="Sportart suchen" />
-                        <CommandList>
-                          <CommandEmpty>Keine Sportarten gefunden</CommandEmpty>
-                          <CommandGroup>
-                            {sportsCategories.map(({ value, label }) => (
-                              <CommandItem
-                                value={label}
-                                key={value}
-                                className="w-full max-w-full"
-                                onSelect={() => {
-                                  form.setValue('sportsCategory', value)
-                                }}
-                              >
-                                <Check
-                                  className={cn(
-                                    'mr-2 h-4 w-4',
-                                    value === field.value
-                                      ? 'opacity-100'
-                                      : 'opacity-0'
-                                  )}
-                                />
-                                {label}
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
                   <FormMessage />
                 </FormItem>
               )}
