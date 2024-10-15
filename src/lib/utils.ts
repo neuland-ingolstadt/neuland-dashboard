@@ -34,6 +34,7 @@ export const sportsCategories = [
   { value: 'Frisbee', label: 'Frisbee' },
   { value: 'FullBodyWorkout', label: 'Ganzkörpertraining' },
   { value: 'Handball', label: 'Handball' },
+  { value: 'Hockey', label: 'Hockey' },
   { value: 'Jogging', label: 'Joggen' },
   { value: 'Kickboxing', label: 'Kickboxen' },
   { value: 'Climbing', label: 'Klettern' },
