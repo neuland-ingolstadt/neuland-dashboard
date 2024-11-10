@@ -27,13 +27,9 @@ export const announcementSchema = z.object({
         return new Date(val)
       }
     },
-    z
-      .date({
-        required_error: 'Bitte geben Sie eine Startzeit ein',
-      })
-      .refine(isNotPastDate, {
-        message: 'Das Startdatum muss in der Zukunft liegen',
-      })
+    z.date({
+      required_error: 'Bitte geben Sie eine Startzeit ein',
+    })
   ),
   endDateTime: z.preprocess(
     (val) => {

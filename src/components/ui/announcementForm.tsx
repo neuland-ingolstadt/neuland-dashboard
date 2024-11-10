@@ -223,6 +223,9 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
                       max={10}
                       step={1}
                       defaultValue={0}
+                      onChange={(e) => {
+                        field.onChange(parseInt(e.target.value, 10))
+                      }}
                     />
                   </FormControl>
 
