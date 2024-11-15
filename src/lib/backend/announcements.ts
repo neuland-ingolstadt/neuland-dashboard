@@ -55,6 +55,12 @@ export const announcementSchema = z.object({
   url: z.string().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  platform: z.enum(['WEB', 'WEB_DEV', 'IOS', 'ANDROID']).array().min(1, {
+    message: 'Bitte wählen Sie mindestens eine Plattform aus',
+  }),
+  userKind: z.enum(['STUDENT', 'EMPLOYEE', 'GUEST']).array().min(1, {
+    message: 'Bitte wählen Sie mindestens eine Benutzergruppe aus',
+  }),
 })
 
 export const updateAnnouncementSchema = announcementSchema.omit({

@@ -41,6 +41,8 @@ export async function getSportsEvents() {
         sportsCategory
         createdAt
         updatedAt
+        platform
+        userKind
       }
     }
   `.replace(/\s+/g, ' ')
@@ -126,6 +128,8 @@ export async function getAnnouncements() {
         url
         createdAt
         updatedAt
+        platform
+        userKind
       }
     }
   `.replace(/\s+/g, ' ')

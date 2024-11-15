@@ -13,7 +13,9 @@ interface AnnouncementsPageProps {
   announcements: Announcement[]
 }
 
-export default function SportsPage({ announcements }: AnnouncementsPageProps) {
+export default function AnnouncementsPage({
+  announcements,
+}: AnnouncementsPageProps) {
   return (
     <div>
       <Head>

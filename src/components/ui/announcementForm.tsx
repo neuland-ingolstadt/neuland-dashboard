@@ -8,20 +8,87 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { MultiSelect } from '@/components/ui/multiSelect'
 import RequiredLabel from '@/components/ui/required'
 import { Textarea } from '@/components/ui/textarea'
 import {
   NewAnnouncement,
   newAnnouncementSchema,
+  Announcement,
 } from '@/lib/backend/announcements'
 import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  BriefcaseBusiness,
+  FlaskConical,
+  Globe,
+  GraduationCap,
+  User,
+} from 'lucide-react'
 import { forwardRef, useImperativeHandle } from 'react'
 import { useForm } from 'react-hook-form'
+import { SiAndroid, SiIos } from 'react-icons/si'
 
 interface AnnouncementFormProps {
   onSubmit: (data: NewAnnouncement) => void
   defaultValues?: NewAnnouncement
 }
+
+type Platform = {
+  label: string
+  value: Announcement['platform'][number]
+  icon: React.ComponentType<{ className?: string }>
+}
+
+type UserKind = {
+  label: string
+  value: Announcement['userKind'][number]
+  icon: React.ComponentType<{ className?: string }>
+}
+
+export const platforms: Platform[] = [
+  {
+    value: 'ANDROID',
+    label: 'Android',
+    icon: SiAndroid,
+  },
+  {
+    value: 'IOS',
+    label: 'iOS',
+    icon: SiIos,
+  },
+  {
+    value: 'WEB',
+    label: 'Web',
+    icon: Globe,
+  },
+  {
+    value: 'WEB_DEV',
+    label: 'Web Dev',
+    icon: FlaskConical,
+  },
+]
+
+const defaultPlatformValues = platforms.map((platform) => platform.value)
+
+export const userKinds: UserKind[] = [
+  {
+    value: 'STUDENT',
+    label: 'Student',
+    icon: GraduationCap,
+  },
+  {
+    value: 'EMPLOYEE',
+    label: 'Mitarbeiter',
+    icon: BriefcaseBusiness,
+  },
+  {
+    value: 'GUEST',
+    label: 'Gast',
+    icon: User,
+  },
+]
+
+const defaultUserKindValues = userKinds.map((kind) => kind.value)
 
 export interface AnnouncementFormRef {
   triggerSubmit: () => void
@@ -33,6 +100,8 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
       resolver: zodResolver(newAnnouncementSchema),
       defaultValues: {
         ...defaultValues,
+        platform: defaultValues?.platform ?? defaultPlatformValues,
+        userKind: defaultValues?.userKind ?? defaultUserKindValues,
         url: defaultValues?.url ?? null,
       },
     })
@@ -203,9 +272,57 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
               )}
             />
           </div>
-          <h2 className="mt-6 text-xl font-bold tracking-tight">Priorität</h2>
+          <h2 className="mt-6 text-xl font-bold tracking-tight">Zielgruppe</h2>
 
-          <div className="grid grid-cols-2 gap-6">
+          <div className="flex gap-6">
+            <FormField
+              control={form.control}
+              name="platform"
+              render={({ field }) => (
+                <FormItem className="flex-1">
+                  <FormLabel>
+                    Plattform <RequiredLabel />
+                  </FormLabel>
+
+                  <FormControl>
+                    <MultiSelect
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      options={platforms}
+                      defaultValue={defaultPlatformValues}
+                      placeholder="Plattform auswählen"
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="userKind"
+              render={({ field }) => (
+                <FormItem className="flex-1">
+                  <FormLabel>
+                    Nutzergruppe <RequiredLabel />
+                  </FormLabel>
+
+                  <FormControl>
+                    <MultiSelect
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      options={userKinds}
+                      defaultValue={defaultUserKindValues}
+                      placeholder="Nutzergruppe auswählen"
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="priority"

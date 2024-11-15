@@ -1,6 +1,13 @@
+import { platforms, userKinds } from '@/components/ui/announcementForm'
 import { Badge } from '@/components/ui/badge'
 import { DataTableColumnHeader } from '@/components/ui/dataTable/columnHeader'
 import { DataTable } from '@/components/ui/dataTable/dataTable'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { Announcement } from '@/lib/backend/announcements'
 import {
   announcementStatus,
@@ -10,7 +17,7 @@ import { cn } from '@/lib/utils'
 import { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import { useRouter } from 'next/router'
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 
 interface AnnouncementsTableProps {
   announcement: Announcement[]
@@ -60,6 +67,74 @@ export default function AnnouncementsTable({
         header: 'Title',
       },
       {
+        accessorKey: 'platform',
+        size: 50,
+        header: 'Plattform',
+        filterFn: 'arrIncludesSome',
+        cell({
+          cell: {
+            row: { original },
+          },
+        }) {
+          return (
+            <div className="flex flex-row gap-2">
+              {platforms
+                .filter(({ value }) => original.platform.includes(value))
+                .map(({ value, icon, label }) => (
+                  <Tooltip key={value}>
+                    <TooltipTrigger>
+                      <Badge
+                        key={value}
+                        variant="outline"
+                      >
+                        {React.createElement(icon, {
+                          className: 'w-3 h-3',
+                        })}
+                      </Badge>
+                    </TooltipTrigger>
+
+                    <TooltipContent>{label}</TooltipContent>
+                  </Tooltip>
+                ))}
+            </div>
+          )
+        },
+      },
+      {
+        accessorKey: 'userKind',
+        header: 'Nutzergruppe',
+        size: 50,
+        filterFn: 'arrIncludesSome',
+        cell({
+          cell: {
+            row: { original },
+          },
+        }) {
+          return (
+            <div className="flex flex-row gap-2">
+              {userKinds
+                .filter(({ value }) => original.userKind.includes(value))
+                .map(({ icon, value, label }) => (
+                  <Tooltip key={value}>
+                    <TooltipTrigger>
+                      <Badge
+                        key={value}
+                        variant="outline"
+                      >
+                        {React.createElement(icon, {
+                          className: 'w-3 h-3',
+                        })}
+                      </Badge>
+                    </TooltipTrigger>
+
+                    <TooltipContent>{label}</TooltipContent>
+                  </Tooltip>
+                ))}
+            </div>
+          )
+        },
+      },
+      {
         id: 'timespan',
         size: 250,
         header: 'Zeitraum',
@@ -104,31 +179,43 @@ export default function AnnouncementsTable({
   )
 
   return (
-    <DataTable
-      onClick={({ id }) => router.push(`/announcements/edit?id=${id}`)}
-      columns={columns}
-      enableFilter
-      enablePagination
-      filterOptions={{
-        searchFilter: {
-          column: 'title_de',
-          title: 'Titel',
-        },
-        selectFilters: [
-          {
-            column: 'status',
-            title: 'Status',
-            options: Object.entries(announcementStatus).map(
-              ([value, label]) => ({
-                value,
-                label,
-              })
-            ),
+    <TooltipProvider>
+      <DataTable
+        onClick={({ id }) => router.push(`/announcements/edit?id=${id}`)}
+        columns={columns}
+        enableFilter
+        enablePagination
+        filterOptions={{
+          searchFilter: {
+            column: 'title_de',
+            title: 'Titel',
           },
-        ],
-      }}
-      tableId="announcements"
-      data={announcement}
-    />
+          selectFilters: [
+            {
+              column: 'status',
+              title: 'Status',
+              options: Object.entries(announcementStatus).map(
+                ([value, label]) => ({
+                  value,
+                  label,
+                })
+              ),
+            },
+            {
+              column: 'platform',
+              title: 'Plattform',
+              options: platforms,
+            },
+            {
+              column: 'userKind',
+              title: 'Nutzergruppe',
+              options: userKinds,
+            },
+          ],
+        }}
+        tableId="announcements"
+        data={announcement}
+      />
+    </TooltipProvider>
   )
 }
