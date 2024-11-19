@@ -41,8 +41,6 @@ export async function getSportsEvents() {
         sportsCategory
         createdAt
         updatedAt
-        platform
-        userKind
       }
     }
   `.replace(/\s+/g, ' ')
