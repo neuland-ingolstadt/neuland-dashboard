@@ -179,43 +179,41 @@ export default function AnnouncementsTable({
   )
 
   return (
-    <TooltipProvider>
-      <DataTable
-        onClick={({ id }) => router.push(`/announcements/edit?id=${id}`)}
-        columns={columns}
-        enableFilter
-        enablePagination
-        filterOptions={{
-          searchFilter: {
-            column: 'title_de',
-            title: 'Titel',
+    <DataTable
+      onClick={({ id }) => router.push(`/announcements/edit?id=${id}`)}
+      columns={columns}
+      enableFilter
+      enablePagination
+      filterOptions={{
+        searchFilter: {
+          column: 'title_de',
+          title: 'Titel',
+        },
+        selectFilters: [
+          {
+            column: 'status',
+            title: 'Status',
+            options: Object.entries(announcementStatus).map(
+              ([value, label]) => ({
+                value,
+                label,
+              })
+            ),
           },
-          selectFilters: [
-            {
-              column: 'status',
-              title: 'Status',
-              options: Object.entries(announcementStatus).map(
-                ([value, label]) => ({
-                  value,
-                  label,
-                })
-              ),
-            },
-            {
-              column: 'platform',
-              title: 'Plattform',
-              options: platforms,
-            },
-            {
-              column: 'userKind',
-              title: 'Nutzergruppe',
-              options: userKinds,
-            },
-          ],
-        }}
-        tableId="announcements"
-        data={announcement}
-      />
-    </TooltipProvider>
+          {
+            column: 'platform',
+            title: 'Plattform',
+            options: platforms,
+          },
+          {
+            column: 'userKind',
+            title: 'Nutzergruppe',
+            options: userKinds,
+          },
+        ],
+      }}
+      tableId="announcements"
+      data={announcement}
+    />
   )
 }

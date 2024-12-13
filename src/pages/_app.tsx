@@ -1,3 +1,4 @@
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { DialogsProvider } from '@/lib/providers/dialogsProvider'
 import { ThemeProvider } from '@/lib/providers/themeProvider'
 import '@/styles/globals.css'
@@ -24,9 +25,11 @@ export default function App({ Component, pageProps }: AppProps) {
         enableSystem
         disableTransitionOnChange
       >
-        <DialogsProvider>
-          <Component {...pageProps} />
-        </DialogsProvider>
+        <TooltipProvider delayDuration={150}>
+          <DialogsProvider>
+            <Component {...pageProps} />
+          </DialogsProvider>
+        </TooltipProvider>
       </ThemeProvider>
     </SessionProvider>
   )

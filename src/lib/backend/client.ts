@@ -1,4 +1,5 @@
 import { Announcement, NewAnnouncement } from '@/lib/backend/announcements'
+import { RoomReport } from '@/lib/backend/rootReports'
 import { NewSportsEvent, SportsEvent } from '@/lib/backend/sportEvents'
 import { gql, GraphQLClient } from 'graphql-request'
 
@@ -14,6 +15,11 @@ interface SportsEventData {
 
 interface AnnouncementsData {
   appAnnouncements: Announcement[]
+  error?: unknown
+}
+
+interface RoomReportsData {
+  roomReports: RoomReport[]
   error?: unknown
 }
 
@@ -97,6 +103,45 @@ export async function deleteSportsEvent(id: string, accessToken: string) {
   const mutation = gql`
     mutation DeleteUniversitySport($id: ID!) {
       deleteUniversitySport(id: $id)
+    }
+  `.replace(/\s+/g, ' ')
+
+  await graphqlClient.request(
+    mutation,
+    { id },
+    { Authorization: `Bearer ${accessToken}` }
+  )
+}
+
+export async function getRoomReports() {
+  const query = gql`
+    query {
+      roomReports {
+        id
+        createdAt
+        description
+        reason
+        resolvedAt
+        room
+      }
+    }
+  `.replace(/\s+/g, ' ')
+
+  const data = await graphqlClient.request<RoomReportsData>(query)
+
+  if (!data.roomReports) {
+    throw new Error('No data returned from API')
+  }
+
+  return data.roomReports
+}
+
+export async function resolveRoomReport(id: string, accessToken: string) {
+  const mutation = gql`
+    mutation deleteAppAnnouncement($id: ID!) {
+      resolveRoomReport(id: $id, resolved: true) {
+        id
+      }
     }
   `.replace(/\s+/g, ' ')
 
