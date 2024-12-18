@@ -4,7 +4,7 @@ FROM node:20-alpine AS base
 FROM base AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm install --frozen-lockfile
+RUN npm install --frozen-lockfile  --ignore-scripts
 
 # Stage 2: Build the application
 FROM base AS builder

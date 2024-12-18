@@ -14,6 +14,7 @@ import {
   ExternalLink,
   LineChart,
   LucideIcon,
+  Home as HomeIcon,
   Megaphone,
 } from 'lucide-react'
 import Head from 'next/head'
@@ -52,6 +53,13 @@ const indexCards: Section[] = [
         href: '/announcements',
         icon: Megaphone,
         groups: ['announcements'],
+      },
+      {
+        title: 'Raummeldungen',
+        description: 'Meldungen für falsch eingetragene Rauminfos.',
+        href: '/roomreports',
+        icon: HomeIcon,
+        groups: ['admin'],
       },
     ],
   },

@@ -26,6 +26,11 @@ const links: Link[] = [
     href: '/announcements',
     groups: ['announcements'],
   },
+  {
+    label: 'Raummeldungen',
+    href: '/roomreports',
+    groups: ['admin'],
+  },
 ]
 
 export function MainNav({
