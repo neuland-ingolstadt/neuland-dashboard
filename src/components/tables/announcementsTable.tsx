@@ -5,7 +5,6 @@ import { DataTable } from '@/components/ui/dataTable/dataTable'
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { Announcement } from '@/lib/backend/announcements'
