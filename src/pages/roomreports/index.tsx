@@ -5,6 +5,7 @@ import { getRoomReports } from '@/lib/backend/client'
 import { checkServerSidePermissions } from '@/lib/backend/groups'
 import { RoomReport } from '@/lib/backend/rootReports'
 import { GetServerSideProps } from 'next'
+import { getSession } from 'next-auth/react'
 import Head from 'next/head'
 
 interface RoomReportsProps {
@@ -37,8 +38,9 @@ export default function RoomReportsPage({ reports }: RoomReportsProps) {
 export const getServerSideProps: GetServerSideProps<RoomReportsProps> = async (
   ctx
 ) => {
+  const session = await getSession(ctx)
   const authorized = await checkServerSidePermissions(ctx, 'announcements')
-  if (!authorized) {
+  if (!authorized || !session) {
     return {
       redirect: {
         destination: '/auth/signIn',
@@ -47,7 +49,7 @@ export const getServerSideProps: GetServerSideProps<RoomReportsProps> = async (
     }
   }
 
-  const reports = await getRoomReports()
+  const reports = await getRoomReports(session.accessToken)
   return {
     props: {
       reports,
