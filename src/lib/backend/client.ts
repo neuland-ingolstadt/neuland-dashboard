@@ -113,7 +113,7 @@ export async function deleteSportsEvent(id: string, accessToken: string) {
   )
 }
 
-export async function getRoomReports() {
+export async function getRoomReports(accessToken: string) {
   const query = gql`
     query {
       roomReports {
@@ -127,7 +127,9 @@ export async function getRoomReports() {
     }
   `.replace(/\s+/g, ' ')
 
-  const data = await graphqlClient.request<RoomReportsData>(query)
+  const data = await graphqlClient.request<RoomReportsData>(query, {
+    Authorization: `Bearer ${accessToken}`,
+  })
 
   if (!data.roomReports) {
     throw new Error('No data returned from API')
