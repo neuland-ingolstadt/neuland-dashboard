@@ -1,10 +1,10 @@
 import { Button } from '@/components/ui/button'
 import {
   DataTableFacetedFilter,
-  FacetFilter,
+  type FacetFilter,
 } from '@/components/ui/dataTable/facetedFilter'
 import { Input } from '@/components/ui/input'
-import { Column, Table } from '@tanstack/react-table'
+import type { Column, Table } from '@tanstack/react-table'
 import { X } from 'lucide-react'
 
 interface SearchFilter {
@@ -14,7 +14,7 @@ interface SearchFilter {
 
 interface DataTableFilterToolbarProps<TData, TValue> {
   table: Table<TData>
-  searchFilter: SearchFilter
+  searchFilter: SearchFilter | undefined
   selectFilters?: FacetFilter<TData, TValue>[]
 }
 
@@ -32,22 +32,25 @@ export function DataTableFilterToolbar<TData, TValue>({
 
   return (
     <div className="flex flex-1 items-center space-x-2">
-      <Input
-        placeholder={`${searchFilter.title} filtern...`}
-        value={
-          (table.getColumn(searchFilter.column)?.getFilterValue() as string) ??
-          ''
-        }
-        onChange={(event) =>
-          table
-            .getColumn(searchFilter.column)
-            ?.setFilterValue(event.target.value)
-        }
-        className="h-8 w-[150px] lg:w-[250px]"
-      />
+      {searchFilter && (
+        <Input
+          placeholder={`${searchFilter.title} filtern...`}
+          value={
+            (table
+              .getColumn(searchFilter.column)
+              ?.getFilterValue() as string) ?? ''
+          }
+          onChange={(event) =>
+            table
+              .getColumn(searchFilter.column)
+              ?.setFilterValue(event.target.value)
+          }
+          className="h-8 w-[150px] lg:w-[250px]"
+        />
+      )}
       {selectFilters?.map((filter, idx) => (
         <DataTableFacetedFilter
-          key={idx}
+          key={filter.title}
           {...filter}
           column={table.getColumn(filter.column) as Column<TData, TValue>}
         />

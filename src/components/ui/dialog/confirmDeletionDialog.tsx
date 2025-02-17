@@ -22,10 +22,7 @@ export default function ConfirmDeleteDialog({
   onConfirm,
 }: ConfirmDeleteDialogProps) {
   return (
-    <Dialog
-      open={open}
-      onOpenChange={setOpen}
-    >
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
@@ -35,17 +32,11 @@ export default function ConfirmDeleteDialog({
         </DialogHeader>
 
         <DialogFooter className="grid grid-cols-2">
-          <Button
-            onClick={() => setOpen(false)}
-            variant="outline"
-          >
+          <Button onClick={() => setOpen(false)} variant="outline">
             Abbrechen
           </Button>
 
-          <Button
-            onClick={onConfirm}
-            variant="destructive"
-          >
+          <Button onClick={onConfirm} variant="destructive">
             Löschen
           </Button>
         </DialogFooter>

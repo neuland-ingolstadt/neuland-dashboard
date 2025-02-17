@@ -7,19 +7,19 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { RoomReport } from '@/lib/backend/rootReports'
+import type { RoomReport } from '@/lib/backend/rootReports'
 import { useDialogs } from '@/lib/providers/dialogsProvider'
-import { ColumnDef } from '@tanstack/react-table'
+import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import {
   Check,
-  X,
-  MapPinX,
-  Text,
   MapPinMinus,
+  MapPinX,
   MessageCircleQuestion,
+  Text,
+  X,
 } from 'lucide-react'
-import { NextRouter, useRouter } from 'next/router'
+import { type NextRouter, useRouter } from 'next/router'
 import React from 'react'
 
 const columns: (
@@ -29,10 +29,7 @@ const columns: (
   {
     accessorKey: 'createdAt',
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Erstellt am"
-      />
+      <DataTableColumnHeader column={column} title="Erstellt am" />
     ),
     cell: ({ cell: { row } }) => {
       return format(row.original.createdAt, 'dd.MM.yyyy')
@@ -44,10 +41,7 @@ const columns: (
       return a?.localeCompare(b)
     },
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Grund"
-      />
+      <DataTableColumnHeader column={column} title="Grund" />
     ),
     cell({ cell: { row } }) {
       const icon = {
@@ -75,10 +69,7 @@ const columns: (
   {
     accessorKey: 'room',
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Raum"
-      />
+      <DataTableColumnHeader column={column} title="Raum" />
     ),
     cell: ({ cell: { row } }) => (
       <Badge variant="secondary">{row.original.room}</Badge>
@@ -110,7 +101,7 @@ const columns: (
           className="p-2"
           onClick={async () => {
             dialog.setLoading(true)
-            const response = await fetch(`/api/roomreports`, {
+            const response = await fetch('/api/roomreports', {
               method: 'DELETE',
               headers: {
                 'Content-Type': 'application/json',
@@ -131,10 +122,7 @@ const columns: (
             dialog.setLoading(false)
           }}
         >
-          <Check
-            size={20}
-            className="text-green-600"
-          />
+          <Check size={20} className="text-green-600" />
         </Button>
       ) : (
         <span>{original.resolvedAt}</span>

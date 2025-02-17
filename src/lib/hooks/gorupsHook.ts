@@ -1,4 +1,4 @@
-import { Group, groups } from '@/lib/backend/groups'
+import { type Group, groups } from '@/lib/backend/groups'
 import { useSession } from 'next-auth/react'
 import { useMemo } from 'react'
 

@@ -5,16 +5,16 @@ on:
   pull_request:
     branches: [develop, main]
 jobs:
-  lint:
+  check:
     runs-on: ubuntu-latest
     steps:
-      - uses: oven-sh/setup-bun@v2
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Biome
+        uses: biomejs/setup-biome@v2
         with:
-          bun-version: latest
-      - uses: actions/checkout@v4
-      - name: Install modules
-        run: bun install
-      - name: Run ESLint
-        run: bunx eslint .
-      - name: Run Prettier
-        run: bunx prettier --check .
+          version: latest
+
+      - name: Run Biome
+        run: biome ci .

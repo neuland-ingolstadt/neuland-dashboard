@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdownMenu'
 import { cn } from '@/lib/utils'
-import { Column } from '@tanstack/react-table'
+import type { Column } from '@tanstack/react-table'
 import { ArrowUpDown, MoveDown, MoveUp } from 'lucide-react'
 
 interface DataTableColumnHeaderProps<TData, TValue>

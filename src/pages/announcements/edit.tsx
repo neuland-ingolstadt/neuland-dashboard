@@ -1,15 +1,15 @@
 import AnnouncementForm, {
-  AnnouncementFormRef,
+  type AnnouncementFormRef,
 } from '@/components/ui/announcementForm'
 import { Button } from '@/components/ui/button'
 import ConfirmDeleteDialog from '@/components/ui/dialog/confirmDeletionDialog'
 import NavBar from '@/components/ui/navBar'
 import PathBreadcrumbs from '@/components/ui/pathBreadcrumbs'
-import { Announcement, NewAnnouncement } from '@/lib/backend/announcements'
+import type { Announcement, NewAnnouncement } from '@/lib/backend/announcements'
 import { getAnnouncements } from '@/lib/backend/client'
 import { useDialogs } from '@/lib/providers/dialogsProvider'
 import { Save, Trash } from 'lucide-react'
-import { GetServerSideProps } from 'next'
+import type { GetServerSideProps } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useCallback, useMemo, useRef, useState } from 'react'
@@ -37,7 +37,7 @@ export default function EditAnnouncementEventPage({
   const handleDelete = useCallback(async () => {
     setLoading(true)
 
-    const response = await fetch(`/api/announcements`, {
+    const response = await fetch('/api/announcements', {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -117,10 +117,7 @@ export default function EditAnnouncementEventPage({
           </Button>
 
           <Button onClick={() => formRef.current?.triggerSubmit()}>
-            <Save
-              className="mr-2"
-              size={16}
-            />
+            <Save className="mr-2" size={16} />
             <span>Speichern</span>
           </Button>
         </div>

@@ -37,10 +37,7 @@ export default function NavBar() {
   return (
     <div className="border-b">
       <div className="container flex h-16 items-center">
-        <Link
-          href="/"
-          passHref
-        >
+        <Link href="/" passHref>
           <Image
             src={Logo}
             alt="Neuland e.V. Logo"
@@ -56,20 +53,13 @@ export default function NavBar() {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              className="relative h-8 w-8 rounded-full"
-            >
+            <Button variant="ghost" className="relative h-8 w-8 rounded-full">
               <Avatar className="h-8 w-8">
                 <AvatarFallback>{getInitials}</AvatarFallback>
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-56"
-            align="end"
-            forceMount
-          >
+          <DropdownMenuContent className="w-56" align="end" forceMount>
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">

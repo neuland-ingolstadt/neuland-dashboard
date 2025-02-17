@@ -46,7 +46,7 @@ export default function PathBreadcrumbs() {
     <Breadcrumb>
       <BreadcrumbList>
         {links.map((link, index) => (
-          <Fragment key={index}>
+          <Fragment key={link.label}>
             <BreadcrumbItem>
               <BreadcrumbLink
                 href={link.href}

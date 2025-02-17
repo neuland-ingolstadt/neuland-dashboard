@@ -1,9 +1,9 @@
 import { Input } from '@/components/ui/input'
 import {
+  type TimePickerType,
   getArrowByType,
   getDateByType,
   setDateByType,
-  TimePickerType,
 } from '@/lib/timePickerUtils'
 import { cn } from '@/lib/utils'
 import React from 'react'
@@ -61,7 +61,7 @@ const TimePickerInput = React.forwardRef<
     }, [date, picker])
 
     const calculateNewValue = (key: string) => {
-      return !flag ? '0' + key : calculatedValue.slice(1, 2) + key
+      return !flag ? `0${key}` : calculatedValue.slice(1, 2) + key
     }
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

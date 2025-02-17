@@ -21,16 +21,10 @@ export default function ErrorDialog({
   message,
 }: ErrorDialogProps) {
   return (
-    <Dialog
-      open={open}
-      onOpenChange={setOpen}
-    >
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <div className="flex flex-row items-center gap-3">
-          <TriangleAlert
-            size={32}
-            className="text-destructive"
-          />
+          <TriangleAlert size={32} className="text-destructive" />
           <DialogHeader>
             <DialogTitle>Ein Fehler ist aufgetreten</DialogTitle>
             {message && <DialogDescription>{message}</DialogDescription>}

@@ -6,15 +6,15 @@ import {
 } from '@/components/ui/card'
 import NavBar from '@/components/ui/navBar'
 import PathBreadcrumbs from '@/components/ui/pathBreadcrumbs'
-import { Group } from '@/lib/backend/groups'
+import type { Group } from '@/lib/backend/groups'
 import { useUserGroups } from '@/lib/hooks/gorupsHook'
 import {
   ActivitySquare,
   Calendar,
   ExternalLink,
-  LineChart,
-  LucideIcon,
   Home as HomeIcon,
+  LineChart,
+  type LucideIcon,
   Megaphone,
 } from 'lucide-react'
 import Head from 'next/head'
@@ -114,15 +114,12 @@ export default function Home() {
 
       <div className="container my-4 flex flex-col gap-6">
         {userSections.map((section, idx) => (
-          <div
-            key={idx}
-            className="flex flex-col gap-2"
-          >
+          <div key={section.title} className="flex flex-col gap-2">
             <h2 className="font-semibold text-lg">{section.title}</h2>
             <div className="grid grid-cols-2 gap-3 auto-rows-fr">
               {section.cards.map((card, idx) => (
                 <Link
-                  key={idx}
+                  key={card.title}
                   href={card.href}
                   passHref
                   target={card.external ? '_blank' : undefined}

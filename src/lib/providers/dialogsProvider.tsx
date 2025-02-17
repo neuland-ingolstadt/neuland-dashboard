@@ -42,10 +42,7 @@ export function DialogsProvider({ children, ...props }: DialogsProviderProps) {
   }
 
   return (
-    <DialogsProviderContext.Provider
-      value={value}
-      {...props}
-    >
+    <DialogsProviderContext.Provider value={value} {...props}>
       <LoadingDialog
         open={loading}
         setOpen={setLoading}

@@ -7,13 +7,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { Announcement } from '@/lib/backend/announcements'
+import type { Announcement } from '@/lib/backend/announcements'
 import {
   announcementStatus,
   useAnnouncementsUtils,
 } from '@/lib/hooks/annoucmentsHook'
 import { cn } from '@/lib/utils'
-import { ColumnDef } from '@tanstack/react-table'
+import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import { useRouter } from 'next/router'
 import React, { useMemo } from 'react'
@@ -82,10 +82,7 @@ export default function AnnouncementsTable({
                 .map(({ value, icon, label }) => (
                   <Tooltip key={value}>
                     <TooltipTrigger>
-                      <Badge
-                        key={value}
-                        variant="outline"
-                      >
+                      <Badge key={value} variant="outline">
                         {React.createElement(icon, {
                           className: 'w-3 h-3',
                         })}
@@ -116,10 +113,7 @@ export default function AnnouncementsTable({
                 .map(({ icon, value, label }) => (
                   <Tooltip key={value}>
                     <TooltipTrigger>
-                      <Badge
-                        key={value}
-                        variant="outline"
-                      >
+                      <Badge key={value} variant="outline">
                         {React.createElement(icon, {
                           className: 'w-3 h-3',
                         })}
@@ -161,10 +155,7 @@ export default function AnnouncementsTable({
         accessorKey: 'priority',
         size: 1,
         header: ({ column }) => (
-          <DataTableColumnHeader
-            column={column}
-            title="Priorität"
-          />
+          <DataTableColumnHeader column={column} title="Priorität" />
         ),
         sortingFn: (
           { original: { priority: a } },

@@ -19,10 +19,7 @@ export default function UpdateSession({
   onOpenChange,
 }: UpdateSessionProps) {
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={onOpenChange}
-    >
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent hideCloseButton>
         <DialogHeader>
           <DialogTitle>Session abgelaufen</DialogTitle>

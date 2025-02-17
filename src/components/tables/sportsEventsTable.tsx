@@ -1,9 +1,9 @@
 import { Badge } from '@/components/ui/badge'
 import { DataTableColumnHeader } from '@/components/ui/dataTable/columnHeader'
 import { DataTable } from '@/components/ui/dataTable/dataTable'
-import { SportsEvent } from '@/lib/backend/sportEvents'
+import type { SportsEvent } from '@/lib/backend/sportEvents'
 import { weekdays } from '@/lib/utils'
-import { ColumnDef } from '@tanstack/react-table'
+import type { ColumnDef } from '@tanstack/react-table'
 import { Calendar, School } from 'lucide-react'
 import { useRouter } from 'next/router'
 
@@ -12,10 +12,7 @@ const columns: ColumnDef<SportsEvent>[] = [
     filterFn: 'arrIncludesSome',
     accessorKey: 'weekday',
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Wochentag"
-      />
+      <DataTableColumnHeader column={column} title="Wochentag" />
     ),
     sortingFn: ({ original: { weekday: a } }, { original: { weekday: b } }) => {
       return weekdays[a].order - weekdays[b].order
@@ -29,14 +26,8 @@ const columns: ColumnDef<SportsEvent>[] = [
       },
     }) {
       return (
-        <Badge
-          variant="outline"
-          className="flex w-fit flex-row items-center"
-        >
-          <Calendar
-            className="mr-2"
-            size={12}
-          />
+        <Badge variant="outline" className="flex w-fit flex-row items-center">
+          <Calendar className="mr-2" size={12} />
           <p>{weekdays[weekday].de}</p>
         </Badge>
       )
@@ -45,10 +36,7 @@ const columns: ColumnDef<SportsEvent>[] = [
   {
     accessorKey: 'title.de',
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Name"
-      />
+      <DataTableColumnHeader column={column} title="Name" />
     ),
   },
   {
@@ -63,14 +51,8 @@ const columns: ColumnDef<SportsEvent>[] = [
       },
     }) {
       return (
-        <Badge
-          variant="outline"
-          className="flex w-fit flex-row items-center"
-        >
-          <School
-            className="mr-2"
-            size={12}
-          />
+        <Badge variant="outline" className="flex w-fit flex-row items-center">
+          <School className="mr-2" size={12} />
           <p>{campus}</p>
         </Badge>
       )

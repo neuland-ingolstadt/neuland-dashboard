@@ -2,10 +2,10 @@ import AnnouncementsTable from '@/components/tables/announcementsTable'
 import { Button } from '@/components/ui/button'
 import NavBar from '@/components/ui/navBar'
 import PathBreadcrumbs from '@/components/ui/pathBreadcrumbs'
-import { Announcement } from '@/lib/backend/announcements'
+import type { Announcement } from '@/lib/backend/announcements'
 import { getAnnouncements } from '@/lib/backend/client'
 import { checkServerSidePermissions } from '@/lib/backend/groups'
-import { GetServerSideProps } from 'next'
+import type { GetServerSideProps } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
 
@@ -31,10 +31,7 @@ export default function AnnouncementsPage({
             In-App Ankündigungen
           </h1>
 
-          <Link
-            href="/announcements/new"
-            passHref
-          >
+          <Link href="/announcements/new" passHref>
             <Button>Neue Ankündigung</Button>
           </Link>
         </div>

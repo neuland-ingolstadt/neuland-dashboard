@@ -4,8 +4,8 @@ import NavBar from '@/components/ui/navBar'
 import PathBreadcrumbs from '@/components/ui/pathBreadcrumbs'
 import { getSportsEvents } from '@/lib/backend/client'
 import { checkServerSidePermissions } from '@/lib/backend/groups'
-import { SportsEvent } from '@/lib/backend/sportEvents'
-import { GetServerSideProps } from 'next'
+import type { SportsEvent } from '@/lib/backend/sportEvents'
+import type { GetServerSideProps } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
 
@@ -29,10 +29,7 @@ export default function SportsPage({ events }: SportsPageProps) {
             Hochschulsport
           </h1>
 
-          <Link
-            href="/sports/new"
-            passHref
-          >
+          <Link href="/sports/new" passHref>
             <Button>Neue Veranstaltung</Button>
           </Link>
         </div>

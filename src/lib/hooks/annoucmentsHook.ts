@@ -1,4 +1,4 @@
-import { Announcement } from '@/lib/backend/announcements'
+import type { Announcement } from '@/lib/backend/announcements'
 import { useCallback } from 'react'
 
 export const announcementStatus = {
@@ -18,11 +18,13 @@ export function useAnnouncementsUtils() {
 
       if (now < startDate) {
         return 'upcoming'
-      } else if (now > endDate) {
-        return 'past'
-      } else {
-        return 'active'
       }
+
+      if (now > endDate) {
+        return 'past'
+      }
+
+      return 'active'
     },
     []
   )
