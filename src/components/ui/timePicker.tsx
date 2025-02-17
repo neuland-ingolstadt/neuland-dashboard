@@ -41,10 +41,7 @@ export default function TimePicker({ onValueChange, value }: TimePickerProps) {
   )
 
   return (
-    <Popover
-      open={open}
-      onOpenChange={setOpen}
-    >
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <div className="relative">
           <Button

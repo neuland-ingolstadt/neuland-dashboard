@@ -56,7 +56,7 @@ function getValidNumber(
   value: string,
   { max, min = 0, loop = false }: GetValidNumberConfig
 ) {
-  let numericValue = parseInt(value, 10)
+  let numericValue = Number.parseInt(value, 10)
 
   if (!Number.isNaN(numericValue)) {
     if (!loop) {
@@ -97,7 +97,7 @@ function getValidArrowNumber(
   value: string,
   { min, max, step }: GetValidArrowNumberConfig
 ) {
-  let numericValue = parseInt(value, 10)
+  let numericValue = Number.parseInt(value, 10)
   if (!Number.isNaN(numericValue)) {
     numericValue += step
     return getValidNumber(String(numericValue), { min, max, loop: true })
@@ -119,24 +119,24 @@ function getValidArrowMinuteOrSecond(value: string, step: number) {
 
 function setMinutes(date: Date, value: string) {
   const minutes = getValidMinuteOrSecond(value)
-  date.setMinutes(parseInt(minutes, 10))
+  date.setMinutes(Number.parseInt(minutes, 10))
   return date
 }
 
 function setSeconds(date: Date, value: string) {
   const seconds = getValidMinuteOrSecond(value)
-  date.setSeconds(parseInt(seconds, 10))
+  date.setSeconds(Number.parseInt(seconds, 10))
   return date
 }
 
 function setHours(date: Date, value: string) {
   const hours = getValidHour(value)
-  date.setHours(parseInt(hours, 10))
+  date.setHours(Number.parseInt(hours, 10))
   return date
 }
 
 function set12Hours(date: Date, value: string, period: Period) {
-  const hours = parseInt(getValid12Hour(value), 10)
+  const hours = Number.parseInt(getValid12Hour(value), 10)
   const convertedHours = convert12HourTo24Hour(hours, period)
   date.setHours(convertedHours)
   return date
@@ -497,23 +497,16 @@ const TimePicker = React.forwardRef<TimePickerRef, TimePickerProps>(
       date && date.getHours() >= 12 ? 'PM' : 'AM'
     )
 
-    useImperativeHandle(
-      ref,
-      () => ({
-        minuteRef: minuteRef.current,
-        hourRef: hourRef.current,
-        secondRef: secondRef.current,
-        periodRef: periodRef.current,
-      }),
-      [minuteRef, hourRef, secondRef]
-    )
+    useImperativeHandle(ref, () => ({
+      minuteRef: minuteRef.current,
+      hourRef: hourRef.current,
+      secondRef: secondRef.current,
+      periodRef: periodRef.current,
+    }))
 
     return (
       <div className="flex items-center justify-center gap-2">
-        <label
-          htmlFor="datetime-picker-hour-input"
-          className="cursor-pointer"
-        >
+        <label htmlFor="datetime-picker-hour-input" className="cursor-pointer">
           <Clock className="mr-2 h-4 w-4" />
         </label>
         <TimePickerInput
@@ -681,10 +674,7 @@ const DateTimePicker = React.forwardRef<
 
     return (
       <Popover>
-        <PopoverTrigger
-          asChild
-          disabled={disabled}
-        >
+        <PopoverTrigger asChild disabled={disabled}>
           <Button
             variant="outline"
             className={cn(

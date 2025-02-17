@@ -19,16 +19,10 @@ export default function LoadingDialog({
   message,
 }: LoadingDialogProps) {
   return (
-    <Dialog
-      open={open}
-      onOpenChange={setOpen}
-    >
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent hideCloseButton>
         <div className="flex flex-row items-center gap-3">
-          <LoaderIcon
-            size={32}
-            className="animate-spin"
-          />
+          <LoaderIcon size={32} className="animate-spin" />
           <DialogHeader>
             <DialogTitle>Bitte warten</DialogTitle>
             {message && <DialogDescription>{message}</DialogDescription>}

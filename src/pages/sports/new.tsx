@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button'
 import NavBar from '@/components/ui/navBar'
 import PathBreadcrumbs from '@/components/ui/pathBreadcrumbs'
-import SportsForm, { SportsFormRef } from '@/components/ui/sportsForm'
-import { NewSportsEvent } from '@/lib/backend/sportEvents'
+import SportsForm, { type SportsFormRef } from '@/components/ui/sportsForm'
+import type { NewSportsEvent } from '@/lib/backend/sportEvents'
 import { useDialogs } from '@/lib/providers/dialogsProvider'
 import { Save } from 'lucide-react'
 import Head from 'next/head'
@@ -55,18 +55,12 @@ export default function NewSportsEventPage() {
           </h1>
 
           <Button onClick={() => formRef.current?.triggerSubmit()}>
-            <Save
-              className="mr-2"
-              size={16}
-            />
+            <Save className="mr-2" size={16} />
             <span>Speichern</span>
           </Button>
         </div>
 
-        <SportsForm
-          onSubmit={handleSave}
-          ref={formRef}
-        />
+        <SportsForm onSubmit={handleSave} ref={formRef} />
       </div>
     </div>
   )

@@ -1,7 +1,7 @@
-import { Announcement, NewAnnouncement } from '@/lib/backend/announcements'
-import { RoomReport } from '@/lib/backend/rootReports'
-import { NewSportsEvent, SportsEvent } from '@/lib/backend/sportEvents'
-import { gql, GraphQLClient } from 'graphql-request'
+import type { Announcement, NewAnnouncement } from '@/lib/backend/announcements'
+import type { RoomReport } from '@/lib/backend/rootReports'
+import type { NewSportsEvent, SportsEvent } from '@/lib/backend/sportEvents'
+import { GraphQLClient, gql } from 'graphql-request'
 
 const endpoint =
   process.env.NEXT_PUBLIC_GRAPHQL_URL || 'https://api.dev.neuland.app/graphql'

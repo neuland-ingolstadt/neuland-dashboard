@@ -1,4 +1,4 @@
-import NextAuth, { NextAuthOptions } from 'next-auth'
+import NextAuth, { type NextAuthOptions } from 'next-auth'
 import AuthentikProvider from 'next-auth/providers/authentik'
 
 export const authOptions: NextAuthOptions = {
@@ -8,9 +8,9 @@ export const authOptions: NextAuthOptions = {
   },
   providers: [
     AuthentikProvider({
-      clientId: process.env.AUTHENTIK_ID!,
-      clientSecret: process.env.AUTHENTIK_SECRET!,
-      issuer: process.env.AUTHENTIK_ISSUER!,
+      clientId: process.env.AUTHENTIK_ID || '',
+      clientSecret: process.env.AUTHENTIK_SECRET || '',
+      issuer: process.env.AUTHENTIK_ISSUER || '',
       authorization: {
         params: { scope: 'openid email profile groups offline_access' },
       },
@@ -39,10 +39,10 @@ export const authOptions: NextAuthOptions = {
       return token
     },
     async session({ session, token }) {
-      if (token.groups && token.accessToken) {
+      if (token.groups && token.accessToken && token.accessTokenExpires) {
         session.user.groups = token.groups || []
         session.accessToken = token.accessToken
-        session.accessTokenExpires = token.accessTokenExpires!
+        session.accessTokenExpires = token.accessTokenExpires
       }
       return session
     },

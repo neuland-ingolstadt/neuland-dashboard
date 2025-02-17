@@ -48,10 +48,7 @@ export default function SessionExpiration() {
 
   return (
     <>
-      <UpdateSession
-        isOpen={isExpiredOpen}
-        onOpenChange={setIsExpiredOpen}
-      />
+      <UpdateSession isOpen={isExpiredOpen} onOpenChange={setIsExpiredOpen} />
       <Badge
         className="mr-2 flex items-center gap-2"
         variant={isExpired ? 'destructive' : 'outline'}

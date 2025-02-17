@@ -32,10 +32,13 @@ import {
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import TimePicker from '@/components/ui/timePicker'
-import { NewSportsEvent, newSportsEventSchema } from '@/lib/backend/sportEvents'
+import {
+  type NewSportsEvent,
+  newSportsEventSchema,
+} from '@/lib/backend/sportEvents'
 import { cn, sportsCategories, weekdays } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ChevronsUpDown, Check } from 'lucide-react'
+import { Check, ChevronsUpDown } from 'lucide-react'
 import { forwardRef, useImperativeHandle } from 'react'
 import { useForm } from 'react-hook-form'
 
@@ -87,10 +90,7 @@ const SportsForm = forwardRef<SportsFormRef, SportsFormProps>(
                   </FormLabel>
 
                   <FormControl>
-                    <Input
-                      {...field}
-                      value={field.value ?? ''}
-                    />
+                    <Input {...field} value={field.value ?? ''} />
                   </FormControl>
 
                   <FormMessage />
@@ -128,10 +128,7 @@ const SportsForm = forwardRef<SportsFormRef, SportsFormProps>(
                     Wochentag <RequiredLabel />
                   </FormLabel>
 
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger
                         className={cn({
@@ -144,10 +141,7 @@ const SportsForm = forwardRef<SportsFormRef, SportsFormProps>(
 
                     <SelectContent>
                       {Object.entries(weekdays).map(([key, value], idx) => (
-                        <SelectItem
-                          key={idx}
-                          value={key}
-                        >
+                        <SelectItem key={key} value={key}>
                           {value.de}
                         </SelectItem>
                       ))}
@@ -209,10 +203,7 @@ const SportsForm = forwardRef<SportsFormRef, SportsFormProps>(
                     Campus <RequiredLabel />
                   </FormLabel>
 
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger
                         className={cn({
@@ -265,6 +256,7 @@ const SportsForm = forwardRef<SportsFormRef, SportsFormProps>(
                         <FormControl>
                           <Button
                             variant="outline"
+                            // biome-ignore lint/a11y/useSemanticElements: official radix-ui component
                             role="combobox"
                             className={cn(
                               'justify-between w-full',
@@ -280,10 +272,7 @@ const SportsForm = forwardRef<SportsFormRef, SportsFormProps>(
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
-                      <PopoverContent
-                        className="w-full p-0"
-                        align="start"
-                      >
+                      <PopoverContent className="w-full p-0" align="start">
                         <Command>
                           <CommandInput placeholder="Sportart suchen" />
                           <CommandList>
@@ -336,10 +325,7 @@ const SportsForm = forwardRef<SportsFormRef, SportsFormProps>(
                   <FormLabel>Beschreibung (Deutsch)</FormLabel>
 
                   <FormControl>
-                    <Textarea
-                      {...field}
-                      value={field.value ?? ''}
-                    />
+                    <Textarea {...field} value={field.value ?? ''} />
                   </FormControl>
 
                   <FormMessage />
@@ -354,10 +340,7 @@ const SportsForm = forwardRef<SportsFormRef, SportsFormProps>(
                   <FormLabel>Beschreibung (Englisch)</FormLabel>
 
                   <FormControl>
-                    <Textarea
-                      {...field}
-                      value={field.value ?? ''}
-                    />
+                    <Textarea {...field} value={field.value ?? ''} />
                   </FormControl>
 
                   <FormMessage />

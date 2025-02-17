@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Table } from '@tanstack/react-table'
+import type { Table } from '@tanstack/react-table'
 import {
   ChevronLeft,
   ChevronRight,
@@ -43,10 +43,7 @@ export function DataTablePagination<TData>({
             </SelectTrigger>
             <SelectContent side="top">
               {pageSizes.map((pageSize) => (
-                <SelectItem
-                  key={pageSize}
-                  value={`${pageSize}`}
-                >
+                <SelectItem key={pageSize} value={`${pageSize}`}>
                   {pageSize}
                 </SelectItem>
               ))}

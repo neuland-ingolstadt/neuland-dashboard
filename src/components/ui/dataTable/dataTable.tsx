@@ -1,22 +1,22 @@
 import {
   DataTableFilterToolbar,
-  FilterOptions,
+  type FilterOptions,
 } from '@/components/ui/dataTable/filterToolbar'
 import { DataTablePagination } from '@/components/ui/dataTable/paginationToolbar'
 import {
-  TableHeader,
-  TableRow,
-  TableHead,
+  Table,
   TableBody,
   TableCell,
-  Table,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  TableState,
+  type ColumnDef,
+  type ColumnFiltersState,
+  type SortingState,
+  type TableState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -116,8 +116,8 @@ export function DataTable<TData, TValue>({
       {enableFilter && (
         <DataTableFilterToolbar
           table={table}
-          searchFilter={filterOptions!.searchFilter}
-          selectFilters={filterOptions!.selectFilters}
+          searchFilter={filterOptions?.searchFilter}
+          selectFilters={filterOptions?.selectFilters}
         />
       )}
 

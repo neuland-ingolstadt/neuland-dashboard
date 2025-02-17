@@ -9,7 +9,7 @@ import {
 } from '@/lib/backend/client'
 import { checkApiPermissions } from '@/lib/backend/groups'
 import { authOptions } from '@/pages/api/auth/[...nextauth]'
-import { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 
 export default async function handler(
@@ -21,7 +21,11 @@ export default async function handler(
     return res.status(403).json({ message: 'Not authorized!' })
   }
 
-  const session = (await getServerSession(req, res, authOptions))!
+  const session = await getServerSession(req, res, authOptions)
+
+  if (!session) {
+    return res.status(401).json({ message: 'Not authenticated!' })
+  }
 
   // create new announcement
   if (req.method === 'POST') {

@@ -1,4 +1,4 @@
-import { SportsEvent } from '@/lib/backend/sportEvents'
+import type { SportsEvent } from '@/lib/backend/sportEvents'
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 

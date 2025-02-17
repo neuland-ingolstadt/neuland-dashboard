@@ -2,12 +2,12 @@ import { Button } from '@/components/ui/button'
 import ConfirmDeleteDialog from '@/components/ui/dialog/confirmDeletionDialog'
 import NavBar from '@/components/ui/navBar'
 import PathBreadcrumbs from '@/components/ui/pathBreadcrumbs'
-import SportsForm, { SportsFormRef } from '@/components/ui/sportsForm'
+import SportsForm, { type SportsFormRef } from '@/components/ui/sportsForm'
 import { getSportsEvents } from '@/lib/backend/client'
-import { NewSportsEvent, SportsEvent } from '@/lib/backend/sportEvents'
+import type { NewSportsEvent, SportsEvent } from '@/lib/backend/sportEvents'
 import { useDialogs } from '@/lib/providers/dialogsProvider'
 import { Save, Trash } from 'lucide-react'
-import { GetServerSideProps } from 'next'
+import type { GetServerSideProps } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useCallback, useRef, useState } from 'react'
@@ -27,7 +27,7 @@ export default function EditSportsEventPage({
   const handleDelete = useCallback(async () => {
     setLoading(true)
 
-    const response = await fetch(`/api/sports`, {
+    const response = await fetch('/api/sports', {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -107,19 +107,12 @@ export default function EditSportsEventPage({
           </Button>
 
           <Button onClick={() => formRef.current?.triggerSubmit()}>
-            <Save
-              className="mr-2"
-              size={16}
-            />
+            <Save className="mr-2" size={16} />
             <span>Speichern</span>
           </Button>
         </div>
 
-        <SportsForm
-          onSubmit={handleEdit}
-          ref={formRef}
-          defaultValues={event}
-        />
+        <SportsForm onSubmit={handleEdit} ref={formRef} defaultValues={event} />
       </div>
     </div>
   )

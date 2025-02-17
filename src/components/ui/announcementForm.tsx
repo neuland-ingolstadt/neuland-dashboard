@@ -12,9 +12,9 @@ import { MultiSelect } from '@/components/ui/multiSelect'
 import RequiredLabel from '@/components/ui/required'
 import { Textarea } from '@/components/ui/textarea'
 import {
-  NewAnnouncement,
+  type Announcement,
+  type NewAnnouncement,
   newAnnouncementSchema,
-  Announcement,
 } from '@/lib/backend/announcements'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
@@ -166,7 +166,7 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
             />
           </div>
           <h2 className="mt-6 text-xl font-bold tracking-tight">Titel</h2>
-          <div className="grid grid-cols-2 gap-6"></div>
+          <div className="grid grid-cols-2 gap-6" />
           <div className="grid grid-cols-2 gap-6">
             <FormField
               control={form.control}
@@ -178,10 +178,7 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
                   </FormLabel>
 
                   <FormControl>
-                    <Input
-                      {...field}
-                      value={field.value ?? ''}
-                    />
+                    <Input {...field} value={field.value ?? ''} />
                   </FormControl>
 
                   <FormMessage />
@@ -222,10 +219,7 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
                   </FormLabel>
 
                   <FormControl>
-                    <Textarea
-                      {...field}
-                      value={field.value ?? ''}
-                    />
+                    <Textarea {...field} value={field.value ?? ''} />
                   </FormControl>
 
                   <FormMessage />
@@ -242,10 +236,7 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
                   </FormLabel>
 
                   <FormControl>
-                    <Textarea
-                      {...field}
-                      value={field.value ?? ''}
-                    />
+                    <Textarea {...field} value={field.value ?? ''} />
                   </FormControl>
 
                   <FormMessage />
@@ -260,11 +251,7 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
                   <FormLabel>Link</FormLabel>
 
                   <FormControl>
-                    <Input
-                      {...field}
-                      value={field.value ?? ''}
-                      type="url"
-                    />
+                    <Input {...field} value={field.value ?? ''} type="url" />
                   </FormControl>
 
                   <FormMessage />
@@ -341,7 +328,7 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
                       step={1}
                       defaultValue={0}
                       onChange={(e) => {
-                        field.onChange(parseInt(e.target.value, 10))
+                        field.onChange(Number.parseInt(e.target.value, 10))
                       }}
                     />
                   </FormControl>

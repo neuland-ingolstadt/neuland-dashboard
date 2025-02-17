@@ -16,8 +16,8 @@ import {
 } from '@/components/ui/popover'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
-import { Column } from '@tanstack/react-table'
-import { PlusCircle, Check } from 'lucide-react'
+import type { Column } from '@tanstack/react-table'
+import { Check, PlusCircle } from 'lucide-react'
 
 export interface FacetedFilterItem {
   label: string
@@ -51,19 +51,12 @@ export function DataTableFacetedFilter<TData, TValue>({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-8 border-dashed"
-        >
+        <Button variant="outline" size="sm" className="h-8 border-dashed">
           <PlusCircle className="mr-2 h-4 w-4" />
           {title}
           {selectedValues?.size > 0 && (
             <>
-              <Separator
-                orientation="vertical"
-                className="mx-2 h-4"
-              />
+              <Separator orientation="vertical" className="mx-2 h-4" />
               <Badge
                 variant="secondary"
                 className="rounded-sm px-1 font-normal lg:hidden"
@@ -81,10 +74,10 @@ export function DataTableFacetedFilter<TData, TValue>({
                 ) : (
                   options
                     .filter((option) => selectedValues.has(option.value))
-                    .map((option, idx) => (
+                    .map((option) => (
                       <Badge
                         variant="secondary"
-                        key={idx}
+                        key={option.value}
                         className="rounded-sm px-1 font-normal"
                       >
                         {option.label}
@@ -96,10 +89,7 @@ export function DataTableFacetedFilter<TData, TValue>({
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent
-        className="w-fit min-w-48 p-0"
-        align="start"
-      >
+      <PopoverContent className="w-fit min-w-48 p-0" align="start">
         <Command>
           <CommandInput placeholder={title} />
           <CommandList>
