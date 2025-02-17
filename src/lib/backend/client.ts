@@ -127,7 +127,7 @@ export async function getRoomReports(accessToken: string) {
     }
   `.replace(/\s+/g, ' ')
 
-  const data = await graphqlClient.request<RoomReportsData>(query, {
+  const data = await graphqlClient.request<RoomReportsData>(query, undefined, {
     Authorization: `Bearer ${accessToken}`,
   })
 
