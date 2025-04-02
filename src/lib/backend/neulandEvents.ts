@@ -6,16 +6,22 @@ export const neulandEventSchema = z.object({
     de: z.string({ required_error: 'Bitte geben Sie einen Titel ein' }),
     en: z.string({ required_error: 'Bitte geben Sie einen Titel ein' }),
   }),
-  description: z.object({
-    de: z.string({
-      required_error: 'Bitte geben Sie eine Beschreibung ein',
-      invalid_type_error: 'Bitte geben Sie eine Beschreibung ein',
-    }),
-    en: z.string({
-      required_error: 'Bitte geben Sie eine Beschreibung ein',
-      invalid_type_error: 'Bitte geben Sie eine Beschreibung ein',
-    }),
-  }),
+  description: z
+    .object({
+      de: z
+        .string({
+          required_error: 'Bitte geben Sie eine Beschreibung ein',
+          invalid_type_error: 'Bitte geben Sie eine Beschreibung ein',
+        })
+        .nullable(),
+      en: z
+        .string({
+          required_error: 'Bitte geben Sie eine Beschreibung ein',
+          invalid_type_error: 'Bitte geben Sie eine Beschreibung ein',
+        })
+        .nullable(),
+    })
+    .nullable(),
   location: z.string(),
   startTime: z.date({ required_error: 'Bitte geben Sie eine Startzeit ein' }),
   endTime: z.date({ required_error: 'Bitte geben Sie eine Endzeit ein' }),
@@ -29,7 +35,7 @@ export const updateNeulandEventSchema = neulandEventSchema.omit({
   updatedAt: true,
 })
 
-export const newNeulandEventSchema = neulandEventSchema.omit({
+export const newNeulandEventSchema = updateNeulandEventSchema.omit({
   id: true,
 })
 

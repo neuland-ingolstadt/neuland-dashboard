@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import type { Group } from '@/lib/backend/groups'
-import { useUserGroups } from '@/lib/hooks/gorupsHook'
+import { useUserGroups } from '@/lib/hooks/groups'
 import { cn } from '@/lib/utils'
 import { ExternalLink } from 'lucide-react'
 import Link from 'next/link'

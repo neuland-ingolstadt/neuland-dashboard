@@ -7,7 +7,7 @@ import {
 import NavBar from '@/components/ui/navBar'
 import PathBreadcrumbs from '@/components/ui/pathBreadcrumbs'
 import type { Group } from '@/lib/backend/groups'
-import { useUserGroups } from '@/lib/hooks/gorupsHook'
+import { useUserGroups } from '@/lib/hooks/groups'
 import {
   ActivitySquare,
   Calendar,
@@ -113,11 +113,11 @@ export default function Home() {
       </div>
 
       <div className="container my-4 flex flex-col gap-6">
-        {userSections.map((section, idx) => (
+        {userSections.map((section) => (
           <div key={section.title} className="flex flex-col gap-2">
             <h2 className="font-semibold text-lg">{section.title}</h2>
             <div className="grid grid-cols-2 gap-3 auto-rows-fr">
-              {section.cards.map((card, idx) => (
+              {section.cards.map((card) => (
                 <Link
                   key={card.title}
                   href={card.href}

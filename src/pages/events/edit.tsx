@@ -1,8 +1,9 @@
-import type { AnnouncementFormRef } from '@/components/ui/announcementForm'
 import { Button } from '@/components/ui/button'
 import ConfirmDeleteDialog from '@/components/ui/dialog/confirmDeletionDialog'
 import NavBar from '@/components/ui/navBar'
-import NeulandEventForm from '@/components/ui/neulandEventForm'
+import NeulandEventForm, {
+  type NeulandEventFormRef,
+} from '@/components/ui/neulandEventForm'
 import PathBreadcrumbs from '@/components/ui/pathBreadcrumbs'
 import { getNeulandEvents } from '@/lib/backend/client'
 import type { NeulandEvent, NewNeulandEvent } from '@/lib/backend/neulandEvents'
@@ -83,7 +84,7 @@ export default function EditNeulandEventPage({
     [event.id, openErrorDialog, router, setLoading]
   )
 
-  const formRef = useRef<AnnouncementFormRef>(null)
+  const formRef = useRef<NeulandEventFormRef>(null)
 
   return (
     <div>
@@ -120,14 +121,11 @@ export default function EditNeulandEventPage({
             <span>Speichern</span>
           </Button>
         </div>
-
-        {/* <AnnouncementForm
+        <NeulandEventForm
           onSubmit={handleEdit}
           ref={formRef}
-          defaultValues={announcement}
-        /> */}
-
-        <NeulandEventForm />
+          existingEvent={event}
+        />
       </div>
     </div>
   )
