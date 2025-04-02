@@ -31,6 +31,11 @@ const links: NavLink[] = [
     href: '/roomreports',
     groups: ['admin'],
   },
+  {
+    label: 'Neuland Events',
+    href: '/events',
+    groups: ['events'],
+  },
 ]
 
 export function MainNav({
@@ -43,7 +48,10 @@ export function MainNav({
   const userLinks = useMemo(() => {
     return links.filter((link) => {
       if (!link.groups) return true
-      return link.groups.some((group) => userGroups.includes(group))
+      return (
+        link.groups.some((group) => userGroups.includes(group)) ||
+        userGroups.includes('admin')
+      )
     })
   }, [userGroups])
 

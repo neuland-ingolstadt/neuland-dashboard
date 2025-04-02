@@ -140,7 +140,7 @@ const SportsForm = forwardRef<SportsFormRef, SportsFormProps>(
                     </FormControl>
 
                     <SelectContent>
-                      {Object.entries(weekdays).map(([key, value], idx) => (
+                      {Object.entries(weekdays).map(([key, value]) => (
                         <SelectItem key={key} value={key}>
                           {value.de}
                         </SelectItem>
