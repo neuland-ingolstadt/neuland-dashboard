@@ -1,4 +1,10 @@
-import { useCallback, forwardRef, useImperativeHandle, useState } from 'react'
+import {
+  useCallback,
+  forwardRef,
+  useImperativeHandle,
+  useState,
+  useMemo,
+} from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { addHours } from 'date-fns'
@@ -22,6 +28,9 @@ import {
 import { RecurrencesProvider } from '@/lib/providers/recurrenceProvider'
 import EditSeriesDialog from '@/components/ui/dialog/editSeriesDialog'
 import { Switch } from '@/components/ui/switch'
+import { rrulestr } from 'rrule'
+import { Button } from '@/components/ui/button'
+import { Edit } from 'lucide-react'
 
 interface NeulandEventFormProps {
   onSubmit: (data: NewNeulandEvent) => void
@@ -73,6 +82,15 @@ const NeulandEventForm = forwardRef<NeulandEventFormRef, NeulandEventFormProps>(
       },
     }))
 
+    const rruleWatch = form.watch('rrule')
+
+    const rruleText = useMemo(() => {
+      if (!rruleWatch) return ''
+
+      const rrule = rrulestr(rruleWatch)
+      return rrule.toText()
+    }, [rruleWatch])
+
     return (
       <Form {...form}>
         <RecurrencesProvider
@@ -84,6 +102,9 @@ const NeulandEventForm = forwardRef<NeulandEventFormRef, NeulandEventFormProps>(
           <EditSeriesDialog
             isOpen={isEditorOpen}
             onOpenChange={setIsEditorOpen}
+            onSave={(rrule) => {
+              form.setValue('rrule', rrule)
+            }}
           />
 
           <form
@@ -228,23 +249,51 @@ const NeulandEventForm = forwardRef<NeulandEventFormRef, NeulandEventFormProps>(
               />
             </div>
 
-            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-              <div className="space-y-0.5">
-                <FormLabel className="text-base">
-                  Wiederkehrendes Event
-                </FormLabel>
-                <FormDescription>Kein wiederkehrendes Event</FormDescription>
-              </div>
-              <FormControl>
-                <Switch
-                  checked={false}
-                  onCheckedChange={() => {
-                    setIsEditorOpen(true)
-                  }}
-                  className="!mt-0"
-                />
-              </FormControl>
-            </FormItem>
+            <FormField
+              control={form.control}
+              name="rrule"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">
+                      Wiederkehrendes Event
+                    </FormLabel>
+                    <FormDescription className="flex flex-row items-center gap-3">
+                      <span className="first-letter:capitalize">
+                        {rruleText}
+                      </span>
+
+                      {rruleWatch && (
+                        <Button
+                          className="!m-0 !p-0 h-6"
+                          variant="link"
+                          type="button"
+                          onClick={() => setIsEditorOpen(true)}
+                        >
+                          <Edit className="h-3 w-3 mr-1" />
+                          Bearbeiten
+                        </Button>
+                      )}
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={!!field.value}
+                      onCheckedChange={(checked) => {
+                        if (!checked) {
+                          console.log('checked', checked)
+                          field.onChange(null)
+                          return
+                        }
+
+                        setIsEditorOpen(true)
+                      }}
+                      className="!mt-0"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
           </form>
         </RecurrencesProvider>
       </Form>

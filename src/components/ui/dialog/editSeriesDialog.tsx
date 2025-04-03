@@ -1,15 +1,12 @@
 import IntervalSelector from '@/components/intervalSelector'
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { DateTimePicker } from '@/components/ui/datetimepicker'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
@@ -23,25 +20,46 @@ import RecurrenceSelector from '@/components/ui/recurrenceSelector'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import WeekdaySelector from '@/components/weekdaySelector'
 import { useRecurrence } from '@/lib/providers/recurrenceProvider'
+import { useCallback, useMemo } from 'react'
 import { Frequency } from 'rrule'
 
 interface EditSeriesDialogProps {
   isOpen: boolean
   onOpenChange: (open: boolean) => void
+  onSave: (rrule: string) => void
 }
 
 export default function EditSeriesDialog({
   isOpen,
   onOpenChange,
+  onSave,
 }: EditSeriesDialogProps) {
-  const { recurrence, changeRecurrence, startDate, onStartDateChange } =
+  const { recurrence, changeRecurrence, startDate, onStartDateChange, rrule } =
     useRecurrence()
 
+  const rruleText = useMemo(() => {
+    return rrule?.toText() || ''
+  }, [rrule])
+
+  const onCancel = useCallback(() => {
+    onOpenChange(false)
+  }, [onOpenChange])
+
+  const onOpenChangeDialog = useCallback(
+    (open: boolean) => {
+      onOpenChange(open)
+    },
+    [onOpenChange]
+  )
+
   return (
-    <Dialog open={true && isOpen} onOpenChange={onOpenChange}>
+    <Dialog open={true && isOpen} onOpenChange={onOpenChangeDialog}>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>Wiederkehrendes Event bearbeiten</DialogTitle>
+          <DialogDescription className="first-letter:capitalize">
+            {rruleText}
+          </DialogDescription>
         </DialogHeader>
 
         <FormItem>
@@ -73,7 +91,6 @@ export default function EditSeriesDialog({
             <Card className="h-72">
               <CardHeader>
                 <CardTitle>Täglich</CardTitle>
-                <CardDescription>TODO rrule hier generieren</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <IntervalSelector frequency={Frequency.DAILY} />
@@ -87,7 +104,6 @@ export default function EditSeriesDialog({
             <Card className="h-72">
               <CardHeader>
                 <CardTitle>Wöchentlich</CardTitle>
-                <CardDescription>TODO rrule hier generieren</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <IntervalSelector frequency={Frequency.WEEKLY} />
@@ -101,7 +117,6 @@ export default function EditSeriesDialog({
             <Card className="h-72">
               <CardHeader>
                 <CardTitle>Wöchentlich</CardTitle>
-                <CardDescription>TODO rrule hier generieren</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <IntervalSelector frequency={Frequency.MONTHLY} />
@@ -115,7 +130,6 @@ export default function EditSeriesDialog({
             <Card className="h-72">
               <CardHeader>
                 <CardTitle>Wöchentlich</CardTitle>
-                <CardDescription>TODO rrule hier generieren</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <IntervalSelector frequency={Frequency.YEARLY} />
@@ -125,6 +139,20 @@ export default function EditSeriesDialog({
             </Card>
           </TabsContent>
         </Tabs>
+
+        <DialogFooter>
+          <Button variant="ghost" onClick={onCancel}>
+            Abbrechen
+          </Button>
+          <Button
+            onClick={() => {
+              onSave(rrule?.toString() || '')
+              onOpenChange(false)
+            }}
+          >
+            Änderungen speichern
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )

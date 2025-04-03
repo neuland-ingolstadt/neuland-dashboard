@@ -13,7 +13,7 @@ import {
   isSameMonth,
   startOfMonth,
 } from 'date-fns'
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { Frequency } from 'rrule'
 import { de } from 'date-fns/locale'
 
@@ -71,16 +71,17 @@ const RecurrenceSelector = React.memo(function RecurrenceSelector() {
     return !isSameMonth(addWeeks(startDate, 1), startDate)
   }, [startDate])
 
+  const nthWeekdayOfMonth = useMemo(() => {
+    if (!startDate) return 0
+
+    return differenceInWeeks(startDate, startOfMonth(startDate)) + 1
+  }, [startDate])
+
   const getOrdinal = useCallback(() => {
     if (!startDate) return ''
 
-    const nthWeekdayOfMonth =
-      differenceInWeeks(startDate, startOfMonth(startDate)) + 1
-
-    console.log('nthWeekdayOfMonth', nthWeekdayOfMonth)
-
     return `${ordinalMap[`${isLastDayOfMonth() && nthWeekdayOfMonth > 4 ? -1 : nthWeekdayOfMonth}`]}`
-  }, [startDate, isLastDayOfMonth])
+  }, [startDate, isLastDayOfMonth, nthWeekdayOfMonth])
 
   const getRelativeLabel = useCallback(() => {
     if (!startDate) return ''
@@ -125,7 +126,7 @@ const RecurrenceSelector = React.memo(function RecurrenceSelector() {
       <FormControl>
         <RadioGroup
           onValueChange={handleChange}
-          defaultValue={recurrence.recurrenceType || 'absolute'}
+          defaultValue={recurrence.recurrenceType || undefined}
           className="flex flex-col space-y-1"
         >
           <FormItem className="flex items-center space-x-3 space-y-0">
@@ -140,14 +141,15 @@ const RecurrenceSelector = React.memo(function RecurrenceSelector() {
             </FormControl>
             <FormLabel className="font-normal">{getRelativeLabel()}</FormLabel>
           </FormItem>
-          {isLastDayOfMonth() && (
-            <FormItem className="flex items-center space-x-3 space-y-0">
-              <FormControl>
-                <RadioGroupItem value="last" />
-              </FormControl>
-              <FormLabel className="font-normal">{getLastLabel()}</FormLabel>
-            </FormItem>
-          )}
+          {isLastDayOfMonth() ||
+            (nthWeekdayOfMonth === 4 && (
+              <FormItem className="flex items-center space-x-3 space-y-0">
+                <FormControl>
+                  <RadioGroupItem value="last" />
+                </FormControl>
+                <FormLabel className="font-normal">{getLastLabel()}</FormLabel>
+              </FormItem>
+            ))}
         </RadioGroup>
       </FormControl>
       <FormMessage />

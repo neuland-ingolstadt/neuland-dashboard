@@ -1,8 +1,10 @@
+import { toRRule } from '@/lib/utils/recurrenceUtils'
 import {
   createContext,
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from 'react'
 import { Frequency, RRule, type Weekday } from 'rrule'
@@ -79,6 +81,7 @@ type RecurrencesProviderState = {
   changeRecurrence: (values: Partial<RecurrenceType>) => void
   startDate: Date | undefined
   onStartDateChange: (date: Date | undefined) => void
+  rrule: RRule | null
 }
 
 const initialState: RecurrencesProviderState = {
@@ -86,6 +89,7 @@ const initialState: RecurrencesProviderState = {
   changeRecurrence: () => {},
   startDate: undefined,
   onStartDateChange: () => {},
+  rrule: null,
 }
 
 const RecurrencesProviderContext =
@@ -120,7 +124,6 @@ export function RecurrencesProvider({
 
   const changeRecurrence = useCallback((values: Partial<RecurrenceType>) => {
     setRecurrence((prev) => {
-      console.log('prev', prev)
       return {
         ...prev,
         ...values,
@@ -128,11 +131,18 @@ export function RecurrencesProvider({
     })
   }, [])
 
+  const rrule = useMemo(() => {
+    if (!recurrence || !startDateValue) return null
+
+    return toRRule(recurrence, startDateValue)
+  }, [recurrence, startDateValue])
+
   const value = {
     recurrence,
     changeRecurrence,
     startDate: startDateValue,
     onStartDateChange: handleStartDateChange,
+    rrule,
   }
 
   return (
