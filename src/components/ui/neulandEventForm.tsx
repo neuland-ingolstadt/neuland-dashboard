@@ -74,15 +74,16 @@ const NeulandEventForm = forwardRef<NeulandEventFormRef, NeulandEventFormProps>(
     }))
 
     return (
-      <RecurrencesProvider>
-        <Form {...form}>
+      <Form {...form}>
+        <RecurrencesProvider
+          startDate={form.getValues('startTime')}
+          onStartDateChange={(date) => {
+            form.setValue('startTime', date)
+          }}
+        >
           <EditSeriesDialog
             isOpen={isEditorOpen}
             onOpenChange={setIsEditorOpen}
-            startDate={form.getValues('startTime')}
-            onStartDateChange={(date) => {
-              form.setValue('startTime', date)
-            }}
           />
 
           <form
@@ -236,7 +237,7 @@ const NeulandEventForm = forwardRef<NeulandEventFormRef, NeulandEventFormProps>(
               </div>
               <FormControl>
                 <Switch
-                  checked={true}
+                  checked={false}
                   onCheckedChange={() => {
                     setIsEditorOpen(true)
                   }}
@@ -245,8 +246,8 @@ const NeulandEventForm = forwardRef<NeulandEventFormRef, NeulandEventFormProps>(
               </FormControl>
             </FormItem>
           </form>
-        </Form>
-      </RecurrencesProvider>
+        </RecurrencesProvider>
+      </Form>
     )
   }
 )

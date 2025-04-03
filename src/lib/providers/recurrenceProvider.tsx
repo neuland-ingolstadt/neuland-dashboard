@@ -1,4 +1,10 @@
-import { createContext, useCallback, useContext, useState } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { Frequency, RRule, type Weekday } from 'rrule'
 
 export const WEEKDAYS = [
@@ -40,11 +46,11 @@ type FrequencyType =
     }
   | {
       frequency: Frequency.MONTHLY
-      reoccurrenceType: 'absolute' | 'relative'
+      recurrenceType: 'absolute' | 'relative' | 'last'
     }
   | {
       frequency: Frequency.YEARLY
-      reoccurrenceType: 'absolute' | 'relative'
+      recurrenceType: 'absolute' | 'relative' | 'last'
     }
 
 export type RecurrenceType = {
@@ -55,7 +61,7 @@ export type RecurrenceType = {
 
 export const INITIAL_RECURRENCE_VALUES: RecurrenceType = {
   isRecurring: false,
-  frequency: Frequency.DAILY,
+  frequency: Frequency.WEEKLY,
   interval: 1,
   weekdays: [],
   endType: 'never',
@@ -64,16 +70,22 @@ export const INITIAL_RECURRENCE_VALUES: RecurrenceType = {
 type RecurrencesProviderProps = {
   children: React.ReactNode
   openRecurrenceDialog?: (bool: boolean) => void
+  startDate: Date
+  onStartDateChange: (date: Date) => void
 }
 
 type RecurrencesProviderState = {
   recurrence: RecurrenceType
   changeRecurrence: (values: Partial<RecurrenceType>) => void
+  startDate: Date | undefined
+  onStartDateChange: (date: Date | undefined) => void
 }
 
 const initialState: RecurrencesProviderState = {
   recurrence: INITIAL_RECURRENCE_VALUES,
   changeRecurrence: () => {},
+  startDate: undefined,
+  onStartDateChange: () => {},
 }
 
 const RecurrencesProviderContext =
@@ -81,8 +93,27 @@ const RecurrencesProviderContext =
 
 export function RecurrencesProvider({
   children,
+  startDate,
+  onStartDateChange,
   ...props
 }: RecurrencesProviderProps) {
+  // direct approach does not work with form watch and setValue
+  const [startDateValue, setStartDateValue] = useState<Date | undefined>(
+    startDate
+  )
+
+  useEffect(() => {
+    setStartDateValue(startDate)
+  }, [startDate])
+
+  const handleStartDateChange = useCallback(
+    (date: Date | undefined) => {
+      setStartDateValue(date)
+      onStartDateChange(date || new Date())
+    },
+    [onStartDateChange]
+  )
+
   const [recurrence, setRecurrence] = useState<RecurrenceType>(
     () => INITIAL_RECURRENCE_VALUES
   )
@@ -100,6 +131,8 @@ export function RecurrencesProvider({
   const value = {
     recurrence,
     changeRecurrence,
+    startDate: startDateValue,
+    onStartDateChange: handleStartDateChange,
   }
 
   return (
@@ -109,7 +142,7 @@ export function RecurrencesProvider({
   )
 }
 
-export const useRecurrences = () => {
+export const useRecurrence = () => {
   const context = useContext(RecurrencesProviderContext)
 
   if (context === undefined)
