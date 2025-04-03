@@ -10,7 +10,7 @@ export function formatDateInterval(
   }
 
   if (!endTime) {
-    return format(startTime, 'dd.MM.yyyy HH:mm')
+    return `${format(startTime, 'HH:mm')} Uhr`
   }
 
   if (rrule) {

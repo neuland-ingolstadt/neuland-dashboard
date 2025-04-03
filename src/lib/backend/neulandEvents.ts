@@ -93,6 +93,14 @@ export const newNeulandEventSchema = baseNeulandEventSchema
         path: ['startTime'],
       })
     }
+
+    if (startTime && endTime && endTime < startTime) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Endzeit muss nach Startzeit liegen',
+        path: ['endTime'],
+      })
+    }
   })
 
 export type NeulandEvent = z.infer<typeof neulandEventSchema>
