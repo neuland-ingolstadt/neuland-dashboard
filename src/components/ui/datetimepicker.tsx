@@ -391,7 +391,6 @@ type DateTimePickerProps = {
   onChange?: (date: Date | undefined) => void
   disabled?: boolean
   /** showing `AM/PM` or not. */
-  hourCycle?: 12 | 24
   placeholder?: string
   /**
    * The year range will be: `This year + yearRange` and `this year - yearRange`.
@@ -411,6 +410,7 @@ type DateTimePickerProps = {
    **/
   granularity?: Granularity
   className?: string
+  showClearButton?: boolean
 } & Pick<
   CalendarProps,
   'locale' | 'weekStartsOn' | 'showWeekNumber' | 'showOutsideDays'
@@ -435,11 +435,14 @@ const DateTimePicker = React.forwardRef<
       granularity = 'second',
       placeholder = 'Datum und Uhrzeit auswählen',
       className,
+      showClearButton = false,
       ...props
     },
     ref
   ) => {
-    const [month, setMonth] = React.useState<Date>(value ?? new Date())
+    const [month, setMonth] = React.useState<Date | undefined>(
+      value ?? new Date()
+    )
     const buttonRef = useRef<HTMLButtonElement>(null)
     /**
      * carry over the current time when a user clicks a new day
@@ -492,9 +495,15 @@ const DateTimePicker = React.forwardRef<
       }
     }
 
+    const [popoverOpen, setPopoverOpen] = React.useState(false)
+
     return (
-      <Popover>
-        <PopoverTrigger asChild disabled={disabled}>
+      <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+        <PopoverTrigger
+          asChild
+          disabled={disabled}
+          onClick={() => setPopoverOpen(true)}
+        >
           <Button
             variant="outline"
             className={cn(
@@ -532,6 +541,23 @@ const DateTimePicker = React.forwardRef<
                 date={value}
                 granularity={granularity}
               />
+            </div>
+          )}
+
+          {showClearButton && (
+            <div className="border-t border-border">
+              <Button
+                variant="ghost"
+                className="w-full"
+                onClick={() => {
+                  // handleSelect(undefined)
+                  setMonth(undefined)
+                  onChange?.(undefined)
+                  setPopoverOpen(false)
+                }}
+              >
+                Löschen
+              </Button>
             </div>
           )}
         </PopoverContent>

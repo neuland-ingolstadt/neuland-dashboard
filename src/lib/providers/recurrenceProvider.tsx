@@ -74,16 +74,16 @@ export const INITIAL_RECURRENCE_VALUES: RecurrenceType = {
 type RecurrencesProviderProps = {
   children: React.ReactNode
   openRecurrenceDialog?: (bool: boolean) => void
-  startDate: Date
-  onStartDateChange: (date: Date) => void
+  startDate: Date | null
+  onStartDateChange: (date: Date | null) => void
   existingRrule?: string | null
 }
 
 type RecurrencesProviderState = {
   recurrence: RecurrenceType
   changeRecurrence: (values: Partial<RecurrenceType>) => void
-  startDate: Date | undefined
-  onStartDateChange: (date: Date | undefined) => void
+  startDate: Date | null
+  onStartDateChange: (date: Date | null) => void
   rrule: RRule | null
   restoreRecurrence: () => void
 }
@@ -91,7 +91,7 @@ type RecurrencesProviderState = {
 const initialState: RecurrencesProviderState = {
   recurrence: INITIAL_RECURRENCE_VALUES,
   changeRecurrence: () => {},
-  startDate: undefined,
+  startDate: null,
   onStartDateChange: () => {},
   rrule: null,
   restoreRecurrence: () => {},
@@ -112,22 +112,6 @@ const RecurrencesProvider = forwardRef<
     { children, startDate, onStartDateChange, existingRrule, ...props },
     ref
   ) => {
-    const [startDateValue, setStartDateValue] = useState<Date | undefined>(
-      startDate
-    )
-
-    useEffect(() => {
-      setStartDateValue(startDate)
-    }, [startDate])
-
-    const handleStartDateChange = useCallback(
-      (date: Date | undefined) => {
-        setStartDateValue(date)
-        onStartDateChange(date || new Date())
-      },
-      [onStartDateChange]
-    )
-
     const [recurrence, setRecurrence] = useState<RecurrenceType>(
       () => INITIAL_RECURRENCE_VALUES
     )
@@ -154,10 +138,10 @@ const RecurrencesProvider = forwardRef<
     }, [])
 
     const rrule = useMemo(() => {
-      if (!recurrence || !startDateValue) return null
+      if (!recurrence || !startDate) return null
 
-      return toRRule(recurrence, startDateValue)
-    }, [recurrence, startDateValue])
+      return toRRule(recurrence, startDate)
+    }, [recurrence, startDate])
 
     useImperativeHandle(
       ref,
@@ -170,8 +154,8 @@ const RecurrencesProvider = forwardRef<
     const value = {
       recurrence,
       changeRecurrence,
-      startDate: startDateValue,
-      onStartDateChange: handleStartDateChange,
+      startDate,
+      onStartDateChange,
       rrule,
       restoreRecurrence,
     }

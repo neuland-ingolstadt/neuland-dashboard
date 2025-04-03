@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const neulandEventSchema = z.object({
+const baseNeulandEventSchema = z.object({
   id: z.string(),
   title: z.object({
     de: z.string({ required_error: 'Bitte geben Sie einen Titel ein' }),
@@ -23,39 +23,77 @@ export const neulandEventSchema = z.object({
     })
     .nullable(),
   location: z.string(),
-  startTime: z.preprocess(
-    (val) => {
-      if (typeof val === 'string' || val instanceof Date) {
-        return new Date(val)
-      }
-    },
-    z.date({
-      required_error: 'Bitte geben Sie eine Startzeit ein',
-    })
-  ),
-  endTime: z.preprocess(
-    (val) => {
-      if (typeof val === 'string' || val instanceof Date) {
-        return new Date(val)
-      }
-    },
-    z.date({
-      required_error: 'Bitte geben Sie eine Endzeit ein',
-    })
-  ),
+  startTime: z
+    .preprocess(
+      (val) => {
+        if (typeof val === 'string' || val instanceof Date) {
+          return new Date(val)
+        }
+      },
+      z.date({
+        required_error: 'Bitte geben Sie eine Startzeit ein',
+      })
+    )
+    .nullable(),
+  endTime: z
+    .preprocess(
+      (val) => {
+        if (typeof val === 'string' || val instanceof Date) {
+          return new Date(val)
+        }
+      },
+      z.date({
+        required_error: 'Bitte geben Sie eine Endzeit ein',
+      })
+    )
+    .nullable(),
   rrule: z.string().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
 })
 
-export const updateNeulandEventSchema = neulandEventSchema.omit({
-  createdAt: true,
-  updatedAt: true,
-})
+export const neulandEventSchema = baseNeulandEventSchema.superRefine(
+  ({ startTime, endTime }, ctx) => {
+    if (endTime && !startTime) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Bitte geben Sie ein Start- und Enddatum ein',
+        path: ['startTime'],
+      })
+    }
+  }
+)
 
-export const newNeulandEventSchema = updateNeulandEventSchema.omit({
-  id: true,
-})
+export const updateNeulandEventSchema = baseNeulandEventSchema
+  .omit({
+    createdAt: true,
+    updatedAt: true,
+  })
+  .superRefine(({ startTime, endTime }, ctx) => {
+    if (endTime && !startTime) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Bitte geben Sie ein Start- und Enddatum ein',
+        path: ['startTime'],
+      })
+    }
+  })
+
+export const newNeulandEventSchema = baseNeulandEventSchema
+  .omit({
+    createdAt: true,
+    updatedAt: true,
+    id: true,
+  })
+  .superRefine(({ startTime, endTime }, ctx) => {
+    if (endTime && !startTime) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Bitte geben Sie ein Start- und Enddatum ein',
+        path: ['startTime'],
+      })
+    }
+  })
 
 export type NeulandEvent = z.infer<typeof neulandEventSchema>
 export type UpdateNeulandEvent = z.infer<typeof updateNeulandEventSchema>

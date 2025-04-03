@@ -49,6 +49,7 @@ export default function EditSeriesDialog({
 
   const onOpenChangeDialog = useCallback(
     (open: boolean) => {
+      console.log('onOpenChangeDialog', open)
       if (!open) {
         restoreRecurrence()
       }
@@ -59,7 +60,7 @@ export default function EditSeriesDialog({
   )
 
   return (
-    <Dialog open={true && isOpen} onOpenChange={onOpenChangeDialog}>
+    <Dialog open={isOpen} onOpenChange={onOpenChangeDialog}>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>Wiederkehrendes Event bearbeiten</DialogTitle>
@@ -72,8 +73,10 @@ export default function EditSeriesDialog({
           <FormLabel>Startdatum</FormLabel>
           <FormControl>
             <DateTimePicker
-              value={startDate}
-              onChange={onStartDateChange}
+              value={startDate || undefined}
+              onChange={(date) => {
+                onStartDateChange(date || null)
+              }}
               granularity="day"
             />
           </FormControl>

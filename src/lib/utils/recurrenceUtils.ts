@@ -12,9 +12,9 @@ export function toRRule(
   recurrence: RecurrenceType,
   startDate: Date
 ): RRule | null {
-  // if (!recurrence.isRecurring) {
-  //   return null
-  // }
+  if (!recurrence.isRecurring) {
+    return null
+  }
 
   const options: Partial<Options> = {
     freq: recurrence.frequency,

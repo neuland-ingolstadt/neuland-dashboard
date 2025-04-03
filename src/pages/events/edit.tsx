@@ -24,8 +24,10 @@ export default function EditNeulandEventPage({
   const event = useMemo(
     () => ({
       ...initialEvent,
-      startTime: new Date(initialEvent.startTime),
-      endTime: new Date(initialEvent.endTime),
+      startTime: initialEvent.startTime
+        ? new Date(initialEvent.startTime)
+        : null,
+      endTime: initialEvent.endTime ? new Date(initialEvent.endTime) : null,
     }),
     [initialEvent]
   )

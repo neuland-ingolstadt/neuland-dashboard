@@ -12,8 +12,8 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import RRuleText from '@/components/ui/recurrenceSwitch'
+import RecurringSwitch from '@/components/ui/recurringSwitch'
 import RequiredLabel from '@/components/ui/required'
-import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import {
   type NewNeulandEvent,
@@ -76,16 +76,17 @@ const NeulandEventForm = forwardRef<NeulandEventFormRef, NeulandEventFormProps>(
       },
     }))
 
-    const rruleWatch = existingEvent?.rrule
+    const rruleWatch = form.watch('rrule')
+    const startTime = form.watch('startTime')
 
     return (
       <Form {...form}>
         <RecurrencesProvider
-          startDate={form.getValues('startTime')}
+          startDate={startTime}
           onStartDateChange={(date) => {
             form.setValue('startTime', date)
           }}
-          existingRrule={rruleWatch}
+          existingRrule={existingEvent?.rrule || null}
         >
           <EditSeriesDialog
             isOpen={isEditorOpen}
@@ -197,16 +198,21 @@ const NeulandEventForm = forwardRef<NeulandEventFormRef, NeulandEventFormProps>(
                 name="startTime"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      Startzeit <RequiredLabel />
-                    </FormLabel>
+                    <FormLabel>Startzeit</FormLabel>
 
                     <FormControl>
                       <DateTimePicker
-                        onChange={field.onChange}
-                        value={field.value}
+                        onChange={(date) => {
+                          field.onChange(date ?? null)
+                          form.setValue('rrule', null)
+
+                          if (date) {
+                            form.clearErrors('startTime')
+                          }
+                        }}
+                        value={field.value ?? undefined}
                         granularity="minute"
-                        hourCycle={24}
+                        showClearButton
                       />
                     </FormControl>
 
@@ -224,10 +230,12 @@ const NeulandEventForm = forwardRef<NeulandEventFormRef, NeulandEventFormProps>(
 
                     <FormControl>
                       <DateTimePicker
-                        onChange={field.onChange}
-                        value={field.value}
+                        onChange={(date) => {
+                          field.onChange(date ?? null)
+                        }}
+                        value={field.value ?? undefined}
                         granularity="minute"
-                        hourCycle={24}
+                        showClearButton
                       />
                     </FormControl>
 
@@ -263,17 +271,25 @@ const NeulandEventForm = forwardRef<NeulandEventFormRef, NeulandEventFormProps>(
                     </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch
+                    <RecurringSwitch
                       checked={!!field.value}
                       onCheckedChange={(checked) => {
+                        if (checked && form.getValues('startTime') === null) {
+                          form.setError('startTime', {
+                            type: 'custom',
+                            message: 'Bitte wählen Sie ein Startdatum aus',
+                          })
+                          return false
+                        }
+
                         if (!checked) {
-                          field.onChange(null)
-                          return
+                          form.setValue('rrule', null)
+                          return true
                         }
 
                         setIsEditorOpen(true)
+                        return true
                       }}
-                      className="!mt-0"
                     />
                   </FormControl>
                 </FormItem>

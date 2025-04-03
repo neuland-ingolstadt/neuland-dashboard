@@ -1,10 +1,14 @@
 import { differenceInDays, format, isSameDay } from 'date-fns'
 
 export function formatDateInterval(
-  startTime: Date,
+  startTime: Date | null,
   endTime: Date | null,
   rrule: string | null
 ) {
+  if (!startTime) {
+    return ''
+  }
+
   if (!endTime) {
     return format(startTime, 'dd.MM.yyyy HH:mm')
   }
