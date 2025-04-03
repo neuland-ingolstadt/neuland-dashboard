@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import RRuleText from '@/components/ui/recurrenceSwitch'
+import RRuleText from '@/components/ui/rRuleText'
 import RecurringSwitch from '@/components/ui/recurringSwitch'
 import RequiredLabel from '@/components/ui/required'
 import { Textarea } from '@/components/ui/textarea'

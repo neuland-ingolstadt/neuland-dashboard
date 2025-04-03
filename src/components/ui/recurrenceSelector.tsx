@@ -141,15 +141,14 @@ const RecurrenceSelector = React.memo(function RecurrenceSelector() {
             </FormControl>
             <FormLabel className="font-normal">{getRelativeLabel()}</FormLabel>
           </FormItem>
-          {isLastDayOfMonth() ||
-            (nthWeekdayOfMonth === 4 && (
-              <FormItem className="flex items-center space-x-3 space-y-0">
-                <FormControl>
-                  <RadioGroupItem value="last" />
-                </FormControl>
-                <FormLabel className="font-normal">{getLastLabel()}</FormLabel>
-              </FormItem>
-            ))}
+          {(isLastDayOfMonth() || nthWeekdayOfMonth === 4) && (
+            <FormItem className="flex items-center space-x-3 space-y-0">
+              <FormControl>
+                <RadioGroupItem value="last" />
+              </FormControl>
+              <FormLabel className="font-normal">{getLastLabel()}</FormLabel>
+            </FormItem>
+          )}
         </RadioGroup>
       </FormControl>
       <FormMessage />

@@ -1,6 +1,9 @@
-// @ts-nocheck this the types make no sense at all, please dont touch this file
-import { ALL_WEEKDAYS, Frequency, type Options, RRule, Weekday } from 'rrule'
-import type { EndType, RecurrenceType } from '../providers/recurrenceProvider'
+import { Frequency, type Options, RRule, type Weekday } from 'rrule'
+import {
+  WEEKDAYS,
+  type EndType,
+  type RecurrenceType,
+} from '../providers/recurrenceProvider'
 
 /**
  * Converts a RecurrenceType object to an RRule instance
@@ -14,6 +17,14 @@ export function toRRule(
 ): RRule | null {
   if (!recurrence.isRecurring) {
     return null
+  }
+
+  const startDateWeekday = WEEKDAYS.find(
+    (day) => day.value.getJsWeekday() === startDate.getDay()
+  )?.value
+
+  if (!startDateWeekday) {
+    throw new Error('Invalid weekday')
   }
 
   const options: Partial<Options> = {
@@ -60,20 +71,16 @@ export function toRRule(
         options.bymonthday = startDate.getDate()
       } else if (recurrence.recurrenceType === 'relative') {
         // Use the nth weekday of month
-        const weekday = startDate.getDay()
         const nthWeekday = Math.floor((startDate.getDate() - 1) / 7)
 
         if (nthWeekday < 4) {
-          options.byweekday = [
-            Weekday.fromStr(ALL_WEEKDAYS[weekday]).nth(nthWeekday + 1),
-          ]
+          options.byweekday = [startDateWeekday.nth(nthWeekday + 1)]
         } else {
-          options.byweekday = [Weekday.fromStr(ALL_WEEKDAYS[weekday]).nth(-1)]
+          options.byweekday = [startDateWeekday.nth(-1)]
         }
       } else if (recurrence.recurrenceType === 'last') {
         // Use the last weekday of month
-        const weekday = startDate.getDay()
-        options.byweekday = [Weekday.fromStr(ALL_WEEKDAYS[weekday]).nth(-1)]
+        options.byweekday = [startDateWeekday.nth(-1)]
       }
       break
 
@@ -87,15 +94,11 @@ export function toRRule(
         options.bymonthday = startDate.getDate()
       } else if (recurrence.recurrenceType === 'relative') {
         // Use the nth weekday of month
-        const weekday = startDate.getDay()
         const nthWeekday = Math.floor((startDate.getDate() - 1) / 7)
-        options.byweekday = [
-          Weekday.fromStr(ALL_WEEKDAYS[weekday]).nth(nthWeekday + 1),
-        ]
+        options.byweekday = [startDateWeekday.nth(nthWeekday + 1)]
       } else if (recurrence.recurrenceType === 'last') {
         // Use the last weekday of month
-        const weekday = startDate.getDay()
-        options.byweekday = [Weekday.fromStr(ALL_WEEKDAYS[weekday]).nth(-1)]
+        options.byweekday = [startDateWeekday.nth(-1)]
       }
       break
   }
@@ -109,9 +112,11 @@ export function toRRule(
  * @returns A RecurrenceType object representing the recurrence pattern
  */
 export function fromRRule(rule: RRule): RecurrenceType {
-  const options = rule.options
+  const options = rule.origOptions
   const frequency = options.freq
   const interval = options.interval || 1
+
+  console.dir(rule, { depth: null })
 
   // Determine end type
   let endType: EndType
@@ -141,7 +146,7 @@ export function fromRRule(rule: RRule): RecurrenceType {
   // Add frequency-specific properties
   switch (frequency) {
     case Frequency.DAILY: {
-      const weekdays = options.byweekday || []
+      const weekdays = (options.byweekday || []) as Weekday[]
       return {
         ...baseRecurrence,
         frequency: Frequency.DAILY,
@@ -151,7 +156,7 @@ export function fromRRule(rule: RRule): RecurrenceType {
     }
 
     case Frequency.WEEKLY: {
-      const weekdays = options.byweekday || []
+      const weekdays = (options.byweekday || []) as Weekday[]
       return {
         ...baseRecurrence,
         frequency: Frequency.WEEKLY,
@@ -169,7 +174,7 @@ export function fromRRule(rule: RRule): RecurrenceType {
           ? options.byweekday[0]
           : options.byweekday
 
-        if (typeof weekday === 'object' && 'n' in weekday) {
+        if (typeof weekday === 'object' && 'n' in weekday && weekday.n) {
           recurrenceType = weekday.n < 0 ? 'last' : 'relative'
         }
       }
@@ -191,7 +196,7 @@ export function fromRRule(rule: RRule): RecurrenceType {
           ? options.byweekday[0]
           : options.byweekday
 
-        if (typeof weekday === 'object' && 'n' in weekday) {
+        if (typeof weekday === 'object' && 'n' in weekday && weekday.n) {
           recurrenceType = weekday.n < 0 ? 'last' : 'relative'
         }
       }
