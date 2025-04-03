@@ -22,8 +22,6 @@ export function toRRule(
     dtstart: startDate,
   }
 
-  console.log('Recurrence:', recurrence)
-
   // Handle end type
   if (recurrence.endType === 'after') {
     options.count = recurrence.count

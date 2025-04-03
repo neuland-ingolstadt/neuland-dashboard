@@ -3,7 +3,7 @@ import { DataTable } from '@/components/ui/dataTable/dataTable'
 import type { NeulandEvent } from '@/lib/backend/neulandEvents'
 import { formatDateInterval } from '@/lib/dateUtils'
 import type { ColumnDef } from '@tanstack/react-table'
-import { format } from 'date-fns'
+import { format, isSameDay } from 'date-fns'
 import { CalendarOff, MapPin, MapPinOff, Repeat } from 'lucide-react'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
@@ -47,6 +47,10 @@ export default function NeulandEventsTable({
               )
             }
 
+            if (startTime && endTime && isSameDay(startTime, endTime)) {
+              return <p>{`${start}`}</p>
+            }
+
             return <p>{`${start}${startTime && endTime ? ` - ${end}` : ''}`}</p>
           }
 
@@ -57,6 +61,22 @@ export default function NeulandEventsTable({
             </Badge>
           )
         },
+      },
+
+      {
+        id: 'timespan',
+        accessorKey: 'startTime',
+        header: undefined,
+        cell({
+          cell: {
+            row: {
+              original: { startTime, endTime, rrule },
+            },
+          },
+        }) {
+          return formatDateInterval(startTime, endTime, rrule)
+        },
+        size: 350,
       },
       {
         id: 'location',
@@ -86,21 +106,6 @@ export default function NeulandEventsTable({
           )
         },
         size: 200,
-      },
-      {
-        id: 'timespan',
-        accessorKey: 'startTime',
-        header: undefined,
-        cell({
-          cell: {
-            row: {
-              original: { startTime, endTime, rrule },
-            },
-          },
-        }) {
-          return formatDateInterval(startTime, endTime, rrule)
-        },
-        size: 250,
       },
     ],
     []

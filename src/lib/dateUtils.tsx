@@ -32,7 +32,7 @@ export function formatDateInterval(
   }
 
   if (isSameDay(startTime, endTime)) {
-    return `${format(startTime, 'dd.MM.yyyy HH:mm')} - ${format(endTime, 'HH:mm')}`
+    return `${format(startTime, 'HH:mm')} - ${format(endTime, 'HH:mm')} Uhr`
   }
 
   return `${format(startTime, 'dd.MM.yyyy HH:mm')} - ${format(

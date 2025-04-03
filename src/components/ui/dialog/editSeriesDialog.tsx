@@ -49,7 +49,6 @@ export default function EditSeriesDialog({
 
   const onOpenChangeDialog = useCallback(
     (open: boolean) => {
-      console.log('onOpenChangeDialog', open)
       if (!open) {
         restoreRecurrence()
       }

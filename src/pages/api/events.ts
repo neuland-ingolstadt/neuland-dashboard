@@ -33,7 +33,6 @@ export default async function handler(
 
     const result = await newNeulandEventSchema.safeParseAsync(eventData)
     if (result.error) {
-      console.error(result.error)
       return res.status(400).json({ message: 'Invalid data!' })
     }
 
@@ -47,7 +46,6 @@ export default async function handler(
 
     const result = await updateNeulandEventSchema.safeParseAsync(eventData)
     if (result.error) {
-      console.error(result.error)
       return res.status(400).json({ message: 'Invalid data!' })
     }
 

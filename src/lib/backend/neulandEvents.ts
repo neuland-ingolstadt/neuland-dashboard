@@ -3,8 +3,12 @@ import { z } from 'zod'
 const baseNeulandEventSchema = z.object({
   id: z.string(),
   title: z.object({
-    de: z.string({ required_error: 'Bitte geben Sie einen Titel ein' }),
-    en: z.string({ required_error: 'Bitte geben Sie einen Titel ein' }),
+    de: z.string({ required_error: 'Bitte geben Sie einen Titel ein' }).min(1, {
+      message: 'Bitte geben Sie einen Titel ein',
+    }),
+    en: z.string({ required_error: 'Bitte geben Sie einen Titel ein' }).min(1, {
+      message: 'Bitte geben Sie einen Titel ein',
+    }),
   }),
   description: z
     .object({
@@ -52,32 +56,62 @@ const baseNeulandEventSchema = z.object({
   updatedAt: z.string(),
 })
 
-export const neulandEventSchema = baseNeulandEventSchema.superRefine(
-  ({ startTime, endTime }, ctx) => {
-    if (endTime && !startTime) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Bitte geben Sie ein Start- und Enddatum ein',
-        path: ['startTime'],
-      })
-    }
+function refineData(
+  data: {
+    description: {
+      de: string | null
+      en: string | null
+    } | null
+    startTime: Date | null
+    endTime: Date | null
+  },
+  ctx: z.RefinementCtx
+) {
+  const { startTime, endTime, description } = data
+
+  if (endTime && !startTime) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Bitte geben Sie ein Start- und Enddatum ein',
+      path: ['startTime'],
+    })
   }
-)
+
+  if (startTime && endTime && endTime < startTime) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Endzeit muss nach Startzeit liegen',
+      path: ['endTime'],
+    })
+  }
+
+  if (description?.de && !description.en) {
+    ctx.addIssue({
+      code: 'custom',
+      message:
+        'Bitte geben Sie entweder beide Beschreibungen oder keine Beschreibung an',
+      path: ['description.de'],
+    })
+  }
+
+  if (description?.en && !description.de) {
+    ctx.addIssue({
+      code: 'custom',
+      message:
+        'Bitte geben Sie entweder beide Beschreibungen oder keine Beschreibung an',
+      path: ['description.en'],
+    })
+  }
+}
+
+export const neulandEventSchema = baseNeulandEventSchema.superRefine(refineData)
 
 export const updateNeulandEventSchema = baseNeulandEventSchema
   .omit({
     createdAt: true,
     updatedAt: true,
   })
-  .superRefine(({ startTime, endTime }, ctx) => {
-    if (endTime && !startTime) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Bitte geben Sie ein Start- und Enddatum ein',
-        path: ['startTime'],
-      })
-    }
-  })
+  .superRefine(refineData)
 
 export const newNeulandEventSchema = baseNeulandEventSchema
   .omit({
@@ -85,24 +119,7 @@ export const newNeulandEventSchema = baseNeulandEventSchema
     updatedAt: true,
     id: true,
   })
-  .superRefine(({ startTime, endTime }, ctx) => {
-    if (endTime && !startTime) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Bitte geben Sie ein Start- und Enddatum ein',
-        path: ['startTime'],
-      })
-    }
-
-    if (startTime && endTime && endTime < startTime) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Endzeit muss nach Startzeit liegen',
-        path: ['endTime'],
-      })
-    }
-  })
-
+  .superRefine(refineData)
 export type NeulandEvent = z.infer<typeof neulandEventSchema>
 export type UpdateNeulandEvent = z.infer<typeof updateNeulandEventSchema>
 export type NewNeulandEvent = z.infer<typeof newNeulandEventSchema>
