@@ -1,5 +1,5 @@
 import { ALL_WEEKDAYS, Frequency, type Options, RRule, Weekday } from 'rrule'
-import type { RecurrenceType } from '../providers/recurrenceProvider'
+import type { EndType, RecurrenceType } from '../providers/recurrenceProvider'
 
 /**
  * Converts a RecurrenceType object to an RRule instance
@@ -94,4 +94,114 @@ export function toRRule(
   }
 
   return new RRule(options)
+}
+
+/**
+ * Converts an RRule instance to a RecurrenceType object
+ * @param rule The RRule instance to convert
+ * @returns A RecurrenceType object representing the recurrence pattern
+ */
+export function fromRRule(rule: RRule): RecurrenceType {
+  const options = rule.options
+  const frequency = options.freq
+  const interval = options.interval || 1
+
+  // Determine end type
+  let endType: EndType
+  if (options.count) {
+    endType = {
+      endType: 'after',
+      count: options.count,
+    }
+  } else if (options.until) {
+    endType = {
+      endType: 'on-date',
+      until: options.until,
+    }
+  } else {
+    endType = {
+      endType: 'never',
+    }
+  }
+
+  // Base recurrence properties
+  const baseRecurrence = {
+    isRecurring: true,
+    interval,
+    ...endType,
+  }
+
+  // Add frequency-specific properties
+  switch (frequency) {
+    case Frequency.DAILY: {
+      const weekdays = options.byweekday || []
+      return {
+        ...baseRecurrence,
+        frequency: Frequency.DAILY,
+        interval: 1,
+        weekdays: Array.isArray(weekdays) ? weekdays : [weekdays],
+      }
+    }
+
+    case Frequency.WEEKLY: {
+      const weekdays = options.byweekday || []
+      return {
+        ...baseRecurrence,
+        frequency: Frequency.WEEKLY,
+        weekdays: Array.isArray(weekdays) ? weekdays : [weekdays],
+      }
+    }
+
+    case Frequency.MONTHLY: {
+      // Determine recurrence type
+      let recurrenceType: 'absolute' | 'relative' | 'last' = 'absolute'
+
+      // If byweekday exists and has nth value
+      if (options.byweekday) {
+        const weekday = Array.isArray(options.byweekday)
+          ? options.byweekday[0]
+          : options.byweekday
+
+        if (typeof weekday === 'object' && 'n' in weekday) {
+          recurrenceType = weekday.n < 0 ? 'last' : 'relative'
+        }
+      }
+
+      return {
+        ...baseRecurrence,
+        frequency: Frequency.MONTHLY,
+        recurrenceType,
+      } as RecurrenceType
+    }
+
+    case Frequency.YEARLY: {
+      // Determine recurrence type
+      let recurrenceType: 'absolute' | 'relative' | 'last' = 'absolute'
+
+      // If byweekday exists and has nth value
+      if (options.byweekday) {
+        const weekday = Array.isArray(options.byweekday)
+          ? options.byweekday[0]
+          : options.byweekday
+
+        if (typeof weekday === 'object' && 'n' in weekday) {
+          recurrenceType = weekday.n < 0 ? 'last' : 'relative'
+        }
+      }
+
+      return {
+        ...baseRecurrence,
+        frequency: Frequency.YEARLY,
+        recurrenceType,
+      } as RecurrenceType
+    }
+
+    default:
+      // Default to weekly if unknown frequency
+      return {
+        ...baseRecurrence,
+        frequency: Frequency.WEEKLY,
+        weekdays: [],
+      } as RecurrenceType
+  }
 }

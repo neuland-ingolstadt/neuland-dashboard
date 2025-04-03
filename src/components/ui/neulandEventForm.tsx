@@ -98,6 +98,7 @@ const NeulandEventForm = forwardRef<NeulandEventFormRef, NeulandEventFormProps>(
           onStartDateChange={(date) => {
             form.setValue('startTime', date)
           }}
+          existingRrule={rruleWatch}
         >
           <EditSeriesDialog
             isOpen={isEditorOpen}
@@ -281,7 +282,6 @@ const NeulandEventForm = forwardRef<NeulandEventFormRef, NeulandEventFormProps>(
                       checked={!!field.value}
                       onCheckedChange={(checked) => {
                         if (!checked) {
-                          console.log('checked', checked)
                           field.onChange(null)
                           return
                         }

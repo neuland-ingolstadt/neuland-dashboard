@@ -1,4 +1,4 @@
-import { toRRule } from '@/lib/utils/recurrenceUtils'
+import { fromRRule, toRRule } from '@/lib/utils/recurrenceUtils'
 import {
   createContext,
   useCallback,
@@ -7,7 +7,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { Frequency, RRule, type Weekday } from 'rrule'
+import { Frequency, RRule, rrulestr, type Weekday } from 'rrule'
 
 export const WEEKDAYS = [
   {
@@ -23,7 +23,7 @@ export const WEEKDAYS = [
   { value: RRule.SA, label: 'Samstag', shortLabel: 'Sa' },
 ] as const
 
-type EndType =
+export type EndType =
   | {
       endType: 'after'
       count: number
@@ -36,7 +36,7 @@ type EndType =
       endType: 'never'
     }
 
-type FrequencyType =
+export type FrequencyType =
   | {
       frequency: Frequency.DAILY
       interval: 1
@@ -74,6 +74,7 @@ type RecurrencesProviderProps = {
   openRecurrenceDialog?: (bool: boolean) => void
   startDate: Date
   onStartDateChange: (date: Date) => void
+  existingRrule?: string | null
 }
 
 type RecurrencesProviderState = {
@@ -99,6 +100,7 @@ export function RecurrencesProvider({
   children,
   startDate,
   onStartDateChange,
+  existingRrule,
   ...props
 }: RecurrencesProviderProps) {
   // direct approach does not work with form watch and setValue
@@ -121,6 +123,14 @@ export function RecurrencesProvider({
   const [recurrence, setRecurrence] = useState<RecurrenceType>(
     () => INITIAL_RECURRENCE_VALUES
   )
+
+  useEffect(() => {
+    if (existingRrule) {
+      const rrule = rrulestr(existingRrule)
+      const recurrence = fromRRule(rrule)
+      setRecurrence(recurrence)
+    }
+  }, [existingRrule])
 
   const changeRecurrence = useCallback((values: Partial<RecurrenceType>) => {
     setRecurrence((prev) => {
