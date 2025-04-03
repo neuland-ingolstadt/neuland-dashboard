@@ -34,22 +34,28 @@ export default function EditSeriesDialog({
   onOpenChange,
   onSave,
 }: EditSeriesDialogProps) {
-  const { recurrence, changeRecurrence, startDate, onStartDateChange, rrule } =
-    useRecurrence()
+  const {
+    recurrence,
+    changeRecurrence,
+    startDate,
+    onStartDateChange,
+    rrule,
+    restoreRecurrence,
+  } = useRecurrence()
 
   const rruleText = useMemo(() => {
     return rrule?.toText() || ''
   }, [rrule])
 
-  const onCancel = useCallback(() => {
-    onOpenChange(false)
-  }, [onOpenChange])
-
   const onOpenChangeDialog = useCallback(
     (open: boolean) => {
+      if (!open) {
+        restoreRecurrence()
+      }
+
       onOpenChange(open)
     },
-    [onOpenChange]
+    [onOpenChange, restoreRecurrence]
   )
 
   return (
@@ -141,7 +147,7 @@ export default function EditSeriesDialog({
         </Tabs>
 
         <DialogFooter>
-          <Button variant="ghost" onClick={onCancel}>
+          <Button variant="ghost" onClick={() => onOpenChangeDialog(false)}>
             Abbrechen
           </Button>
           <Button

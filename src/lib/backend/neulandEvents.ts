@@ -23,8 +23,26 @@ export const neulandEventSchema = z.object({
     })
     .nullable(),
   location: z.string(),
-  startTime: z.date({ required_error: 'Bitte geben Sie eine Startzeit ein' }),
-  endTime: z.date({ required_error: 'Bitte geben Sie eine Endzeit ein' }),
+  startTime: z.preprocess(
+    (val) => {
+      if (typeof val === 'string' || val instanceof Date) {
+        return new Date(val)
+      }
+    },
+    z.date({
+      required_error: 'Bitte geben Sie eine Startzeit ein',
+    })
+  ),
+  endTime: z.preprocess(
+    (val) => {
+      if (typeof val === 'string' || val instanceof Date) {
+        return new Date(val)
+      }
+    },
+    z.date({
+      required_error: 'Bitte geben Sie eine Endzeit ein',
+    })
+  ),
   rrule: z.string().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),

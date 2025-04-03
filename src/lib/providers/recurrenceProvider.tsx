@@ -1,9 +1,11 @@
 import { fromRRule, toRRule } from '@/lib/utils/recurrenceUtils'
 import {
   createContext,
+  forwardRef,
   useCallback,
   useContext,
   useEffect,
+  useImperativeHandle,
   useMemo,
   useState,
 } from 'react'
@@ -83,6 +85,7 @@ type RecurrencesProviderState = {
   startDate: Date | undefined
   onStartDateChange: (date: Date | undefined) => void
   rrule: RRule | null
+  restoreRecurrence: () => void
 }
 
 const initialState: RecurrencesProviderState = {
@@ -91,76 +94,98 @@ const initialState: RecurrencesProviderState = {
   startDate: undefined,
   onStartDateChange: () => {},
   rrule: null,
+  restoreRecurrence: () => {},
 }
 
 const RecurrencesProviderContext =
   createContext<RecurrencesProviderState>(initialState)
 
-export function RecurrencesProvider({
-  children,
-  startDate,
-  onStartDateChange,
-  existingRrule,
-  ...props
-}: RecurrencesProviderProps) {
-  // direct approach does not work with form watch and setValue
-  const [startDateValue, setStartDateValue] = useState<Date | undefined>(
-    startDate
-  )
+export interface RecurrencesProviderRef {
+  rrule: RRule | null
+}
 
-  useEffect(() => {
-    setStartDateValue(startDate)
-  }, [startDate])
+const RecurrencesProvider = forwardRef<
+  RecurrencesProviderRef,
+  RecurrencesProviderProps
+>(
+  (
+    { children, startDate, onStartDateChange, existingRrule, ...props },
+    ref
+  ) => {
+    const [startDateValue, setStartDateValue] = useState<Date | undefined>(
+      startDate
+    )
 
-  const handleStartDateChange = useCallback(
-    (date: Date | undefined) => {
-      setStartDateValue(date)
-      onStartDateChange(date || new Date())
-    },
-    [onStartDateChange]
-  )
+    useEffect(() => {
+      setStartDateValue(startDate)
+    }, [startDate])
 
-  const [recurrence, setRecurrence] = useState<RecurrenceType>(
-    () => INITIAL_RECURRENCE_VALUES
-  )
+    const handleStartDateChange = useCallback(
+      (date: Date | undefined) => {
+        setStartDateValue(date)
+        onStartDateChange(date || new Date())
+      },
+      [onStartDateChange]
+    )
 
-  useEffect(() => {
-    if (existingRrule) {
+    const [recurrence, setRecurrence] = useState<RecurrenceType>(
+      () => INITIAL_RECURRENCE_VALUES
+    )
+
+    const restoreRecurrence = useCallback(() => {
+      if (!existingRrule) return
+
       const rrule = rrulestr(existingRrule)
       const recurrence = fromRRule(rrule)
       setRecurrence(recurrence)
+    }, [existingRrule])
+
+    useEffect(() => {
+      restoreRecurrence()
+    }, [restoreRecurrence])
+
+    const changeRecurrence = useCallback((values: Partial<RecurrenceType>) => {
+      setRecurrence((prev) => {
+        return {
+          ...prev,
+          ...values,
+        } as RecurrenceType
+      })
+    }, [])
+
+    const rrule = useMemo(() => {
+      if (!recurrence || !startDateValue) return null
+
+      return toRRule(recurrence, startDateValue)
+    }, [recurrence, startDateValue])
+
+    useImperativeHandle(
+      ref,
+      () => ({
+        rrule,
+      }),
+      [rrule]
+    )
+
+    const value = {
+      recurrence,
+      changeRecurrence,
+      startDate: startDateValue,
+      onStartDateChange: handleStartDateChange,
+      rrule,
+      restoreRecurrence,
     }
-  }, [existingRrule])
 
-  const changeRecurrence = useCallback((values: Partial<RecurrenceType>) => {
-    setRecurrence((prev) => {
-      return {
-        ...prev,
-        ...values,
-      } as RecurrenceType
-    })
-  }, [])
-
-  const rrule = useMemo(() => {
-    if (!recurrence || !startDateValue) return null
-
-    return toRRule(recurrence, startDateValue)
-  }, [recurrence, startDateValue])
-
-  const value = {
-    recurrence,
-    changeRecurrence,
-    startDate: startDateValue,
-    onStartDateChange: handleStartDateChange,
-    rrule,
+    return (
+      <RecurrencesProviderContext.Provider value={value} {...props}>
+        {children}
+      </RecurrencesProviderContext.Provider>
+    )
   }
+)
 
-  return (
-    <RecurrencesProviderContext.Provider value={value} {...props}>
-      {children}
-    </RecurrencesProviderContext.Provider>
-  )
-}
+RecurrencesProvider.displayName = 'RecurrencesProvider'
+export default RecurrencesProvider
 
 export const useRecurrence = () => {
   const context = useContext(RecurrencesProviderContext)

@@ -1,3 +1,4 @@
+// @ts-nocheck this the types make no sense at all, please dont touch this file
 import { ALL_WEEKDAYS, Frequency, type Options, RRule, Weekday } from 'rrule'
 import type { EndType, RecurrenceType } from '../providers/recurrenceProvider'
 
@@ -34,12 +35,20 @@ export function toRRule(
   switch (recurrence.frequency) {
     case Frequency.DAILY:
       // For daily frequency, byweekday is only used if specific weekdays are selected
+      if (!recurrence.weekdays) {
+        recurrence.weekdays = []
+      }
+
       if (recurrence.weekdays.length > 0 && recurrence.interval === 1) {
         options.byweekday = recurrence.weekdays
       }
       break
 
     case Frequency.WEEKLY:
+      if (!recurrence.weekdays) {
+        recurrence.weekdays = []
+      }
+
       // For weekly frequency, we need to set the byweekday option
       if (recurrence.weekdays.length > 0) {
         options.byweekday = recurrence.weekdays

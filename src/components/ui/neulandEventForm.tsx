@@ -1,10 +1,4 @@
-import {
-  useCallback,
-  forwardRef,
-  useImperativeHandle,
-  useState,
-  useMemo,
-} from 'react'
+import { useCallback, forwardRef, useImperativeHandle, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { addHours } from 'date-fns'
@@ -25,12 +19,12 @@ import {
   type NewNeulandEvent,
   newNeulandEventSchema,
 } from '@/lib/backend/neulandEvents'
-import { RecurrencesProvider } from '@/lib/providers/recurrenceProvider'
+import RecurrencesProvider from '@/lib/providers/recurrenceProvider'
 import EditSeriesDialog from '@/components/ui/dialog/editSeriesDialog'
 import { Switch } from '@/components/ui/switch'
-import { rrulestr } from 'rrule'
 import { Button } from '@/components/ui/button'
 import { Edit } from 'lucide-react'
+import RRuleText from '@/components/ui/recurrenceSwitch'
 
 interface NeulandEventFormProps {
   onSubmit: (data: NewNeulandEvent) => void
@@ -82,14 +76,7 @@ const NeulandEventForm = forwardRef<NeulandEventFormRef, NeulandEventFormProps>(
       },
     }))
 
-    const rruleWatch = form.watch('rrule')
-
-    const rruleText = useMemo(() => {
-      if (!rruleWatch) return ''
-
-      const rrule = rrulestr(rruleWatch)
-      return rrule.toText()
-    }, [rruleWatch])
+    const rruleWatch = existingEvent?.rrule
 
     return (
       <Form {...form}>
@@ -260,9 +247,7 @@ const NeulandEventForm = forwardRef<NeulandEventFormRef, NeulandEventFormProps>(
                       Wiederkehrendes Event
                     </FormLabel>
                     <FormDescription className="flex flex-row items-center gap-3">
-                      <span className="first-letter:capitalize">
-                        {rruleText}
-                      </span>
+                      <RRuleText />
 
                       {rruleWatch && (
                         <Button
