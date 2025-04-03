@@ -1,6 +1,6 @@
 import IntervalSelector from '@/components/intervalSelector'
 import { Button } from '@/components/ui/button'
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DateTimePicker } from '@/components/ui/datetimepicker'
 import {
   Dialog,

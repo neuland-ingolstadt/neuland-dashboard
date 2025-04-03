@@ -9,7 +9,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { Frequency, RRule, rrulestr, type Weekday } from 'rrule'
+import { Frequency, RRule, type Weekday, rrulestr } from 'rrule'
 
 export const WEEKDAYS = [
   {

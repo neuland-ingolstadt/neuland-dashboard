@@ -1,30 +1,30 @@
-import { useCallback, forwardRef, useImperativeHandle, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { addHours } from 'date-fns'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@/components/ui/button'
+import { DateTimePicker } from '@/components/ui/datetimepicker'
+import EditSeriesDialog from '@/components/ui/dialog/editSeriesDialog'
 import {
+  Form,
+  FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
-  Form,
-  FormDescription,
 } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import RRuleText from '@/components/ui/recurrenceSwitch'
 import RequiredLabel from '@/components/ui/required'
-import { DateTimePicker } from '@/components/ui/datetimepicker'
+import { Switch } from '@/components/ui/switch'
+import { Textarea } from '@/components/ui/textarea'
 import {
   type NewNeulandEvent,
   newNeulandEventSchema,
 } from '@/lib/backend/neulandEvents'
 import RecurrencesProvider from '@/lib/providers/recurrenceProvider'
-import EditSeriesDialog from '@/components/ui/dialog/editSeriesDialog'
-import { Switch } from '@/components/ui/switch'
-import { Button } from '@/components/ui/button'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { addHours } from 'date-fns'
 import { Edit } from 'lucide-react'
-import RRuleText from '@/components/ui/recurrenceSwitch'
+import { forwardRef, useCallback, useImperativeHandle, useState } from 'react'
+import { useForm } from 'react-hook-form'
 
 interface NeulandEventFormProps {
   onSubmit: (data: NewNeulandEvent) => void

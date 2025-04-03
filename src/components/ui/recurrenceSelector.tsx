@@ -13,9 +13,9 @@ import {
   isSameMonth,
   startOfMonth,
 } from 'date-fns'
+import { de } from 'date-fns/locale'
 import React, { useCallback, useMemo } from 'react'
 import { Frequency } from 'rrule'
-import { de } from 'date-fns/locale'
 
 const ordinalMap: Record<string, string> = {
   '1': 'ersten',

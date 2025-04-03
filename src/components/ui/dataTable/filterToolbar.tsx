@@ -48,7 +48,7 @@ export function DataTableFilterToolbar<TData, TValue>({
           className="h-8 w-[150px] lg:w-[250px]"
         />
       )}
-      {selectFilters?.map((filter, idx) => (
+      {selectFilters?.map((filter) => (
         <DataTableFacetedFilter
           key={filter.title}
           {...filter}

@@ -1,5 +1,5 @@
 import { Toggle } from '@/components/ui/toggle'
-import { useRecurrence, WEEKDAYS } from '@/lib/providers/recurrenceProvider'
+import { WEEKDAYS, useRecurrence } from '@/lib/providers/recurrenceProvider'
 import React, { useCallback, useEffect } from 'react'
 import { Frequency, type Weekday } from 'rrule'
 
