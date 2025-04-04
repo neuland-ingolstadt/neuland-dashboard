@@ -51,7 +51,7 @@ export default function NewSportsEventPage() {
 
         <div className="flex flex-row items-center">
           <h1 className="mt-3 flex-1 text-4xl font-bold tracking-tight">
-            Neue Event
+            Neues Event
           </h1>
 
           <Button onClick={() => formRef.current?.triggerSubmit()}>
