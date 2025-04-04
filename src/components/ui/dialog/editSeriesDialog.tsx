@@ -124,7 +124,7 @@ export default function EditSeriesDialog({
           <TabsContent value={`${Frequency.MONTHLY}`}>
             <Card className="h-72">
               <CardHeader>
-                <CardTitle>Wöchentlich</CardTitle>
+                <CardTitle>Monatlich</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <IntervalSelector frequency={Frequency.MONTHLY} />
@@ -137,7 +137,7 @@ export default function EditSeriesDialog({
           <TabsContent value={`${Frequency.YEARLY}`}>
             <Card className="h-72">
               <CardHeader>
-                <CardTitle>Wöchentlich</CardTitle>
+                <CardTitle>Jährlich</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <IntervalSelector frequency={Frequency.YEARLY} />
