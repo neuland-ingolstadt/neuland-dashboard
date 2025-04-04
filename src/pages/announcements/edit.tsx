@@ -48,7 +48,7 @@ export default function EditAnnouncementEventPage({
     })
 
     if (!response.ok) {
-      openErrorDialog('Die Veranstaltung konnte nicht gelöscht werden.')
+      openErrorDialog('Die Ankündigung konnte nicht gelöscht werden.')
       setLoading(false)
       return
     }
@@ -73,7 +73,7 @@ export default function EditAnnouncementEventPage({
       })
 
       if (!response.ok) {
-        openErrorDialog('Die Veranstaltung konnte nicht gespeichert werden.')
+        openErrorDialog('Die Ankündigung konnte nicht gespeichert werden.')
         setLoading(false)
         return
       }
@@ -96,7 +96,7 @@ export default function EditAnnouncementEventPage({
         open={confirmDeleteOpen}
         setOpen={() => setConfirmDeleteOpen(false)}
         onConfirm={handleDelete}
-        title="Veranstaltung löschen?"
+        title="Ankündigung löschen?"
       />
 
       <NavBar />

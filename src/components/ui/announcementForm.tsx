@@ -134,7 +134,6 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
                       onChange={field.onChange}
                       value={field.value}
                       granularity="minute"
-                      hourCycle={24}
                     />
                   </FormControl>
 
@@ -156,7 +155,6 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
                       onChange={field.onChange}
                       value={field.value}
                       granularity="minute"
-                      hourCycle={24}
                     />
                   </FormControl>
 

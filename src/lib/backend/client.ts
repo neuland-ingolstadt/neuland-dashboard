@@ -1,4 +1,5 @@
 import type { Announcement, NewAnnouncement } from '@/lib/backend/announcements'
+import type { NeulandEvent, NewNeulandEvent } from '@/lib/backend/neulandEvents'
 import type { RoomReport } from '@/lib/backend/rootReports'
 import type { NewSportsEvent, SportsEvent } from '@/lib/backend/sportEvents'
 import { GraphQLClient, gql } from 'graphql-request'
@@ -20,6 +21,11 @@ interface AnnouncementsData {
 
 interface RoomReportsData {
   roomReports: RoomReport[]
+  error?: unknown
+}
+
+interface NeulandEventsData {
+  neulandEvents: NeulandEvent[]
   error?: unknown
 }
 
@@ -237,6 +243,87 @@ export async function deleteAnnouncement(id: string, accessToken: string) {
     }
   `.replace(/\s+/g, ' ')
 
+  await graphqlClient.request(
+    mutation,
+    { id },
+    { Authorization: `Bearer ${accessToken}` }
+  )
+}
+
+export async function getNeulandEvents(): Promise<NeulandEvent[]> {
+  const query = gql`
+    query NeulandEvents {
+			neulandEvents {
+				id
+				title {
+					de
+					en
+				}
+				description {
+					de
+					en
+				}
+				location
+				createdAt
+				updatedAt
+				startTime
+				endTime
+				rrule
+			}
+		}
+  `.replace(/\s+/g, ' ')
+
+  const data = await graphqlClient.request<NeulandEventsData>(query)
+
+  if (!data.neulandEvents) {
+    throw new Error('No data returned from API')
+  }
+
+  return data.neulandEvents
+}
+
+export async function createNeulandEvent(
+  event: NewNeulandEvent,
+  accessToken: string
+) {
+  const mutation = gql`
+		mutation UpsertNeulandEvent($event: NeulandEventInput!) {
+			upsertNeulandEvent(input: $event) {
+				id
+			}
+		}
+	`.replace(/\s+/g, ' ')
+  await graphqlClient.request(
+    mutation,
+    { event },
+    { Authorization: `Bearer ${accessToken}` }
+  )
+}
+
+export async function updateNeulandEvent(
+  event: NewNeulandEvent,
+  id: string,
+  accessToken: string
+) {
+  const mutation = gql`
+		mutation UpsertNeulandEvent($event: NeulandEventInput!, $id: ID!) {
+			upsertNeulandEvent(input: $event, id: $id) {
+				id
+			}
+		}
+	`.replace(/\s+/g, ' ')
+  await graphqlClient.request(
+    mutation,
+    { event, id },
+    { Authorization: `Bearer ${accessToken}` }
+  )
+}
+export async function deleteNeulandEvent(id: string, accessToken: string) {
+  const mutation = gql`
+		mutation DeleteNeulandEvent($id: ID!) {
+			deleteNeulandEvent(id: $id)
+		}
+	`.replace(/\s+/g, ' ')
   await graphqlClient.request(
     mutation,
     { id },

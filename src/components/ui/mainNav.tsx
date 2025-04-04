@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import type { Group } from '@/lib/backend/groups'
-import { useUserGroups } from '@/lib/hooks/gorupsHook'
+import { useUserGroups } from '@/lib/hooks/groups'
 import { cn } from '@/lib/utils'
 import { ExternalLink } from 'lucide-react'
 import Link from 'next/link'
@@ -31,6 +31,11 @@ const links: NavLink[] = [
     href: '/roomreports',
     groups: ['admin'],
   },
+  {
+    label: 'Neuland Events',
+    href: '/events',
+    groups: ['events'],
+  },
 ]
 
 export function MainNav({
@@ -43,7 +48,10 @@ export function MainNav({
   const userLinks = useMemo(() => {
     return links.filter((link) => {
       if (!link.groups) return true
-      return link.groups.some((group) => userGroups.includes(group))
+      return (
+        link.groups.some((group) => userGroups.includes(group)) ||
+        userGroups.includes('admin')
+      )
     })
   }, [userGroups])
 

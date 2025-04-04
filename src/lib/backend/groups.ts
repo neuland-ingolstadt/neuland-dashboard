@@ -12,6 +12,7 @@ export const groups = {
   sports: 'Neuland Next Hochschulsport',
   announcements: 'Neuland Next Announcements',
   admin: 'Neuland Next Admin',
+  events: 'Neuland Next Events',
 } as const
 
 export type Group = keyof typeof groups
@@ -27,8 +28,10 @@ export async function checkApiPermissions(
     return false
   }
 
-  return requiredGroups.every((group) =>
-    session.user.groups.includes(groups[group])
+  return (
+    requiredGroups.every((group) =>
+      session.user.groups.includes(groups[group])
+    ) || session.user.groups.includes(groups.admin)
   )
 }
 
@@ -42,7 +45,9 @@ export async function checkServerSidePermissions(
     return false
   }
 
-  return requiredGroups.every((group) =>
-    session.user.groups.includes(groups[group])
+  return (
+    requiredGroups.every((group) =>
+      session.user.groups.includes(groups[group])
+    ) || session.user.groups.includes(groups.admin)
   )
 }

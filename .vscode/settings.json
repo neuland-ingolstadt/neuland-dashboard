@@ -28,5 +28,8 @@
     "comments": "off",
     "strings": "on"
   },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.biome": "explicit"
+  },
   "typescript.preferences.importModuleSpecifier": "non-relative"
 }

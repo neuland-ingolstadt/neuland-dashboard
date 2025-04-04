@@ -20,7 +20,6 @@ import {
   X,
 } from 'lucide-react'
 import { type NextRouter, useRouter } from 'next/router'
-import React from 'react'
 
 const columns: (
   dialog: ReturnType<typeof useDialogs>,
