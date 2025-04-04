@@ -116,8 +116,6 @@ export function fromRRule(rule: RRule): RecurrenceType {
   const frequency = options.freq
   const interval = options.interval || 1
 
-  console.dir(rule, { depth: null })
-
   // Determine end type
   let endType: EndType
   if (options.count) {
