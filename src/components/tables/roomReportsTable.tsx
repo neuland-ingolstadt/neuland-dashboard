@@ -2,6 +2,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { DataTableColumnHeader } from '@/components/ui/dataTable/columnHeader'
 import { DataTable } from '@/components/ui/dataTable/dataTable'
+import type { FacetFilter } from '@/components/ui/dataTable/facetedFilter'
 import type { RoomReport } from '@/lib/backend/rootReports'
 import { useDialogs } from '@/lib/providers/dialogsProvider'
 import type { ColumnDef } from '@tanstack/react-table'
@@ -172,6 +173,31 @@ export default function RoomReportsTable({ reports }: RoomReportsTableProps) {
   const dialog = useDialogs()
   const router = useRouter()
 
+  const selectFilters: FacetFilter<RoomReport, unknown>[] = [
+    {
+      column: 'reason',
+      title: 'Grund',
+      options: Object.entries(REASONS).map(([value, { label, icon }]) => ({
+        value,
+        label,
+        icon,
+      })),
+      mode: 'multiple',
+    },
+    {
+      column: 'room',
+      title: 'Raum',
+      options: reports
+        .map((report) => report.room)
+        .filter((value, index, self) => self.indexOf(value) === index)
+        .map((room) => ({
+          value: room,
+          label: room,
+        })),
+      mode: 'multiple',
+    },
+  ]
+
   return (
     <div className="flex flex-col gap-4">
       <h2 className="text-xl font-bold">Neue Meldungen</h2>
@@ -191,34 +217,9 @@ export default function RoomReportsTable({ reports }: RoomReportsTableProps) {
             column: 'description',
             title: 'Description',
           },
-          selectFilters: [
-            {
-              column: 'reason',
-              title: 'Grund',
-              options: Object.entries(REASONS).map(
-                ([value, { label, icon }]) => ({
-                  value,
-                  label,
-                  icon,
-                })
-              ),
-              mode: 'multiple',
-            },
-            {
-              column: 'room',
-              title: 'Raum',
-              options: reports
-                .map((report) => report.room)
-                .filter((value, index, self) => self.indexOf(value) === index)
-                .map((room) => ({
-                  value: room,
-                  label: room,
-                })),
-              mode: 'multiple',
-            },
-          ],
+          selectFilters,
         }}
-        tableId="roomReports"
+        tableId="roomReports-new"
         data={reports.filter((r) => r.resolvedAt === null)}
       />
       <h2 className="text-xl font-bold">Abgeschlossene Meldungen</h2>
@@ -238,11 +239,9 @@ export default function RoomReportsTable({ reports }: RoomReportsTableProps) {
             column: 'description',
             title: 'Description',
           },
-          selectFilters: [
-            // TODO add select for reason and room
-          ],
+          selectFilters,
         }}
-        tableId="roomReports"
+        tableId="roomReports-resolved"
         data={reports.filter((r) => r.resolvedAt !== null)}
       />
     </div>
