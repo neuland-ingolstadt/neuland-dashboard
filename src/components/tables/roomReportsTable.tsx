@@ -2,11 +2,6 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { DataTableColumnHeader } from '@/components/ui/dataTable/columnHeader'
 import { DataTable } from '@/components/ui/dataTable/dataTable'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
 import type { RoomReport } from '@/lib/backend/rootReports'
 import { useDialogs } from '@/lib/providers/dialogsProvider'
 import type { ColumnDef } from '@tanstack/react-table'
@@ -20,6 +15,30 @@ import {
   X,
 } from 'lucide-react'
 import { type NextRouter, useRouter } from 'next/router'
+import React from 'react'
+
+const REASONS = {
+  WRONG_DESCRIPTION: {
+    icon: Text,
+    label: 'Falsche Beschreibung',
+  },
+  WRONG_LOCATION: {
+    icon: MapPinMinus,
+    label: 'Falscher Standort',
+  },
+  NOT_EXISTING: {
+    icon: X,
+    label: 'Existiert nicht',
+  },
+  MISSING: {
+    icon: MapPinX,
+    label: 'Fehlt',
+  },
+  OTHER: {
+    icon: MessageCircleQuestion,
+    label: 'Sonstiges',
+  },
+}
 
 const columns: (
   dialog: ReturnType<typeof useDialogs>,
@@ -30,49 +49,56 @@ const columns: (
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Erstellt am" />
     ),
-    cell: ({ cell: { row } }) => {
-      return format(row.original.createdAt, 'dd.MM.yyyy')
+    size: 300,
+    cell: ({
+      cell: {
+        row: {
+          original: { createdAt },
+        },
+      },
+    }) => {
+      return `${format(createdAt, 'dd.MM.yyyy')} um ${format(createdAt, 'HH:mm')} Uhr`
     },
   },
   {
     accessorKey: 'reason',
+    size: 180,
     sortingFn: ({ original: { reason: a } }, { original: { reason: b } }) => {
       return a?.localeCompare(b)
     },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Grund" />
     ),
-    cell({ cell: { row } }) {
-      const icon = {
-        WRONG_DESCRIPTION: <Text size={22} />,
-        WRONG_LOCATION: <MapPinMinus size={22} />,
-        NOT_EXISTING: <X size={22} />,
-        MISSING: <MapPinX size={22} />,
-        OTHER: <MessageCircleQuestion size={22} />,
-      }[row.original.reason]
-      const name = {
-        WRONG_DESCRIPTION: 'Falsche Beschreibung',
-        WRONG_LOCATION: 'Falscher Standort',
-        NOT_EXISTING: 'Existiert nicht',
-        MISSING: 'Fehlt',
-        OTHER: 'Sonstiges',
-      }[row.original.reason]
+    cell({
+      cell: {
+        row: {
+          original: { reason },
+        },
+      },
+    }) {
       return (
-        <Tooltip>
-          <TooltipTrigger>{icon}</TooltipTrigger>
-          <TooltipContent>{name}</TooltipContent>
-        </Tooltip>
+        <Badge className="flex flex-row gap-1 w-fit" variant="secondary">
+          {React.createElement(REASONS[reason].icon, {
+            className: 'h-3 w-4',
+          })}
+          <span className="truncate line-clamp-1">{REASONS[reason].label}</span>
+        </Badge>
       )
     },
   },
   {
     accessorKey: 'room',
+    size: 1,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Raum" />
     ),
-    cell: ({ cell: { row } }) => (
-      <Badge variant="secondary">{row.original.room}</Badge>
-    ),
+    cell: ({
+      cell: {
+        row: {
+          original: { room },
+        },
+      },
+    }) => <Badge variant="secondary">{room}</Badge>,
   },
   {
     accessorKey: 'description',
@@ -92,12 +118,16 @@ const columns: (
   {
     id: 'resolvedAt',
     header: '',
-    cell: ({ row: { original } }) => {
-      return original.resolvedAt === null ? (
+    size: 210,
+    cell: ({
+      row: {
+        original: { resolvedAt, id },
+      },
+    }) => {
+      return resolvedAt === null ? (
         <Button
-          variant="ghost"
-          size="sm"
-          className="p-2"
+          variant="outline"
+          className="w-full"
           onClick={async () => {
             dialog.setLoading(true)
             const response = await fetch('/api/roomreports', {
@@ -106,7 +136,7 @@ const columns: (
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                id: original.id,
+                id,
               }),
             })
 
@@ -121,10 +151,14 @@ const columns: (
             dialog.setLoading(false)
           }}
         >
-          <Check size={20} className="text-green-600" />
+          <Check size={16} className="text-green-600" />
+          <span className="ml-2">Erledigt</span>
         </Button>
       ) : (
-        <span>{original.resolvedAt}</span>
+        <span className="text-muted-foreground">
+          {format(resolvedAt, 'dd.MM.yyyy')} um {format(resolvedAt, 'HH:mm')}{' '}
+          Uhr
+        </span>
       )
     },
   },
@@ -145,7 +179,7 @@ export default function RoomReportsTable({ reports }: RoomReportsTableProps) {
         columns={columns(dialog, router)}
         enableFilter
         enablePagination
-        initialPageSize={5}
+        initialPageSize={20}
         initialSorting={[
           {
             id: 'createdAt',
@@ -158,7 +192,30 @@ export default function RoomReportsTable({ reports }: RoomReportsTableProps) {
             title: 'Description',
           },
           selectFilters: [
-            // TODO add select for reason and room
+            {
+              column: 'reason',
+              title: 'Grund',
+              options: Object.entries(REASONS).map(
+                ([value, { label, icon }]) => ({
+                  value,
+                  label,
+                  icon,
+                })
+              ),
+              mode: 'multiple',
+            },
+            {
+              column: 'room',
+              title: 'Raum',
+              options: reports
+                .map((report) => report.room)
+                .filter((value, index, self) => self.indexOf(value) === index)
+                .map((room) => ({
+                  value: room,
+                  label: room,
+                })),
+              mode: 'multiple',
+            },
           ],
         }}
         tableId="roomReports"
@@ -169,7 +226,7 @@ export default function RoomReportsTable({ reports }: RoomReportsTableProps) {
         columns={columns(dialog, router)}
         enableFilter
         enablePagination
-        initialPageSize={5}
+        initialPageSize={20}
         initialSorting={[
           {
             id: 'createdAt',

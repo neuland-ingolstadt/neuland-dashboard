@@ -16,7 +16,7 @@ export default function RoomReportsPage({ reports }: RoomReportsProps) {
   return (
     <div>
       <Head>
-        <title>Meldungen für falsch eingetragene Rauminfos.</title>
+        <title>Raummeldungen</title>
       </Head>
 
       <NavBar />
@@ -25,7 +25,7 @@ export default function RoomReportsPage({ reports }: RoomReportsProps) {
 
         <div className="flex flex-row items-center">
           <h1 className="mt-3 flex-1 text-4xl font-bold tracking-tight">
-            Meldungen für falsch eingetragene Rauminfos.
+            Raummeldungen
           </h1>
         </div>
 
