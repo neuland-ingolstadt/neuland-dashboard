@@ -4,10 +4,18 @@ import type { RoomReport } from '@/lib/backend/rootReports'
 import type { NewSportsEvent, SportsEvent } from '@/lib/backend/sportEvents'
 import { GraphQLClient, gql } from 'graphql-request'
 
-const endpoint =
-  process.env.NEXT_PUBLIC_GRAPHQL_URL || 'https://api.dev.neuland.app/graphql'
+const endpoint = process.env.GRAPHQL_URL || 'https://api.neuland.app/graphql'
+const devEndpoint = process.env.DEV_GRAPHQL_URL || endpoint
 
-export const graphqlClient = new GraphQLClient(endpoint)
+export const prodGraphqlClient = new GraphQLClient(endpoint)
+export const devGraphqlClient = new GraphQLClient(devEndpoint)
+
+const graphqlClient = {
+  sports: prodGraphqlClient,
+  neulandEvents: devGraphqlClient,
+  roomReports: prodGraphqlClient,
+  appAnnouncements: prodGraphqlClient,
+}
 
 interface SportsEventData {
   universitySports: SportsEvent[]
@@ -57,7 +65,7 @@ export async function getSportsEvents() {
     }
   `.replace(/\s+/g, ' ')
 
-  const data = await graphqlClient.request<SportsEventData>(query)
+  const data = await graphqlClient.sports.request<SportsEventData>(query)
 
   if (!data.universitySports) {
     throw new Error('No data returned from API')
@@ -78,7 +86,7 @@ export async function createSportsEvent(
     }
   `.replace(/\s+/g, ' ')
 
-  await graphqlClient.request(
+  await graphqlClient.sports.request(
     mutation,
     { event },
     { Authorization: `Bearer ${accessToken}` }
@@ -98,7 +106,7 @@ export async function updateSportsEvent(
     }
   `.replace(/\s+/g, ' ')
 
-  await graphqlClient.request(
+  await graphqlClient.sports.request(
     mutation,
     { event, id },
     { Authorization: `Bearer ${accessToken}` }
@@ -112,7 +120,7 @@ export async function deleteSportsEvent(id: string, accessToken: string) {
     }
   `.replace(/\s+/g, ' ')
 
-  await graphqlClient.request(
+  await graphqlClient.sports.request(
     mutation,
     { id },
     { Authorization: `Bearer ${accessToken}` }
@@ -133,9 +141,13 @@ export async function getRoomReports(accessToken: string) {
     }
   `.replace(/\s+/g, ' ')
 
-  const data = await graphqlClient.request<RoomReportsData>(query, undefined, {
-    Authorization: `Bearer ${accessToken}`,
-  })
+  const data = await graphqlClient.roomReports.request<RoomReportsData>(
+    query,
+    undefined,
+    {
+      Authorization: `Bearer ${accessToken}`,
+    }
+  )
 
   if (!data.roomReports) {
     throw new Error('No data returned from API')
@@ -153,7 +165,7 @@ export async function resolveRoomReport(id: string, accessToken: string) {
     }
   `.replace(/\s+/g, ' ')
 
-  await graphqlClient.request(
+  await graphqlClient.roomReports.request(
     mutation,
     { id },
     { Authorization: `Bearer ${accessToken}` }
@@ -185,7 +197,8 @@ export async function getAnnouncements() {
     }
   `.replace(/\s+/g, ' ')
 
-  const data = await graphqlClient.request<AnnouncementsData>(query)
+  const data =
+    await graphqlClient.appAnnouncements.request<AnnouncementsData>(query)
 
   if (!data.appAnnouncements) {
     throw new Error('No data returned from API')
@@ -206,7 +219,7 @@ export async function createAnnouncement(
     }
   `.replace(/\s+/g, ' ')
 
-  await graphqlClient.request(
+  await graphqlClient.appAnnouncements.request(
     mutation,
     { announcement },
     { Authorization: `Bearer ${accessToken}` }
@@ -229,7 +242,7 @@ export async function updateAnnouncement(
     }
   `.replace(/\s+/g, ' ')
 
-  await graphqlClient.request(
+  await graphqlClient.appAnnouncements.request(
     mutation,
     { announcement, id },
     { Authorization: `Bearer ${accessToken}` }
@@ -243,7 +256,7 @@ export async function deleteAnnouncement(id: string, accessToken: string) {
     }
   `.replace(/\s+/g, ' ')
 
-  await graphqlClient.request(
+  await graphqlClient.appAnnouncements.request(
     mutation,
     { id },
     { Authorization: `Bearer ${accessToken}` }
@@ -273,7 +286,8 @@ export async function getNeulandEvents(): Promise<NeulandEvent[]> {
 		}
   `.replace(/\s+/g, ' ')
 
-  const data = await graphqlClient.request<NeulandEventsData>(query)
+  const data =
+    await graphqlClient.neulandEvents.request<NeulandEventsData>(query)
 
   if (!data.neulandEvents) {
     throw new Error('No data returned from API')
@@ -293,7 +307,8 @@ export async function createNeulandEvent(
 			}
 		}
 	`.replace(/\s+/g, ' ')
-  await graphqlClient.request(
+
+  await graphqlClient.neulandEvents.request(
     mutation,
     { event },
     { Authorization: `Bearer ${accessToken}` }
@@ -312,7 +327,7 @@ export async function updateNeulandEvent(
 			}
 		}
 	`.replace(/\s+/g, ' ')
-  await graphqlClient.request(
+  await graphqlClient.neulandEvents.request(
     mutation,
     { event, id },
     { Authorization: `Bearer ${accessToken}` }
@@ -324,7 +339,8 @@ export async function deleteNeulandEvent(id: string, accessToken: string) {
 			deleteNeulandEvent(id: $id)
 		}
 	`.replace(/\s+/g, ' ')
-  await graphqlClient.request(
+
+  await graphqlClient.neulandEvents.request(
     mutation,
     { id },
     { Authorization: `Bearer ${accessToken}` }

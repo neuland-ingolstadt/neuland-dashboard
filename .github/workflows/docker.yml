@@ -50,4 +50,5 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            NEXT_PUBLIC_GRAPHQL_URL=${{ env.NEXT_PUBLIC_GRAPHQL_URL }}
+            GRAPHQL_URL=${{ env.GRAPHQL_URL }}
+            DEV_GRAPHQL_URL=${{ env.DEV_GRAPHQL_URL }}
