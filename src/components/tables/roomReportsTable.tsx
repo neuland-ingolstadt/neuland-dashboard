@@ -15,6 +15,7 @@ import {
   Text,
   X,
 } from 'lucide-react'
+import Link from 'next/link'
 import { type NextRouter, useRouter } from 'next/router'
 import React from 'react'
 
@@ -99,7 +100,14 @@ const columns: (
           original: { room },
         },
       },
-    }) => <Badge variant="secondary">{room}</Badge>,
+    }) => (
+      <Link
+        href={`https://neuland.app/de/rooms/?highlight=${room}`}
+        target="_blank"
+      >
+        <Badge variant="secondary">{room}</Badge>
+      </Link>
+    ),
   },
   {
     accessorKey: 'description',
