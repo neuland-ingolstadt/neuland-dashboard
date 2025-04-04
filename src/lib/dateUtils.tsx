@@ -6,16 +6,18 @@ export function formatDateInterval(
   rrule: string | null
 ) {
   if (!startTime) {
-    return ''
+    return <span />
   }
 
   if (!endTime) {
-    return `${format(startTime, 'HH:mm')} Uhr`
+    return <span>{`${format(startTime, 'HH:mm')} Uhr`}</span>
   }
 
   if (rrule) {
     if (isSameDay(startTime, endTime)) {
-      return `${format(startTime, 'HH:mm')} - ${format(endTime, 'HH:mm')} Uhr`
+      return (
+        <span>{`${format(startTime, 'HH:mm')} - ${format(endTime, 'HH:mm')} Uhr`}</span>
+      )
     }
 
     return (
@@ -35,8 +37,12 @@ export function formatDateInterval(
     return `${format(startTime, 'HH:mm')} - ${format(endTime, 'HH:mm')} Uhr`
   }
 
-  return `${format(startTime, 'dd.MM.yyyy HH:mm')} - ${format(
-    endTime,
-    'dd.MM.yyyy HH:mm'
-  )}`
+  return (
+    <span>
+      {`${format(startTime, 'dd.MM.yyyy HH:mm')} - ${format(
+        endTime,
+        'dd.MM.yyyy HH:mm'
+      )}`}
+    </span>
+  )
 }

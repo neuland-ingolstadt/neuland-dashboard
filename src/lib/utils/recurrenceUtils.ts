@@ -1,8 +1,8 @@
 import { Frequency, type Options, RRule, type Weekday } from 'rrule'
 import {
-  WEEKDAYS,
   type EndType,
   type RecurrenceType,
+  WEEKDAYS,
 } from '../providers/recurrenceProvider'
 
 /**
