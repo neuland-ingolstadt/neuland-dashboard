@@ -6,8 +6,8 @@
     "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
-    "check": "tsc --noEmit && biome check",
-    "check:fix": "biome check --fix"
+    "lint": "tsc --noEmit && biome check",
+    "fmt": "biome check --fix"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

@@ -12,3 +12,17 @@ Here you can manage the university sports courses and in-app announcements.
 3. Run `pnpm install`
 4. Run `pnpm dev` to start the development server
 5. Visit `http://localhost:3000`
+
+## Linting
+
+We use [Biome](https://biomejs.dev/) for linting and formatting. You can run the linter with:
+
+```bash
+pnpm lint
+```
+
+To automatically format the code, you can run:
+
+```bash
+pnpm fmt
+```

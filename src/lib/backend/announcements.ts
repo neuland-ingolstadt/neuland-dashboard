@@ -61,6 +61,7 @@ export const announcementSchema = z.object({
   userKind: z.enum(['STUDENT', 'EMPLOYEE', 'GUEST']).array().min(1, {
     message: 'Bitte wählen Sie mindestens eine Benutzergruppe aus',
   }),
+  imageUrl: z.string().nullable(),
 })
 
 export const updateAnnouncementSchema = announcementSchema.omit({

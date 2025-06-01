@@ -8,8 +8,10 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { MultiSelect } from '@/components/ui/multiSelect'
 import RequiredLabel from '@/components/ui/required'
+import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import {
   type Announcement,
@@ -24,9 +26,10 @@ import {
   GraduationCap,
   User,
 } from 'lucide-react'
-import { forwardRef, useImperativeHandle } from 'react'
+import { forwardRef, useImperativeHandle, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { SiAndroid, SiIos } from 'react-icons/si'
+import AnnouncementPreviewCard from './announcementPreviewCard'
 
 interface AnnouncementFormProps {
   onSubmit: (data: NewAnnouncement) => void
@@ -103,6 +106,7 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
         platform: defaultValues?.platform ?? defaultPlatformValues,
         userKind: defaultValues?.userKind ?? defaultUserKindValues,
         url: defaultValues?.url ?? null,
+        imageUrl: defaultValues?.imageUrl ?? null,
       },
     })
 
@@ -112,231 +116,277 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
       },
     }))
 
+    const formData = form.watch()
+    const [previewLang, setPreviewLang] = useState<'de' | 'en'>('de')
+
+    const handleLanguageToggle = () => {
+      setPreviewLang((prev) => (prev === 'de' ? 'en' : 'de'))
+    }
+
     return (
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-2"
-        >
-          <h2 className="mt-6 text-xl font-bold tracking-tight">Zeitraum</h2>
-          <div className="grid grid-cols-2 gap-6">
-            <FormField
-              control={form.control}
-              name="startDateTime"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    Startzeit <RequiredLabel />
-                  </FormLabel>
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex flex-col gap-2 md:col-span-2"
+          >
+            <h2 className="mt-6 text-xl font-bold tracking-tight">Zeitraum</h2>
+            <div className="grid grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="startDateTime"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Startzeit <RequiredLabel />
+                    </FormLabel>
 
-                  <FormControl>
-                    <DateTimePicker
-                      onChange={field.onChange}
-                      value={field.value}
-                      granularity="minute"
-                    />
-                  </FormControl>
+                    <FormControl>
+                      <DateTimePicker
+                        onChange={field.onChange}
+                        value={field.value}
+                        granularity="minute"
+                      />
+                    </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="endDateTime"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Endzeit <RequiredLabel />
+                    </FormLabel>
+
+                    <FormControl>
+                      <DateTimePicker
+                        onChange={field.onChange}
+                        value={field.value}
+                        granularity="minute"
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <h2 className="mt-6 text-xl font-bold tracking-tight">Titel</h2>
+            <div className="grid grid-cols-2 gap-6" />
+            <div className="grid grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="title.de"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Titel (Deutsch) <RequiredLabel />
+                    </FormLabel>
+
+                    <FormControl>
+                      <Input {...field} value={field.value ?? ''} />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="title.en"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Titel (Englisch) <RequiredLabel />
+                    </FormLabel>
+
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <h2 className="mt-6 text-xl font-bold tracking-tight">
+              Beschreibung
+            </h2>
+            <div className="grid grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="description.de"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Beschreibung (Deutsch) <RequiredLabel />
+                    </FormLabel>
+
+                    <FormControl>
+                      <Textarea {...field} value={field.value ?? ''} />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description.en"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Beschreibung (Englisch) <RequiredLabel />
+                    </FormLabel>
+
+                    <FormControl>
+                      <Textarea {...field} value={field.value ?? ''} />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="url"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel>Link</FormLabel>
+
+                    <FormControl>
+                      <Input {...field} value={field.value ?? ''} type="url" />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="imageUrl"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel>Bild URL</FormLabel>
+
+                    <FormControl>
+                      <Input {...field} value={field.value ?? ''} type="url" />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <h2 className="mt-6 text-xl font-bold tracking-tight">
+              Zielgruppe
+            </h2>
+
+            <div className="flex gap-6">
+              <FormField
+                control={form.control}
+                name="platform"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>
+                      Plattform <RequiredLabel />
+                    </FormLabel>
+
+                    <FormControl>
+                      <MultiSelect
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        options={platforms}
+                        defaultValue={defaultPlatformValues}
+                        placeholder="Plattform auswählen"
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="userKind"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>
+                      Nutzergruppe <RequiredLabel />
+                    </FormLabel>
+
+                    <FormControl>
+                      <MultiSelect
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        options={userKinds}
+                        defaultValue={defaultUserKindValues}
+                        placeholder="Nutzergruppe auswählen"
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="priority"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Priorität <RequiredLabel />
+                    </FormLabel>
+
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="number"
+                        min={0}
+                        max={10}
+                        step={1}
+                        defaultValue={0}
+                        onChange={(e) => {
+                          field.onChange(Number.parseInt(e.target.value, 10))
+                        }}
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </form>
+          <div className="md:col-span-1 md:mt-[calc(2rem+24px)]">
+            <AnnouncementPreviewCard
+              formData={formData}
+              displayLanguage={previewLang}
             />
-            <FormField
-              control={form.control}
-              name="endDateTime"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    Endzeit <RequiredLabel />
-                  </FormLabel>
-
-                  <FormControl>
-                    <DateTimePicker
-                      onChange={field.onChange}
-                      value={field.value}
-                      granularity="minute"
-                    />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="mt-4 flex items-center justify-end gap-2">
+              <Label
+                htmlFor="form-preview-lang-toggle"
+                className="text-xs text-muted-foreground"
+              >
+                Vorschau DE/EN
+              </Label>
+              <Switch
+                id="form-preview-lang-toggle"
+                checked={previewLang === 'en'}
+                onCheckedChange={handleLanguageToggle}
+                aria-label="Vorschau Sprache wechseln (Deutsch/Englisch)"
+              />
+            </div>
           </div>
-          <h2 className="mt-6 text-xl font-bold tracking-tight">Titel</h2>
-          <div className="grid grid-cols-2 gap-6" />
-          <div className="grid grid-cols-2 gap-6">
-            <FormField
-              control={form.control}
-              name="title.de"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    Titel (Deutsch) <RequiredLabel />
-                  </FormLabel>
-
-                  <FormControl>
-                    <Input {...field} value={field.value ?? ''} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="title.en"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    Titel (Englisch) <RequiredLabel />
-                  </FormLabel>
-
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <h2 className="mt-6 text-xl font-bold tracking-tight">
-            Beschreibung
-          </h2>
-          <div className="grid grid-cols-2 gap-6">
-            <FormField
-              control={form.control}
-              name="description.de"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    Beschreibung (Deutsch) <RequiredLabel />
-                  </FormLabel>
-
-                  <FormControl>
-                    <Textarea {...field} value={field.value ?? ''} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="description.en"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    Beschreibung (Englisch) <RequiredLabel />
-                  </FormLabel>
-
-                  <FormControl>
-                    <Textarea {...field} value={field.value ?? ''} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="url"
-              render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel>Link</FormLabel>
-
-                  <FormControl>
-                    <Input {...field} value={field.value ?? ''} type="url" />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <h2 className="mt-6 text-xl font-bold tracking-tight">Zielgruppe</h2>
-
-          <div className="flex gap-6">
-            <FormField
-              control={form.control}
-              name="platform"
-              render={({ field }) => (
-                <FormItem className="flex-1">
-                  <FormLabel>
-                    Plattform <RequiredLabel />
-                  </FormLabel>
-
-                  <FormControl>
-                    <MultiSelect
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      options={platforms}
-                      defaultValue={defaultPlatformValues}
-                      placeholder="Plattform auswählen"
-                    />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="userKind"
-              render={({ field }) => (
-                <FormItem className="flex-1">
-                  <FormLabel>
-                    Nutzergruppe <RequiredLabel />
-                  </FormLabel>
-
-                  <FormControl>
-                    <MultiSelect
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      options={userKinds}
-                      defaultValue={defaultUserKindValues}
-                      placeholder="Nutzergruppe auswählen"
-                    />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="priority"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    Priorität <RequiredLabel />
-                  </FormLabel>
-
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="number"
-                      min={0}
-                      max={10}
-                      step={1}
-                      defaultValue={0}
-                      onChange={(e) => {
-                        field.onChange(Number.parseInt(e.target.value, 10))
-                      }}
-                    />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-        </form>
+        </div>
       </Form>
     )
   }
