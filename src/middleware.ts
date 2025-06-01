@@ -6,3 +6,9 @@ export default withAuth({
     error: '/auth/error',
   },
 })
+
+export const config = {
+  matcher: [
+    '/((?!favicon.ico|logo.webp).*)',
+  ],
+}
