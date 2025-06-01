@@ -1,4 +1,3 @@
-import Logo from '@/components/images/logo.webp'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -39,7 +38,7 @@ export default function NavBar() {
       <div className="container flex h-16 items-center">
         <Link href="/" passHref>
           <Image
-            src={Logo}
+            src={'/logo.webp'}
             alt="Neuland e.V. Logo"
             priority
             width={35}

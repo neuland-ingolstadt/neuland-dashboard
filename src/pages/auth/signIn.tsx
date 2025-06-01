@@ -1,4 +1,3 @@
-import Logo from '@/components/images/logo.webp'
 import { Button } from '@/components/ui/button'
 import { signIn } from 'next-auth/react'
 import Head from 'next/head'
@@ -23,7 +22,7 @@ export default function SignInPage() {
 
       <div className="w-full max-w-md space-y-8 rounded-lg bg-white p-8 shadow-md dark:bg-gray-800 dark:shadow-lg">
         <Image
-          src={Logo}
+          src={'/logo.webp'}
           alt="Neuland e.V. Logo"
           priority
           width={200}
