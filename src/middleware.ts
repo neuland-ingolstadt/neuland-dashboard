@@ -6,3 +6,7 @@ export default withAuth({
     error: '/auth/error',
   },
 })
+
+export const config = {
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|logo.webp).*)'],
+}

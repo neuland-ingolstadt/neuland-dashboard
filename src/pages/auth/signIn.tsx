@@ -1,5 +1,5 @@
-import Logo from '@/components/images/logo.webp'
 import { Button } from '@/components/ui/button'
+import Logo from '@public/logo.webp'
 import { signIn } from 'next-auth/react'
 import Head from 'next/head'
 import Image from 'next/image'

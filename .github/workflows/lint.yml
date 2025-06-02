@@ -16,5 +16,20 @@ jobs:
         with:
           version: latest
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
       - name: Run Biome
         run: biome ci .
+
+      - name: Run Tsc
+        run: |
+          npx tsc --noEmit

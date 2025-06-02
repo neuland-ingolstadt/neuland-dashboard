@@ -193,6 +193,7 @@ export async function getAnnouncements() {
         updatedAt
         platform
         userKind
+        imageUrl
       }
     }
   `.replace(/\s+/g, ' ')
