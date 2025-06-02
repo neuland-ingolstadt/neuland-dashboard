@@ -4,6 +4,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
+import Logo from '@public/logo.webp'
 
 export default function SignInPage() {
   const { query } = useRouter()
@@ -22,7 +23,7 @@ export default function SignInPage() {
 
       <div className="w-full max-w-md space-y-8 rounded-lg bg-white p-8 shadow-md dark:bg-gray-800 dark:shadow-lg">
         <Image
-          src={'/logo.webp'}
+          src={Logo}
           alt="Neuland e.V. Logo"
           priority
           width={200}

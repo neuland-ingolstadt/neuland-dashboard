@@ -21,6 +21,7 @@ import { useTheme } from 'next-themes'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useMemo } from 'react'
+import Logo from '@public/logo.webp'
 
 export default function NavBar() {
   const { data } = useSession()
@@ -38,7 +39,7 @@ export default function NavBar() {
       <div className="container flex h-16 items-center">
         <Link href="/" passHref>
           <Image
-            src={'/logo.webp'}
+            src={Logo}
             alt="Neuland e.V. Logo"
             priority
             width={35}

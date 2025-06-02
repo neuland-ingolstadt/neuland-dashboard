@@ -8,7 +8,5 @@ export default withAuth({
 })
 
 export const config = {
-  matcher: [
-    '/((?!favicon.ico|logo.webp).*)',
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|logo.webp).*)'],
 }
