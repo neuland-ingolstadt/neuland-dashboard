@@ -8,10 +8,9 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { MultiSelect } from '@/components/ui/multiSelect'
 import RequiredLabel from '@/components/ui/required'
-import { Switch } from '@/components/ui/switch'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import {
   type Announcement,
@@ -26,7 +25,7 @@ import {
   GraduationCap,
   User,
 } from 'lucide-react'
-import { forwardRef, useImperativeHandle, useState } from 'react'
+import { forwardRef, useImperativeHandle } from 'react'
 import { useForm } from 'react-hook-form'
 import { SiAndroid, SiIos } from 'react-icons/si'
 import AnnouncementPreviewCard from './announcementPreviewCard'
@@ -116,11 +115,17 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
       },
     }))
 
-    const formData = form.watch()
-    const [previewLang, setPreviewLang] = useState<'de' | 'en'>('de')
-
-    const handleLanguageToggle = () => {
-      setPreviewLang((prev) => (prev === 'de' ? 'en' : 'de'))
+    const [title, description, imageUrl, url] = form.watch([
+      'title',
+      'description',
+      'imageUrl',
+      'url',
+    ])
+    const formData = {
+      title,
+      description,
+      imageUrl,
+      url,
     }
 
     return (
@@ -229,7 +234,11 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
                     </FormLabel>
 
                     <FormControl>
-                      <Textarea {...field} value={field.value ?? ''} />
+                      <Textarea
+                        {...field}
+                        value={field.value ?? ''}
+                        className="min-h-64"
+                      />
                     </FormControl>
 
                     <FormMessage />
@@ -246,7 +255,11 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
                     </FormLabel>
 
                     <FormControl>
-                      <Textarea {...field} value={field.value ?? ''} />
+                      <Textarea
+                        {...field}
+                        value={field.value ?? ''}
+                        className="min-h-64"
+                      />
                     </FormControl>
 
                     <FormMessage />
@@ -288,7 +301,7 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
               Zielgruppe
             </h2>
 
-            <div className="flex gap-6">
+            <div className="flex flex-col gap-3">
               <FormField
                 control={form.control}
                 name="platform"
@@ -367,24 +380,30 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
             </div>
           </form>
           <div className="md:col-span-1 md:mt-[calc(2rem+24px)]">
-            <AnnouncementPreviewCard
-              formData={formData}
-              displayLanguage={previewLang}
-            />
-            <div className="mt-4 flex items-center justify-end gap-2">
-              <Label
-                htmlFor="form-preview-lang-toggle"
-                className="text-xs text-muted-foreground"
-              >
-                Vorschau DE/EN
-              </Label>
-              <Switch
-                id="form-preview-lang-toggle"
-                checked={previewLang === 'en'}
-                onCheckedChange={handleLanguageToggle}
-                aria-label="Vorschau Sprache wechseln (Deutsch/Englisch)"
-              />
-            </div>
+            <Tabs defaultValue="de">
+              <TabsList className="w-full">
+                <TabsTrigger className="w-full" value="de">
+                  Deutsch
+                </TabsTrigger>
+                <TabsTrigger className="w-full" value="en">
+                  English
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="de">
+                <AnnouncementPreviewCard
+                  formData={formData}
+                  displayLanguage="de"
+                />
+              </TabsContent>
+
+              <TabsContent value="en">
+                <AnnouncementPreviewCard
+                  formData={formData}
+                  displayLanguage="en"
+                />
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </Form>

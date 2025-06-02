@@ -15,13 +15,13 @@ import {
 } from '@/components/ui/dropdownMenu'
 import { MainNav } from '@/components/ui/mainNav'
 import SessionExpiration from '@/components/ui/sessionExpiration'
+import Logo from '@public/logo.webp'
 import { CircleUser, LogOut, Palette } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useMemo } from 'react'
-import Logo from '@public/logo.webp'
 
 export default function NavBar() {
   const { data } = useSession()

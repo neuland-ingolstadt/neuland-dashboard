@@ -49,11 +49,9 @@ const AnnouncementPreviewCard: React.FC<AnnouncementPreviewCardProps> = ({
                 alt="Ankündigungsbild Vorschau"
               />
             ) : (
-              <div className="flex h-[130px] w-full flex-col items-center justify-center bg-muted/50 text-center">
-                <AlertTriangle className="mb-1 h-6 w-6 text-destructive" />
-                <p className="text-xs text-destructive">
-                  Bild konnte nicht geladen werden.
-                </p>
+              <div className="flex h-[130px] w-full flex-col items-center justify-center bg-muted/50 text-center text-red-600">
+                <AlertTriangle className="mb-1 h-6 w-6" />
+                <p className="text-xs">Bild konnte nicht geladen werden.</p>
                 <p className="text-[10px] text-muted-foreground">
                   (Mögliche CSP-Verletzung)
                 </p>

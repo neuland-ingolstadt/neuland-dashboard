@@ -1,10 +1,10 @@
 import { Button } from '@/components/ui/button'
+import Logo from '@public/logo.webp'
 import { signIn } from 'next-auth/react'
 import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
-import Logo from '@public/logo.webp'
 
 export default function SignInPage() {
   const { query } = useRouter()
