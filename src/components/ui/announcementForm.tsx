@@ -1,4 +1,5 @@
 import { DateTimePicker } from '@/components/ui/datetimepicker'
+import { FileUpload } from '@/components/ui/fileUpload'
 import {
   Form,
   FormControl,
@@ -7,6 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import { ImageSelector } from '@/components/ui/imageSelector'
 import { Input } from '@/components/ui/input'
 import { MultiSelect } from '@/components/ui/multiSelect'
 import RequiredLabel from '@/components/ui/required'
@@ -17,6 +19,7 @@ import {
   type NewAnnouncement,
   newAnnouncementSchema,
 } from '@/lib/backend/announcements'
+import type { ListedImage } from '@/pages/api/images'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   BriefcaseBusiness,
@@ -289,7 +292,20 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
                     <FormLabel>Bild URL</FormLabel>
 
                     <FormControl>
-                      <Input {...field} value={field.value ?? ''} type="url" />
+                      <div className="flex flex-row gap-3">
+                        <Input
+                          {...field}
+                          value={field.value ?? ''}
+                          type="url"
+                        />
+                        <FileUpload />
+
+                        <ImageSelector
+                          onSelectImage={(image: ListedImage): void => {
+                            field.onChange(image.url)
+                          }}
+                        />
+                      </div>
                     </FormControl>
 
                     <FormMessage />
