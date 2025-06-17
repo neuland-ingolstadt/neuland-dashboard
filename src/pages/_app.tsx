@@ -29,7 +29,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <TooltipProvider delayDuration={150}>
           <DialogsProvider>
             <Component {...pageProps} />
-            <Toaster />
+            <Toaster richColors />
           </DialogsProvider>
         </TooltipProvider>
       </ThemeProvider>

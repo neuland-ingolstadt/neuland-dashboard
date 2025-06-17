@@ -39,7 +39,6 @@ const DEFAULT_ALLOWED_FILE_TYPES: string[] = [
   'image/png',
   'image/gif',
   'image/webp',
-  'application/pdf',
 ]
 const DEFAULT_MAX_FILE_SIZE_MB = 5
 
@@ -83,7 +82,6 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           : acceptedFiles[0]
         setSelectedFile(fileToUpload)
         setUploadProgress(0)
-        toast.success('File Selected')
       }
     },
     [multiple]
