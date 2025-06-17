@@ -1,15 +1,9 @@
 'use client'
 
 import type React from 'react'
-import { useState, useCallback } from 'react'
-import {
-  useDropzone,
-  type FileRejection,
-  type DropzoneState,
-} from 'react-dropzone'
+import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/progress'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
@@ -18,9 +12,9 @@ import type {
   UploadSuccessResponse,
   FileUploadErrorCode,
 } from '@/types/api'
+import { Upload } from 'lucide-react'
 
 interface FileUploadProps {
-  uploadUrl: string
   allowedFileTypes?: string[]
   maxFileSizeMB?: number
   onUploadSuccess?: (data: UploadSuccessResponse) => void
@@ -48,64 +42,68 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   onUploadSuccess,
   onUploadError,
   className,
-  children,
   multiple = false,
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [uploadProgress, setUploadProgress] = useState<number>(0)
   const [isUploading, setIsUploading] = useState<boolean>(false)
 
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
   const maxFileSizeBytes: number = maxFileSizeMB * 1024 * 1024
 
-  const onDrop = useCallback(
-    (acceptedFiles: File[], fileRejections: FileRejection[]): void => {
-      if (fileRejections.length > 0) {
-        for (const { errors } of fileRejections) {
-          for (const err of errors) {
-            if (err.code === 'file-too-large') {
-              toast.error('File Too Large')
-            } else if (err.code === 'file-invalid-type') {
-              toast.error('Invalid File Type')
-            } else {
-              toast.error('File Upload Error')
-            }
-          }
-        }
-        setSelectedFile(null)
-        setUploadProgress(0)
-        return
-      }
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    if (selectedFile && !isUploading) {
+      handleUpload()
+    }
+  }, [selectedFile])
 
-      if (acceptedFiles.length > 0) {
-        const fileToUpload: File = multiple
-          ? acceptedFiles[0]
-          : acceptedFiles[0]
-        setSelectedFile(fileToUpload)
-        setUploadProgress(0)
-      }
-    },
-    [multiple]
-  )
+  const handleFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    const files = event.target.files
 
-  const { getRootProps, getInputProps, isDragActive, open }: DropzoneState =
-    useDropzone({
-      onDrop,
-      multiple,
-      maxSize: maxFileSizeBytes,
-      accept: allowedFileTypes.reduce(
-        (acc: Record<string, string[]>, type: string) => {
-          acc[type] = []
-          return acc
-        },
-        {}
-      ),
-      noClick: true,
-      noKeyboard: true,
-    })
+    if (!files || files.length === 0) {
+      setSelectedFile(null)
+      setUploadProgress(0)
+      return
+    }
+
+    const file = files[0]
+
+    if (allowedFileTypes.length > 0 && !allowedFileTypes.includes(file.type)) {
+      toast.error('Ungültiger Dateityp', {
+        description: `Die Datei ${file.name} ist kein erlaubter Typ.`,
+      })
+      setSelectedFile(null)
+      setUploadProgress(0)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+      return
+    }
+
+    if (file.size > maxFileSizeBytes) {
+      toast.error('Datei zu groß', {
+        description: `${file.name} überschreitet das Limit von ${maxFileSizeMB}MB.`,
+      })
+      setSelectedFile(null)
+      setUploadProgress(0)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+      return
+    }
+
+    setSelectedFile(file)
+  }
 
   const handleUpload = async (): Promise<void> => {
     if (!selectedFile) {
-      toast.error('Please select a file to upload.')
+      toast.error('Keine Datei zum Hochladen.', {
+        description: 'Bitte wählen Sie zuerst eine Datei aus.',
+      })
       return
     }
 
@@ -133,13 +131,16 @@ export const FileUpload: React.FC<FileUploadProps> = ({
               JSON.parse(xhr.responseText)
 
             if (xhr.status >= 200 && xhr.status < 300 && result.success) {
-              toast.success('File uploaded successfully!')
+              toast.success('Datei erfolgreich hochgeladen!')
 
               if (result.data) {
                 onUploadSuccess?.(result.data)
               }
               setSelectedFile(null)
               setUploadProgress(0)
+              if (fileInputRef.current) {
+                fileInputRef.current.value = ''
+              }
             } else {
               const errorResponse: {
                 message: string
@@ -147,23 +148,28 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                 details?: Record<string, unknown>
               } = !result.success
                 ? result.error
-                : { message: 'Unknown error occurred.' }
+                : { message: 'Unbekannter Fehler aufgetreten oder fehlerhafte Antwort.' }
 
-              toast.error(errorResponse.message || 'Upload failed.', {
+              toast.error(errorResponse.message || 'Hochladen fehlgeschlagen.', {
                 description: errorResponse.details
                   ? JSON.stringify(errorResponse.details)
                   : undefined,
                 action: (
                   <Button
-                    onClick={handleUpload}
+                    onClick={triggerFileInput}
                     disabled={isUploading}
                     className="mt-2"
                   >
-                    Try Again
+                    Neue Datei auswählen
                   </Button>
                 ),
               })
               onUploadError?.(errorResponse)
+              setSelectedFile(null)
+              setUploadProgress(0)
+              if (fileInputRef.current) {
+                fileInputRef.current.value = ''
+              }
             }
           } catch (parseError: unknown) {
             console.error(
@@ -171,13 +177,18 @@ export const FileUpload: React.FC<FileUploadProps> = ({
               parseError,
               xhr.responseText
             )
-            toast.error('Failed to parse server response.', {
-              description: 'An unexpected error occurred on the server.',
+            toast.error('Fehler beim Parsen der Serverantwort.', {
+              description: 'Ein unerwarteter Fehler ist auf dem Server aufgetreten.',
             })
             onUploadError?.({
-              message: 'Failed to parse server response.',
+              message: 'Fehler beim Parsen der Serverantwort.',
               code: 'SERVER_ERROR',
             })
+            setSelectedFile(null)
+            setUploadProgress(0)
+            if (fileInputRef.current) {
+              fileInputRef.current.value = ''
+            }
           }
         }
       }
@@ -187,77 +198,63 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     } catch (error: unknown) {
       setIsUploading(false)
       console.error('Upload error:', error)
-      let errorMessage = 'An unexpected error occurred during upload.'
+      let errorMessage = 'Beim Hochladen ist ein unerwarteter Fehler aufgetreten.'
       if (error instanceof Error) {
         errorMessage = error.message
       }
-      toast.error('Upload Error', {
+      toast.error('Fehler beim Hochladen', {
         description: errorMessage,
       })
       onUploadError?.({
         message: errorMessage,
         code: 'UPLOAD_FAILED',
       })
+      setSelectedFile(null)
+      setUploadProgress(0)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
+  }
+
+  const triggerFileInput = (): void => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click()
     }
   }
 
   return (
     <div className={cn('space-y-4', className)}>
-      <Label htmlFor="file-upload">Upload File</Label>
-      <div
-        {...getRootProps()}
-        className={cn(
-          'flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-md cursor-pointer text-center',
-          'transition-colors duration-200 ease-in-out',
-          isDragActive
-            ? 'border-blue-500 bg-blue-50'
-            : 'border-gray-300 hover:border-gray-400',
-          selectedFile ? 'border-green-500' : ''
-        )}
-      >
-        <Input {...getInputProps()} id="file-upload" className="hidden" />
-        {children || (
-          <>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {isDragActive
-                ? 'Drop the files here...'
-                : 'Drag & drop files here, or click to select'}
-            </p>
-            <Button
-              type="button"
-              variant="outline"
-              className="mt-4"
-              onClick={open}
-              disabled={isUploading}
-            >
-              Select File
-            </Button>
-          </>
-        )}
-        {selectedFile && (
-          <div className="mt-4 text-sm text-gray-700 dark:text-gray-300">
-            Selected: {selectedFile.name} (
-            {Math.round(selectedFile.size / 1024)} KB)
-          </div>
-        )}
+      <div className="flex flex-col items-center gap-0">
+        <Input
+          id="file-upload-input"
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          className="hidden"
+          accept={allowedFileTypes.join(',')}
+          multiple={multiple}
+          disabled={isUploading}
+        />
+        <Button
+          type="button"
+          variant="outline"
+          onClick={triggerFileInput}
+          disabled={isUploading}
+        >
+          <Upload className="size-4 mr-2" />
+          {isUploading ? 'Wird ausgewählt...' : 'Bild hochladen'}
+        </Button>
       </div>
 
       {isUploading && selectedFile && (
         <div className="space-y-2">
           <Progress value={uploadProgress} className="w-full" />
           <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-            Uploading {selectedFile.name}... ({uploadProgress}%)
+            Lädt {selectedFile.name} hoch... ({uploadProgress}%)
           </p>
         </div>
       )}
-
-      <Button
-        onClick={handleUpload}
-        disabled={!selectedFile || isUploading}
-        className="w-full"
-      >
-        {isUploading ? 'Uploading...' : 'Confirm Upload'}
-      </Button>
     </div>
   )
 }

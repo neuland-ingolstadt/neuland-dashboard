@@ -30,6 +30,8 @@ import { useForm } from 'react-hook-form'
 import { SiAndroid, SiIos } from 'react-icons/si'
 import AnnouncementPreviewCard from './announcementPreviewCard'
 import { FileUpload } from '@/components/ui/fileUpload'
+import { ImageSelector } from '@/components/ui/imageSelector'
+import type { ListedImage } from '@/pages/api/images'
 
 interface AnnouncementFormProps {
   onSubmit: (data: NewAnnouncement) => void
@@ -290,15 +292,26 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
                     <FormLabel>Bild URL</FormLabel>
 
                     <FormControl>
-                      <Input {...field} value={field.value ?? ''} type="url" />
+                      <div className="flex flex-row gap-3">
+                        <Input
+                          {...field}
+                          value={field.value ?? ''}
+                          type="url"
+                        />
+                        <FileUpload />
+
+                        <ImageSelector
+                          onSelectImage={(image: ListedImage): void => {
+                            field.onChange(image.url)
+                          }}
+                        />
+                      </div>
                     </FormControl>
 
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
-              <FileUpload uploadUrl={''} />
             </div>
             <h2 className="mt-6 text-xl font-bold tracking-tight">
               Zielgruppe
