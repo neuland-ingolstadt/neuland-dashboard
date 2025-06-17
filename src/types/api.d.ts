@@ -26,6 +26,7 @@ export type FileUploadErrorCode =
   | 'UNAUTHORIZED'
   | 'METHOD_NOT_ALLOWED'
   | 'SERVER_ERROR'
+  | 'IMAGE_CONVERSION_FAILED'
 
 export interface UploadedFile {
   filepath: string

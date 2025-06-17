@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { checkApiPermissions } from '@/lib/backend/groups'
@@ -14,6 +15,7 @@ import formidable, {
 } from 'formidable'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
+import sharp from 'sharp'
 
 export const config = {
   api: {
@@ -24,11 +26,14 @@ export const config = {
 const UPLOAD_DIR: string = path.join(process.cwd(), 'public/uploads')
 const MAX_FILE_SIZE_MB: number = 5
 const MAX_FILE_SIZE_BYTES: number = MAX_FILE_SIZE_MB * 1024 * 1024
+
 const ALLOWED_MIME_TYPES: string[] = [
   'image/jpeg',
   'image/png',
   'image/gif',
   'image/webp',
+  'image/tiff',
+  'image/heif',
 ]
 
 async function ensureUploadDir(): Promise<void> {
@@ -42,7 +47,10 @@ async function ensureUploadDir(): Promise<void> {
   }
 }
 
-type UploadImageApiResponse = ApiResponse<UploadSuccessResponse | null>
+type UploadedFileWithId = UploadedFile & { id: string }
+type UploadSuccessResponseWithId = UploadSuccessResponse & { id: string }
+
+type UploadImageApiResponse = ApiResponse<UploadSuccessResponseWithId | null>
 
 export default async function handler(
   req: NextApiRequest,
@@ -96,9 +104,13 @@ export default async function handler(
 
   const form = formidable({
     uploadDir: UPLOAD_DIR,
-    keepExtensions: true,
+    keepExtensions: false,
     maxFileSize: MAX_FILE_SIZE_BYTES,
   })
+
+  let tempFilePath: string | undefined
+  let newFilenameWebP: string | undefined
+  let fileId: string | undefined
 
   try {
     const [_, files] = await new Promise<[formidable.Fields, formidable.Files]>(
@@ -126,6 +138,7 @@ export default async function handler(
     }
 
     const file: FormidableFile = uploadedFiles[0]
+    tempFilePath = file.filepath
 
     if (file.size > MAX_FILE_SIZE_BYTES) {
       await fs
@@ -159,7 +172,7 @@ export default async function handler(
         success: false,
         error: {
           message:
-            'Invalid file type. Only JPEG, PNG, GIF, WEBP images are allowed.',
+            'Invalid file type. Only common image formats (JPEG, PNG, GIF, WEBP etc.) are allowed.',
           code: 'INVALID_FILE_TYPE',
           details: {
             mimetype: file.mimetype,
@@ -168,25 +181,59 @@ export default async function handler(
       })
     }
 
+    fileId = randomUUID()
+    const newFileName = `${fileId}.webp`
+    const webpFilePath = path.join(UPLOAD_DIR, newFileName)
+    newFilenameWebP = newFileName
+
+    try {
+      await sharp(file.filepath).webp({ quality: 80 }).toFile(webpFilePath)
+
+      await fs.unlink(file.filepath)
+    } catch (conversionError: unknown) {
+      console.error('Sharp conversion error:', conversionError)
+      if (newFilenameWebP) {
+        await fs.unlink(webpFilePath).catch(() => {})
+      }
+      if (tempFilePath) {
+        await fs.unlink(tempFilePath).catch(() => {})
+      }
+      return res.status(500).json({
+        success: false,
+        error: {
+          message: 'Image conversion to WebP failed.',
+          code: 'IMAGE_CONVERSION_FAILED',
+          details: {
+            error:
+              conversionError instanceof Error
+                ? conversionError.message
+                : 'Unknown conversion error',
+          },
+        },
+      })
+    }
+
     const relativePath: string = path.relative(
       path.join(process.cwd(), 'public'),
-      file.filepath
+      webpFilePath
     )
     const imageUrl: string = `/${relativePath.replace(/\\/g, '/')}`
 
-    const uploadedFileInfo: UploadedFile = {
-      filepath: file.filepath,
+    const uploadedFileInfo: UploadedFileWithId = {
+      id: fileId,
+      filepath: webpFilePath,
       originalFilename: file.originalFilename,
-      newFilename: file.newFilename,
-      mimetype: file.mimetype,
-      size: file.size,
+      newFilename: newFileName,
+      mimetype: 'image/webp',
+      size: (await fs.stat(webpFilePath)).size,
     }
 
-    console.log('File uploaded successfully:', uploadedFileInfo)
+    console.log('File uploaded and converted successfully:', uploadedFileInfo)
 
     return res.status(200).json({
       success: true,
       data: {
+        id: uploadedFileInfo.id,
         imageUrl,
         filename:
           uploadedFileInfo.originalFilename || uploadedFileInfo.newFilename,
@@ -221,6 +268,14 @@ export default async function handler(
       }
       errorCode = 'SERVER_ERROR'
       statusCode = 500
+    }
+
+    if (tempFilePath) {
+      await fs.unlink(tempFilePath).catch(() => {})
+    }
+    if (newFilenameWebP) {
+      const partialWebpPath = path.join(UPLOAD_DIR, newFilenameWebP)
+      await fs.unlink(partialWebpPath).catch(() => {})
     }
 
     return res.status(statusCode).json({
