@@ -1,3 +1,4 @@
+import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { DialogsProvider } from '@/lib/providers/dialogsProvider'
 import { ThemeProvider } from '@/lib/providers/themeProvider'
@@ -28,6 +29,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <TooltipProvider delayDuration={150}>
           <DialogsProvider>
             <Component {...pageProps} />
+            <Toaster />
           </DialogsProvider>
         </TooltipProvider>
       </ThemeProvider>

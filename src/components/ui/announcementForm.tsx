@@ -29,6 +29,7 @@ import { forwardRef, useImperativeHandle } from 'react'
 import { useForm } from 'react-hook-form'
 import { SiAndroid, SiIos } from 'react-icons/si'
 import AnnouncementPreviewCard from './announcementPreviewCard'
+import { FileUpload } from '@/components/ui/fileUpload'
 
 interface AnnouncementFormProps {
   onSubmit: (data: NewAnnouncement) => void
@@ -296,6 +297,8 @@ const AnnouncementForm = forwardRef<AnnouncementFormRef, AnnouncementFormProps>(
                   </FormItem>
                 )}
               />
+
+              <FileUpload uploadUrl={''} />
             </div>
             <h2 className="mt-6 text-xl font-bold tracking-tight">
               Zielgruppe
