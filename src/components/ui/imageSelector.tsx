@@ -1,7 +1,5 @@
 'use client'
 
-import type React from 'react'
-import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -14,10 +12,12 @@ import {
 } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
-import { toast } from 'sonner'
-import type { ApiResponse } from '@/types/api'
 import type { ImageListSuccessResponse, ListedImage } from '@/pages/api/images'
+import type { ApiResponse } from '@/types/api'
 import { Check, Image } from 'lucide-react'
+import type React from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 interface ImageSelectorProps {
   fetchUrl?: string
@@ -59,7 +59,9 @@ export const ImageSelector: React.FC<ImageSelectorProps> = ({
       if (result.success && result.data) {
         setImages(result.data)
       } else {
-        setError('Bilder konnten nicht geladen werden. Bitte versuchen Sie es erneut.')
+        setError(
+          'Bilder konnten nicht geladen werden. Bitte versuchen Sie es erneut.'
+        )
         toast.error('Bilder konnten nicht geladen werden.', {
           description: 'Bitte versuchen Sie es erneut.',
         })
@@ -67,7 +69,9 @@ export const ImageSelector: React.FC<ImageSelectorProps> = ({
     } catch (err: unknown) {
       console.error('Error fetching images:', err)
       setError(
-        err instanceof Error ? err.message : 'Ein unerwarteter Fehler ist aufgetreten.'
+        err instanceof Error
+          ? err.message
+          : 'Ein unerwarteter Fehler ist aufgetreten.'
       )
       toast.error('Netzwerkfehler', {
         description:

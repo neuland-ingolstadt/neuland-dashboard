@@ -1,18 +1,18 @@
 'use client'
 
-import type React from 'react'
-import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
 import { cn } from '@/lib/utils'
-import { toast } from 'sonner'
 import type {
   ApiResponse,
-  UploadSuccessResponse,
   FileUploadErrorCode,
+  UploadSuccessResponse,
 } from '@/types/api'
 import { Upload } from 'lucide-react'
+import type React from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
 
 interface FileUploadProps {
   allowedFileTypes?: string[]
@@ -148,22 +148,28 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                 details?: Record<string, unknown>
               } = !result.success
                 ? result.error
-                : { message: 'Unbekannter Fehler aufgetreten oder fehlerhafte Antwort.' }
+                : {
+                    message:
+                      'Unbekannter Fehler aufgetreten oder fehlerhafte Antwort.',
+                  }
 
-              toast.error(errorResponse.message || 'Hochladen fehlgeschlagen.', {
-                description: errorResponse.details
-                  ? JSON.stringify(errorResponse.details)
-                  : undefined,
-                action: (
-                  <Button
-                    onClick={triggerFileInput}
-                    disabled={isUploading}
-                    className="mt-2"
-                  >
-                    Neue Datei auswählen
-                  </Button>
-                ),
-              })
+              toast.error(
+                errorResponse.message || 'Hochladen fehlgeschlagen.',
+                {
+                  description: errorResponse.details
+                    ? JSON.stringify(errorResponse.details)
+                    : undefined,
+                  action: (
+                    <Button
+                      onClick={triggerFileInput}
+                      disabled={isUploading}
+                      className="mt-2"
+                    >
+                      Neue Datei auswählen
+                    </Button>
+                  ),
+                }
+              )
               onUploadError?.(errorResponse)
               setSelectedFile(null)
               setUploadProgress(0)
@@ -178,7 +184,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
               xhr.responseText
             )
             toast.error('Fehler beim Parsen der Serverantwort.', {
-              description: 'Ein unerwarteter Fehler ist auf dem Server aufgetreten.',
+              description:
+                'Ein unerwarteter Fehler ist auf dem Server aufgetreten.',
             })
             onUploadError?.({
               message: 'Fehler beim Parsen der Serverantwort.',
@@ -198,7 +205,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     } catch (error: unknown) {
       setIsUploading(false)
       console.error('Upload error:', error)
-      let errorMessage = 'Beim Hochladen ist ein unerwarteter Fehler aufgetreten.'
+      let errorMessage =
+        'Beim Hochladen ist ein unerwarteter Fehler aufgetreten.'
       if (error instanceof Error) {
         errorMessage = error.message
       }

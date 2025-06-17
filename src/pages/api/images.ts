@@ -1,10 +1,10 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import path from 'node:path'
 import fs from 'node:fs/promises'
+import path from 'node:path'
 import { checkApiPermissions } from '@/lib/backend/groups'
-import { getServerSession } from 'next-auth'
 import { authOptions } from '@/pages/api/auth/[...nextauth]'
 import type { ApiResponse } from '@/types/api'
+import type { NextApiRequest, NextApiResponse } from 'next'
+import { getServerSession } from 'next-auth'
 
 export interface ListedImage {
   name: string

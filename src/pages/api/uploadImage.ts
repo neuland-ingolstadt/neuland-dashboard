@@ -1,19 +1,19 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import formidable, {
-  type File as FormidableFile,
-  errors as formidableErrors,
-} from 'formidable'
-import path from 'node:path'
 import fs from 'node:fs/promises'
+import path from 'node:path'
 import { checkApiPermissions } from '@/lib/backend/groups'
-import { getServerSession } from 'next-auth'
 import { authOptions } from '@/pages/api/auth/[...nextauth]'
 import type {
   ApiResponse,
   FileUploadErrorCode,
-  UploadedFile,
   UploadSuccessResponse,
+  UploadedFile,
 } from '@/types/api'
+import formidable, {
+  type File as FormidableFile,
+  errors as formidableErrors,
+} from 'formidable'
+import type { NextApiRequest, NextApiResponse } from 'next'
+import { getServerSession } from 'next-auth'
 
 export const config = {
   api: {
