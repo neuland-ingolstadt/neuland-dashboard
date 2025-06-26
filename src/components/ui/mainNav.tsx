@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
 
-interface NavLink {
+export interface NavLink {
   label: string
   href: string
   target?: string
@@ -15,7 +15,7 @@ interface NavLink {
   groups?: Group[]
 }
 
-const links: NavLink[] = [
+export const links: NavLink[] = [
   {
     label: 'Hochschulsport',
     href: '/sports',

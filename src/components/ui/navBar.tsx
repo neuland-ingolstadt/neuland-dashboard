@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdownMenu'
 import { MainNav } from '@/components/ui/mainNav'
+import MobileNav from '@/components/ui/mobileNav'
 import Logo from '@public/logo.webp'
 import { CircleUser, LogOut, Palette } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
@@ -35,83 +36,87 @@ export default function NavBar() {
 
   return (
     <div className="border-b">
-      <div className="container flex h-16 items-center">
-        <Link href="/" passHref>
-          <Image
-            src={Logo}
-            alt="Neuland e.V. Logo"
-            priority
-            width={35}
-            height={35}
-            className="cursor-pointer"
-          />
-        </Link>
-        <MainNav className="mx-6 flex-1" />
-
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-              <Avatar className="h-8 w-8">
-                <AvatarFallback>{getInitials}</AvatarFallback>
-              </Avatar>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56" align="end" forceMount>
-            <DropdownMenuLabel className="font-normal">
-              <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">
-                  {data?.user?.name}
-                </p>
-                {data?.user?.email && (
-                  <p className="text-xs leading-none text-muted-foreground">
-                    {data?.user?.email}
+      <div className="container flex h-16 items-center justify-between">
+        <div className="flex items-center">
+          <Link href="/" passHref>
+            <Image
+              src={Logo}
+              alt="Neuland e.V. Logo"
+              priority
+              width={35}
+              height={35}
+              className="cursor-pointer"
+            />
+          </Link>
+          <MainNav className="mx-6 hidden sm:flex" />
+        </div>
+        <div className="flex items-center gap-2">
+          <MobileNav />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                <Avatar className="h-8 w-8">
+                  <AvatarFallback>{getInitials}</AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end" forceMount>
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">
+                    {data?.user?.name}
                   </p>
-                )}
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <Link
-                href="https://sso.informatik.sexy/if/user/#/settings"
-                passHref
-                target="_blank"
-              >
-                <DropdownMenuItem>
-                  <CircleUser className="mr-2 h-4 w-4" />
-                  <p>Account</p>
-                </DropdownMenuItem>
-              </Link>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger>
-                  <Palette className="mr-2 h-4 w-4" />
-                  <p>Design</p>
-                </DropdownMenuSubTrigger>
-                <DropdownMenuPortal>
-                  <DropdownMenuSubContent>
-                    <DropdownMenuItem onClick={() => setTheme('light')}>
-                      Hell
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setTheme('dark')}>
-                      Dunkel
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => setTheme('system')}>
-                      System
-                    </DropdownMenuItem>
-                  </DropdownMenuSubContent>
-                </DropdownMenuPortal>
-              </DropdownMenuSub>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => signOut()}>
-              <LogOut className="mr-2 h-4 w-4" />
-              <p>Abmelden</p>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+                  {data?.user?.email && (
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {data?.user?.email}
+                    </p>
+                  )}
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <Link
+                  href="https://sso.informatik.sexy/if/user/#/settings"
+                  passHref
+                  target="_blank"
+                >
+                  <DropdownMenuItem>
+                    <CircleUser className="mr-2 h-4 w-4" />
+                    <p>Account</p>
+                  </DropdownMenuItem>
+                </Link>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>
+                    <Palette className="mr-2 h-4 w-4" />
+                    <p>Design</p>
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuPortal>
+                    <DropdownMenuSubContent>
+                      <DropdownMenuItem onClick={() => setTheme('light')}>
+                        Hell
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setTheme('dark')}>
+                        Dunkel
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => setTheme('system')}>
+                        System
+                      </DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuPortal>
+                </DropdownMenuSub>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => signOut()}>
+                <LogOut className="mr-2 h-4 w-4" />
+                <p>Abmelden</p>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
     </div>
   )
