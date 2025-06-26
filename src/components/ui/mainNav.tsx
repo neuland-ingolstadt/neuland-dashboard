@@ -32,6 +32,11 @@ const links: NavLink[] = [
     groups: ['admin'],
   },
   {
+    label: 'Audit Log',
+    href: '/auditlog',
+    groups: ['admin'],
+  },
+  {
     label: 'Neuland Events',
     href: '/events',
     groups: ['events'],

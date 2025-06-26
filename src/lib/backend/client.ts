@@ -1,4 +1,5 @@
 import type { Announcement, NewAnnouncement } from '@/lib/backend/announcements'
+import type { AuditLogEntry } from '@/lib/backend/auditLog'
 import type { NeulandEvent, NewNeulandEvent } from '@/lib/backend/neulandEvents'
 import type { RoomReport } from '@/lib/backend/rootReports'
 import type { NewSportsEvent, SportsEvent } from '@/lib/backend/sportEvents'
@@ -15,6 +16,7 @@ const graphqlClient = {
   neulandEvents: devGraphqlClient,
   roomReports: prodGraphqlClient,
   appAnnouncements: prodGraphqlClient,
+  auditLog: prodGraphqlClient,
 }
 
 interface SportsEventData {
@@ -34,6 +36,11 @@ interface RoomReportsData {
 
 interface NeulandEventsData {
   neulandEvents: NeulandEvent[]
+  error?: unknown
+}
+
+interface AuditLogData {
+  auditLog: AuditLogEntry[]
   error?: unknown
 }
 
@@ -336,14 +343,46 @@ export async function updateNeulandEvent(
 }
 export async function deleteNeulandEvent(id: string, accessToken: string) {
   const mutation = gql`
-		mutation DeleteNeulandEvent($id: ID!) {
-			deleteNeulandEvent(id: $id)
-		}
-	`.replace(/\s+/g, ' ')
+                mutation DeleteNeulandEvent($id: ID!) {
+                        deleteNeulandEvent(id: $id)
+                }
+        `.replace(/\s+/g, ' ')
 
   await graphqlClient.neulandEvents.request(
     mutation,
     { id },
     { Authorization: `Bearer ${accessToken}` }
   )
+}
+
+export async function getAuditLog(
+  accessToken: string,
+  limit?: number,
+  offset?: number
+) {
+  const query = gql`
+    query AuditLog($limit: Int, $offset: Int) {
+      auditLog(limit: $limit, offset: $offset) {
+        id
+        entity
+        entityId
+        operation
+        name
+        userId
+        createdAt
+      }
+    }
+  `.replace(/\s+/g, ' ')
+
+  const data = await graphqlClient.auditLog.request<AuditLogData>(
+    query,
+    { limit, offset },
+    { Authorization: `Bearer ${accessToken}` }
+  )
+
+  if (!data.auditLog) {
+    throw new Error('No data returned from API')
+  }
+
+  return data.auditLog
 }
