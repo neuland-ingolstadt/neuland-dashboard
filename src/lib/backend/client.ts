@@ -16,7 +16,7 @@ const graphqlClient = {
   neulandEvents: devGraphqlClient,
   roomReports: prodGraphqlClient,
   appAnnouncements: prodGraphqlClient,
-  auditLog: prodGraphqlClient,
+  auditLog: devGraphqlClient,
 }
 
 interface SportsEventData {
@@ -373,7 +373,7 @@ export async function getAuditLog(
       }
     }
   `.replace(/\s+/g, ' ')
-
+  console.log('backend ', accessToken)
   const data = await graphqlClient.auditLog.request<AuditLogData>(
     query,
     { limit, offset },

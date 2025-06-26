@@ -21,6 +21,7 @@ const pathnames: Record<string, string> = {
   '/events': 'Neuland Events',
   '/events/new': 'Neues Event',
   '/events/edit': 'Event bearbeiten',
+  '/auditlog': 'Audit Log',
 }
 
 export default function PathBreadcrumbs() {
