@@ -47,6 +47,9 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  experimental: {
+    webpackMemoryOptimizations: true,
+  },
   headers: async () => {
     return [
       {
