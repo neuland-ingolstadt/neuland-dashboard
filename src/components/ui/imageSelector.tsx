@@ -1,5 +1,9 @@
 'use client'
 
+import type {
+  ImageListSuccessResponse,
+  ListedImage,
+} from '@/app/api/images/route'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -12,7 +16,6 @@ import {
 } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
-import type { ImageListSuccessResponse, ListedImage } from '@/pages/api/images'
 import type { ApiResponse } from '@/types/api'
 import { Check, Image } from 'lucide-react'
 import type React from 'react'

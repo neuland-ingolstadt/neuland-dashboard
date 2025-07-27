@@ -4,7 +4,7 @@ import { useUserGroups } from '@/lib/hooks/groups'
 import { cn } from '@/lib/utils'
 import { ExternalLink } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 
 interface NavLink {
@@ -47,7 +47,7 @@ export function MainNav({
   className,
   ...props
 }: React.HTMLAttributes<HTMLElement>) {
-  const router = useRouter()
+  const pathname = usePathname()
   const { userGroups } = useUserGroups()
 
   const userLinks = useMemo(() => {
@@ -60,10 +60,7 @@ export function MainNav({
     })
   }, [userGroups])
 
-  const basePath = useMemo(
-    () => `/${router.pathname.split('/')[1]}`,
-    [router.pathname]
-  )
+  const basePath = useMemo(() => `/${pathname.split('/')[1]}`, [pathname])
 
   return (
     <nav

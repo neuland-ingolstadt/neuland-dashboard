@@ -5,7 +5,7 @@ import { formatDateInterval } from '@/lib/dateUtils'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format, isSameDay } from 'date-fns'
 import { CalendarOff, MapPin, MapPinOff, Repeat } from 'lucide-react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { useMemo } from 'react'
 
 interface NeulandEventsTableProps {

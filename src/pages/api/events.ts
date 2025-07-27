@@ -1,3 +1,4 @@
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import {
   createNeulandEvent,
   deleteNeulandEvent,
@@ -8,7 +9,6 @@ import {
   newNeulandEventSchema,
   updateNeulandEventSchema,
 } from '@/lib/backend/neulandEvents'
-import { authOptions } from '@/pages/api/auth/[...nextauth]'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 

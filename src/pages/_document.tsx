@@ -1,4 +1,9 @@
-import { inter } from '@/pages/_app'
+import { Inter } from 'next/font/google'
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+})
 import { Head, Html, Main, NextScript } from 'next/document'
 
 export default function Document() {

@@ -5,7 +5,7 @@ import type { SportsEvent } from '@/lib/backend/sportEvents'
 import { weekdays } from '@/lib/utils'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Calendar, School } from 'lucide-react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 
 const columns: ColumnDef<SportsEvent>[] = [
   {

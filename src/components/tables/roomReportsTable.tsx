@@ -16,7 +16,7 @@ import {
   X,
 } from 'lucide-react'
 import Link from 'next/link'
-import { type NextRouter, useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
 const REASONS = {
@@ -44,8 +44,8 @@ const REASONS = {
 
 const columns: (
   dialog: ReturnType<typeof useDialogs>,
-  router: NextRouter
-) => ColumnDef<RoomReport>[] = (dialog, router) => [
+  router: ReturnType<typeof useRouter>
+) => ColumnDef<RoomReport>[] = (dialog, _router) => [
   {
     accessorKey: 'createdAt',
     header: ({ column }) => (
@@ -156,7 +156,7 @@ const columns: (
               dialog.setLoading(false)
             }
 
-            router.reload()
+            window.location.reload()
             dialog.setLoading(false)
           }}
         >
@@ -179,7 +179,7 @@ interface RoomReportsTableProps {
 
 export default function RoomReportsTable({ reports }: RoomReportsTableProps) {
   const dialog = useDialogs()
-  const router = useRouter()
+  const _router = useRouter()
 
   const selectFilters: FacetFilter<RoomReport, unknown>[] = [
     {
@@ -210,7 +210,7 @@ export default function RoomReportsTable({ reports }: RoomReportsTableProps) {
     <div className="flex flex-col gap-4">
       <h2 className="text-xl font-bold">Neue Meldungen</h2>
       <DataTable
-        columns={columns(dialog, router)}
+        columns={columns(dialog, _router)}
         enableFilter
         enablePagination
         initialPageSize={20}
@@ -232,7 +232,7 @@ export default function RoomReportsTable({ reports }: RoomReportsTableProps) {
       />
       <h2 className="text-xl font-bold">Abgeschlossene Meldungen</h2>
       <DataTable
-        columns={columns(dialog, router)}
+        columns={columns(dialog, _router)}
         enableFilter
         enablePagination
         initialPageSize={20}

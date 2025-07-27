@@ -1,3 +1,4 @@
+import type { ListedImage } from '@/app/api/images/route'
 import { DateTimePicker } from '@/components/ui/datetimepicker'
 import { FileUpload } from '@/components/ui/fileUpload'
 import {
@@ -19,7 +20,6 @@ import {
   type NewAnnouncement,
   newAnnouncementSchema,
 } from '@/lib/backend/announcements'
-import type { ListedImage } from '@/pages/api/images'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   BriefcaseBusiness,

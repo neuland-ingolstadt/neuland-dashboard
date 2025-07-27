@@ -6,7 +6,7 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
 import { cn } from '@/lib/utils'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 import { Fragment, useMemo } from 'react'
 
 const pathnames: Record<string, string> = {
@@ -25,10 +25,9 @@ const pathnames: Record<string, string> = {
 }
 
 export default function PathBreadcrumbs() {
-  const router = useRouter()
+  const pathname = usePathname()
 
   const links = useMemo(() => {
-    const pathname = router.pathname
     const parts = pathname.split('/').filter(Boolean)
 
     return [
@@ -44,7 +43,7 @@ export default function PathBreadcrumbs() {
         }
       }),
     ]
-  }, [router.pathname])
+  }, [pathname])
 
   return (
     <Breadcrumb>

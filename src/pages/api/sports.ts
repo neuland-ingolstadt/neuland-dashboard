@@ -1,3 +1,4 @@
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import {
   createSportsEvent,
   deleteSportsEvent,
@@ -8,7 +9,6 @@ import {
   newSportsEventSchema,
   updateSportsEventSchema,
 } from '@/lib/backend/sportEvents'
-import { authOptions } from '@/pages/api/auth/[...nextauth]'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 

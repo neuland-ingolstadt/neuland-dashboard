@@ -11,7 +11,7 @@ import { useDialogs } from '@/lib/providers/dialogsProvider'
 import { Save, Trash } from 'lucide-react'
 import type { GetServerSideProps } from 'next'
 import Head from 'next/head'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useRef, useState } from 'react'
 
 interface EditNeulandEventPageProps {

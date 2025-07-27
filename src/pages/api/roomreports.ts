@@ -1,6 +1,6 @@
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { resolveRoomReport } from '@/lib/backend/client'
 import { checkApiPermissions } from '@/lib/backend/groups'
-import { authOptions } from '@/pages/api/auth/[...nextauth]'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 

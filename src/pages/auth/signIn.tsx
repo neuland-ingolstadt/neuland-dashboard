@@ -3,18 +3,15 @@ import Logo from '@public/logo.webp'
 import { signIn } from 'next-auth/react'
 import Head from 'next/head'
 import Image from 'next/image'
-import { useRouter } from 'next/router'
+import { useSearchParams } from 'next/navigation'
 import { useMemo } from 'react'
 
 export default function SignInPage() {
-  const { query } = useRouter()
+  const searchParams = useSearchParams()
   const callbackUrl = useMemo(() => {
-    if (typeof query.callbackUrl === 'string') {
-      return query.callbackUrl
-    }
-    return '/'
-  }, [query.callbackUrl])
-
+    const value = searchParams.get('callbackUrl')
+    return value ?? '/'
+  }, [searchParams])
   return (
     <div className="flex h-screen flex-col items-center justify-center bg-gray-100 dark:bg-gray-900">
       <Head>

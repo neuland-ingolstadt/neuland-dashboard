@@ -15,7 +15,7 @@ import {
 import { cn } from '@/lib/utils'
 import type { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React, { useMemo } from 'react'
 
 interface AnnouncementsTableProps {

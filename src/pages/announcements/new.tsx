@@ -7,7 +7,7 @@ import type { NewAnnouncement } from '@/lib/backend/announcements'
 import { useDialogs } from '@/lib/providers/dialogsProvider'
 import { Save } from 'lucide-react'
 import Head from 'next/head'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { useCallback, useRef } from 'react'
 
 export default function NewSportsEventPage() {
