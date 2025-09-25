@@ -36,11 +36,6 @@ const links: NavLink[] = [
     href: '/auditlog',
     groups: ['admin'],
   },
-  {
-    label: 'Neuland Events',
-    href: '/events',
-    groups: ['events'],
-  },
 ]
 
 export function MainNav({
