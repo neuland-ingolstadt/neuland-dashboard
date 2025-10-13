@@ -1,8 +1,11 @@
+const S3_ENDPOINT =
+  process.env.S3_ENDPOINT || 'https://nbg1.your-objectstorage.com'
+
 const ContentSecurityPolicy = `
   default-src 'self';
   script-src 'self' 'unsafe-inline' 'unsafe-eval';
   style-src 'self' 'unsafe-inline';
-  img-src 'self' data: https://assets.neuland.app;
+  img-src 'self' data: https://assets.neuland.app ${S3_ENDPOINT};
   font-src 'self';
   connect-src 'self';
   frame-src 'self';
@@ -49,6 +52,17 @@ const nextConfig = {
   },
   experimental: {
     webpackMemoryOptimizations: true,
+  },
+  images: {
+    domains: [],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'nbg1.your-objectstorage.com',
+        port: '',
+        pathname: '/**',
+      },
+    ],
   },
   headers: async () => {
     return [

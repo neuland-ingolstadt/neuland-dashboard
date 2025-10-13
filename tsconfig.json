@@ -8,7 +8,7 @@
     "esModuleInterop": true,
     "module": "esnext",
     "target": "ESNext",
-    "types": ["@types/node", "@types/react"],
+    "types": ["@types/react", "@types/node"],
     "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,

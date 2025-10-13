@@ -1,6 +1,9 @@
-import fs from 'node:fs/promises'
-import path from 'node:path'
 import { checkApiPermissions } from '@/lib/backend/groups'
+import {
+  extractFilenameFromKey,
+  getS3PublicUrl,
+  listS3Objects,
+} from '@/lib/backend/s3Client'
 import { authOptions } from '@/pages/api/auth/[...nextauth]'
 import type { ApiResponse } from '@/types/api'
 import type { NextApiRequest, NextApiResponse } from 'next'
@@ -16,9 +19,6 @@ export interface ListedImage {
 export type ImageListSuccessResponse = ListedImage[]
 
 type ImageListApiResponse = ApiResponse<ImageListSuccessResponse | null>
-
-const UPLOADS_PUBLIC_DIR = path.join(process.cwd(), 'public/uploads')
-const BASE_URL = process.env.NEXTAUTH_URL || 'http://localhost:3000'
 
 export default async function handler(
   req: NextApiRequest,
@@ -56,38 +56,47 @@ export default async function handler(
   }
 
   try {
-    const files = await fs.readdir(UPLOADS_PUBLIC_DIR)
+    const s3Objects = await listS3Objects('uploads/')
     const images: ListedImage[] = []
 
-    for (const file of files) {
-      const filePath = path.join(UPLOADS_PUBLIC_DIR, file)
-      const stat = await fs.stat(filePath)
+    for (const obj of s3Objects) {
+      if (!obj.Key) continue
 
-      const isImage = /\.(jpeg|jpg|png|gif|webp)$/i.test(file)
-      const url = new URL(`/uploads/${file}`, BASE_URL).toString()
+      const isImage = /\.(jpeg|jpg|png|gif|webp)$/i.test(obj.Key)
 
-      if (stat.isFile() && isImage) {
+      if (isImage) {
+        const filename = extractFilenameFromKey(obj.Key)
+        const url = getS3PublicUrl(obj.Key)
+
         images.push({
-          name: file,
+          name: filename,
           url,
-          size: stat.size,
-          uploadedAt: stat.mtime.toISOString(),
+          size: obj.Size,
+          uploadedAt: obj.LastModified?.toISOString(),
         })
       }
     }
 
+    images.sort((a, b) => {
+      if (!a.uploadedAt && !b.uploadedAt) return 0
+      if (!a.uploadedAt) return 1
+      if (!b.uploadedAt) return -1
+      return new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
+    })
+
     return res.status(200).json({ success: true, data: images })
   } catch (error: unknown) {
-    console.error('Error listing images:', error)
-    if (
-      error instanceof Error &&
-      (error as NodeJS.ErrnoException).code === 'ENOENT'
-    ) {
-      return res.status(200).json({ success: true, data: [] })
-    }
+    console.error('Error listing images from S3:', error)
+
     return res.status(500).json({
       success: false,
-      error: { message: 'Failed to list images.', code: 'SERVER_ERROR' },
+      error: {
+        message:
+          error instanceof Error
+            ? error.message
+            : 'Failed to list images from S3',
+        code: 'SERVER_ERROR',
+      },
     })
   }
 }
