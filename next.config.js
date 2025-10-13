@@ -1,4 +1,5 @@
-const S3_ENDPOINT = process.env.S3_ENDPOINT || 'https://nbg1.your-objectstorage.com';
+const S3_ENDPOINT =
+  process.env.S3_ENDPOINT || 'https://nbg1.your-objectstorage.com'
 
 const ContentSecurityPolicy = `
   default-src 'self';
