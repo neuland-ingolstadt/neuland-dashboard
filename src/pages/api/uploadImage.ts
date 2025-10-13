@@ -1,7 +1,8 @@
 import { randomUUID } from 'node:crypto'
 import fs from 'node:fs/promises'
-import path from 'node:path'
+import os from 'node:os'
 import { checkApiPermissions } from '@/lib/backend/groups'
+import { generateS3Key, uploadToS3 } from '@/lib/backend/s3Client'
 import { authOptions } from '@/pages/api/auth/[...nextauth]'
 import type {
   ApiResponse,
@@ -23,9 +24,9 @@ export const config = {
   },
 }
 
-const UPLOAD_DIR: string = path.join(process.cwd(), 'public/uploads')
-const MAX_FILE_SIZE_MB: number = 5
-const MAX_FILE_SIZE_BYTES: number = MAX_FILE_SIZE_MB * 1024 * 1024
+const MAX_FILE_SIZE_MB = 10
+const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
+const TEMP_DIR = os.tmpdir()
 
 const ALLOWED_MIME_TYPES: string[] = [
   'image/jpeg',
@@ -33,23 +34,15 @@ const ALLOWED_MIME_TYPES: string[] = [
   'image/gif',
   'image/webp',
   'image/tiff',
+  'image/bmp',
+  'image/svg+xml',
+  'image/avif',
+  'image/heic',
   'image/heif',
 ]
 
-async function ensureUploadDir(): Promise<void> {
-  try {
-    await fs.mkdir(UPLOAD_DIR, { recursive: true })
-  } catch (error: unknown) {
-    console.error('Failed to create upload directory:', error)
-    throw new Error(
-      'Server configuration error: Upload directory could not be created.'
-    )
-  }
-}
-
 type UploadedFileWithId = UploadedFile & { id: string }
 type UploadSuccessResponseWithId = UploadSuccessResponse & { id: string }
-
 type UploadImageApiResponse = ApiResponse<UploadSuccessResponseWithId | null>
 
 export default async function handler(
@@ -88,28 +81,13 @@ export default async function handler(
     })
   }
 
-  try {
-    await ensureUploadDir()
-  } catch (err: unknown) {
-    console.error(err)
-    return res.status(500).json({
-      success: false,
-      error: {
-        message:
-          err instanceof Error ? err.message : 'Server configuration error.',
-        code: 'SERVER_ERROR',
-      },
-    })
-  }
-
   const form = formidable({
-    uploadDir: UPLOAD_DIR,
+    uploadDir: TEMP_DIR,
     keepExtensions: false,
     maxFileSize: MAX_FILE_SIZE_BYTES,
   })
 
   let tempFilePath: string | undefined
-  let newFilenameWebP: string | undefined
   let fileId: string | undefined
 
   try {
@@ -182,19 +160,16 @@ export default async function handler(
     }
 
     fileId = randomUUID()
-    const newFileName = `${fileId}.webp`
-    const webpFilePath = path.join(UPLOAD_DIR, newFileName)
-    newFilenameWebP = newFileName
+    const originalFilename = file.originalFilename || `upload-${fileId}`
+    const s3Key = generateS3Key(originalFilename, fileId)
 
+    let webpBuffer: Buffer
     try {
-      await sharp(file.filepath).webp({ quality: 80 }).toFile(webpFilePath)
+      webpBuffer = await sharp(file.filepath).webp({ quality: 80 }).toBuffer()
 
       await fs.unlink(file.filepath)
     } catch (conversionError: unknown) {
       console.error('Sharp conversion error:', conversionError)
-      if (newFilenameWebP) {
-        await fs.unlink(webpFilePath).catch(() => {})
-      }
       if (tempFilePath) {
         await fs.unlink(tempFilePath).catch(() => {})
       }
@@ -213,30 +188,45 @@ export default async function handler(
       })
     }
 
-    const relativePath: string = path.relative(
-      path.join(process.cwd(), 'public'),
-      webpFilePath
-    )
-    const imageUrl: string = `/${relativePath.replace(/\\/g, '/')}`
+    let imageUrl: string
+    try {
+      imageUrl = await uploadToS3(s3Key, webpBuffer, 'image/webp', {
+        originalFilename: originalFilename,
+        uploadedBy: session.user?.email || 'unknown',
+        uploadedAt: new Date().toISOString(),
+      })
+    } catch (s3Error: unknown) {
+      console.error('S3 upload error:', s3Error)
+      return res.status(500).json({
+        success: false,
+        error: {
+          message: 'Failed to upload image to S3.',
+          code: 'UPLOAD_FAILED',
+          details: {
+            error:
+              s3Error instanceof Error ? s3Error.message : 'Unknown S3 error',
+          },
+        },
+      })
+    }
 
     const uploadedFileInfo: UploadedFileWithId = {
       id: fileId,
-      filepath: webpFilePath,
-      originalFilename: file.originalFilename,
-      newFilename: newFileName,
+      filepath: s3Key,
+      originalFilename: originalFilename,
+      newFilename: `${fileId}.webp`,
       mimetype: 'image/webp',
-      size: (await fs.stat(webpFilePath)).size,
+      size: webpBuffer.length,
     }
 
-    console.log('File uploaded and converted successfully:', uploadedFileInfo)
+    console.log('File uploaded to S3 successfully:', uploadedFileInfo)
 
     return res.status(200).json({
       success: true,
       data: {
         id: uploadedFileInfo.id,
         imageUrl,
-        filename:
-          uploadedFileInfo.originalFilename || uploadedFileInfo.newFilename,
+        filename: originalFilename,
         size: uploadedFileInfo.size,
       },
     })
@@ -272,10 +262,6 @@ export default async function handler(
 
     if (tempFilePath) {
       await fs.unlink(tempFilePath).catch(() => {})
-    }
-    if (newFilenameWebP) {
-      const partialWebpPath = path.join(UPLOAD_DIR, newFilenameWebP)
-      await fs.unlink(partialWebpPath).catch(() => {})
     }
 
     return res.status(statusCode).json({

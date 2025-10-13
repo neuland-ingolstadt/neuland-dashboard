@@ -34,7 +34,7 @@ const DEFAULT_ALLOWED_FILE_TYPES: string[] = [
   'image/gif',
   'image/webp',
 ]
-const DEFAULT_MAX_FILE_SIZE_MB = 5
+const DEFAULT_MAX_FILE_SIZE_MB = 10
 
 export const FileUpload: React.FC<FileUploadProps> = ({
   allowedFileTypes = DEFAULT_ALLOWED_FILE_TYPES,
