@@ -102,9 +102,8 @@ export async function deleteFromS3(key: string): Promise<void> {
   }
 }
 
-export function generateS3Key(filename: string, fileId: string): string {
-  const extension = filename.split('.').pop()?.toLowerCase() || 'webp'
-  return `uploads/announcements/${fileId}.${extension}`
+export function generateS3Key(fileId: string): string {
+  return `uploads/announcements/${fileId}.webp`
 }
 
 export function extractFilenameFromKey(key: string): string {

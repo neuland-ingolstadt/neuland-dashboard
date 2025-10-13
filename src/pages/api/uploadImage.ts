@@ -161,7 +161,7 @@ export default async function handler(
 
     fileId = randomUUID()
     const originalFilename = file.originalFilename || `upload-${fileId}`
-    const s3Key = generateS3Key(originalFilename, fileId)
+    const s3Key = generateS3Key(fileId)
 
     let webpBuffer: Buffer
     try {
