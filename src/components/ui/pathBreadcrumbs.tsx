@@ -18,9 +18,6 @@ const pathnames: Record<string, string> = {
   '/announcements/new': 'Neue Ankündigung',
   '/announcements/edit': 'Ankündigung bearbeiten',
   '/roomreports': 'Raummeldungen',
-  '/events': 'Neuland Events',
-  '/events/new': 'Neues Event',
-  '/events/edit': 'Event bearbeiten',
   '/auditlog': 'Audit Log',
 }
 
