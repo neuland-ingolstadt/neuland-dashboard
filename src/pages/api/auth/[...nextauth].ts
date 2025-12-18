@@ -17,7 +17,7 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
     })
 
     const response = await fetch(
-      'https://sso.informatik.sexy/application/o/token/',
+      'https://auth.neuland.ing/application/o/token/',
       {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

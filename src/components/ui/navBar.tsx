@@ -72,7 +72,7 @@ export default function NavBar() {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <Link
-                href="https://sso.informatik.sexy/if/user/#/settings"
+                href="https://auth.neuland.ing/if/user/#/settings"
                 passHref
                 target="_blank"
               >

@@ -18,7 +18,7 @@ export default function AuthErrorPage() {
         Es ist ein Fehler bei der Authentifizierung aufgetreten.
       </p>
 
-      <Link href="https://sso.informatik.sexy/flows/-/cancel/" passHref>
+      <Link href="https://auth.neuland.ing/flows/-/cancel/" passHref>
         <Button className="mt-6">Falscher Account?</Button>
       </Link>
     </div>
