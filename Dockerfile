@@ -15,7 +15,7 @@ FROM base AS deps
 WORKDIR /app
 
 # Optimize layer caching by copying only necessary files
-COPY package.json pnpm-lock.yaml* ./
+COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml ./
 
 # Install dependencies
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
