@@ -9,8 +9,8 @@ Here you can manage the university sports courses and in-app announcements.
 
 1. Clone the repository
 2. Create a `.env.local` file in the root directory and add the variables seen in the `.env.example` file
-3. Run `pnpm install`
-4. Run `pnpm dev` to start the development server
+3. Run `bun install`
+4. Run `bun dev` to start the development server
 5. Visit `http://localhost:3000`
 
 ## Linting
@@ -18,11 +18,11 @@ Here you can manage the university sports courses and in-app announcements.
 We use [Biome](https://biomejs.dev/) for linting and formatting. You can run the linter with:
 
 ```bash
-pnpm lint
+bun run lint
 ```
 
 To automatically format the code, you can run:
 
 ```bash
-pnpm fmt
+bun run fmt
 ```

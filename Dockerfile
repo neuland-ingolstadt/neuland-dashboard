@@ -1,62 +1,40 @@
-FROM node:24-alpine AS base
+# syntax=docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
 
-ENV NODE_ENV=production \
-    NEXT_TELEMETRY_DISABLED=1 \
-    NEXT_SHARP_PATH=/app/node_modules/sharp \
-    PNPM_HOME="/pnpm" 
-ENV PATH="${PNPM_HOME}:${PATH}"
+ARG BUN_VERSION
+FROM oven/bun:${BUN_VERSION}-alpine AS base
+WORKDIR /app
 
-# Use --no-cache to reduce layer size
-RUN apk add --no-cache tini curl && \
-    corepack enable
-
-# Dependencies stage
 FROM base AS deps
-WORKDIR /app
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
 
-# Optimize layer caching by copying only necessary files
-COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml ./
-
-# Install dependencies
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-    pnpm install --frozen-lockfile --ignore-scripts
-
-# Builder stage
 FROM base AS builder
-WORKDIR /app
-
-# Copy only necessary files for build
+ENV NODE_ENV=production \
+    NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+RUN bun run build
 
-# Build the application
-RUN pnpm run build
-
-# Runner stage
 FROM base AS runner
-WORKDIR /app
+ENV NODE_ENV=production \
+    NEXT_TELEMETRY_DISABLED=1 \
+    PORT=3000 \
+    HOSTNAME="0.0.0.0"
 
-# Create non-root user
-RUN addgroup -S nextjs && \
-    adduser -S nextjs -G nextjs -u 1001 && \
-    mkdir -p .next && \
-    chown nextjs:nextjs .next
+RUN addgroup --system --gid 1001 nodejs \
+  && adduser --system --uid 1001 --ingroup nodejs nextjs \
+  && mkdir -p .next \
+  && chown nextjs:nodejs .next
 
-# Copy only necessary files
-COPY --from=builder --chown=nextjs:nextjs /app/public ./public
-COPY --from=builder --chown=nextjs:nextjs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nextjs /app/.next/static ./.next/static
-# Ensure sharp is available in the final image
-COPY --from=builder --chown=nextjs:nextjs /app/node_modules/sharp ./node_modules/sharp
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=5 \
-    CMD curl -f http://localhost:3000/ || exit 1
-
 EXPOSE 3000
-ENV PORT=3000 \
-    HOSTNAME="0.0.0.0"
 
-ENTRYPOINT ["/sbin/tini", "--"]
-CMD ["node", "server.js"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=5 \
+  CMD wget -qO- "http://127.0.0.1:${PORT}/" > /dev/null || exit 1
+
+CMD ["bun", "server.js"]

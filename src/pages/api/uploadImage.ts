@@ -238,7 +238,7 @@ export default async function handler(
     let statusCode = 500
     let errorDetails: Record<string, unknown> | undefined
 
-    if (err instanceof formidableErrors.FormidableError) {
+    if (err instanceof formidableErrors.default) {
       if (err.httpCode === 413 || err.message.includes('maxFileSize')) {
         errorMessage = `File size exceeds the limit of ${MAX_FILE_SIZE_MB}MB`
         errorCode = 'FILE_TOO_LARGE'
