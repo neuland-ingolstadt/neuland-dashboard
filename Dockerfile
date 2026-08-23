@@ -8,6 +8,10 @@ FROM base AS deps
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
+FROM base AS proddeps
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile --production
+
 FROM base AS builder
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1
@@ -29,8 +33,8 @@ RUN addgroup --system --gid 1001 nodejs \
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-# next's file tracing misses the nested jose@4 required by openid-client
-COPY --from=deps --chown=nextjs:nodejs /app/node_modules/openid-client/node_modules/jose ./node_modules/openid-client/node_modules/jose
+# bun-based next build breaks output file tracing; overlay full prod node_modules
+COPY --from=proddeps --chown=nextjs:nodejs /app/node_modules ./node_modules
 
 USER nextjs
 
