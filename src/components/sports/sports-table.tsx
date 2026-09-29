@@ -97,7 +97,7 @@ export function SportsTable({ events }: { events: SportsEvent[] }) {
 			enableFilter
 			enablePagination
 			initialPageSize={10}
-			initialSorting={[{ id: "title_de", desc: false }]}
+			initialSorting={[{ id: "weekday", desc: false }]}
 			onClick={({ id }) => {
 				void navigate({ to: "/sports/$id", params: { id } });
 			}}

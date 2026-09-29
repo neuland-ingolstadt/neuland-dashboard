@@ -13,8 +13,8 @@
 		"build": "vite build",
 		"preview": "vite preview --host 127.0.0.1 --port 43127",
 		"start": "bun .output/server/index.mjs",
-		"format": "biome format --write",
-		"lint": "biome lint",
+		"format": "biome check --write .",
+		"lint": "biome check .",
 		"check": "biome check .",
 		"typecheck": "tsc --noEmit",
 		"docker:build": "docker build --build-arg BUN_VERSION=$(tr -d '[:space:]' < .bun-version) -t neuland-dashboard ."
