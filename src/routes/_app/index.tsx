@@ -46,14 +46,6 @@ const featureCards: HomeCard[] = [
 		visible: canAccessAnnouncements,
 	},
 	{
-		title: "Campus Life Events",
-		description: "Campus Life Veranstaltungen verwalten.",
-		href: EXTERNAL_LINKS.CAMPUS_LIFE,
-		icon: CalendarDays,
-		visible: canAccessAnnouncements,
-		external: true,
-	},
-	{
 		title: "Raummeldungen",
 		description: "Meldungen für falsch eingetragene Rauminfos.",
 		href: ROUTES.ROOM_REPORTS,
@@ -70,6 +62,14 @@ const featureCards: HomeCard[] = [
 ];
 
 const linkCards: HomeCard[] = [
+	{
+		title: "Campus Life Events",
+		description: "Campus Life Veranstaltungen verwalten.",
+		href: EXTERNAL_LINKS.CAMPUS_LIFE,
+		icon: CalendarDays,
+		visible: canAccessAnnouncements,
+		external: true,
+	},
 	{
 		title: "Analytics",
 		description: "Analytics und Statistiken der Neuland Next App.",

@@ -54,14 +54,6 @@ export const featureItems: NavItem[] = [
 		visible: canAccessAnnouncements,
 	},
 	{
-		to: EXTERNAL_LINKS.CAMPUS_LIFE,
-		label: "Campus Life Events",
-		icon: CalendarDays,
-		match: () => false,
-		visible: canAccessAnnouncements,
-		external: true,
-	},
-	{
 		to: ROUTES.ROOM_REPORTS,
 		label: "Raum-Meldungen",
 		icon: DoorOpen,
@@ -81,6 +73,14 @@ export const bottomNavItems: NavItem[] = [
 ];
 
 export const externalAdminLinks: NavItem[] = [
+	{
+		to: EXTERNAL_LINKS.CAMPUS_LIFE,
+		label: "Campus Life Events",
+		icon: CalendarDays,
+		match: () => false,
+		visible: canAccessAnnouncements,
+		external: true,
+	},
 	{
 		to: EXTERNAL_LINKS.ANALYTICS,
 		label: "Analytics",
