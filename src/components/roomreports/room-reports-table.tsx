@@ -47,7 +47,7 @@ export function RoomReportsTable({ reports }: { reports: RoomReport[] }) {
 					await router.invalidate();
 				} catch (err) {
 					setError(
-						err instanceof Error ? err.message : "Auflösen fehlgeschlagen",
+						err instanceof Error ? err.message : "Erledigen fehlgeschlagen",
 					);
 				} finally {
 					setPendingId(null);
@@ -153,7 +153,7 @@ export function RoomReportsTable({ reports }: { reports: RoomReport[] }) {
 									onResolve(original.id);
 								}}
 							>
-								{pendingId === original.id ? "…" : "Auflösen"}
+								{pendingId === original.id ? "…" : "Erledigen"}
 								<Check className="size-3.5" aria-hidden />
 							</Button>
 						</div>

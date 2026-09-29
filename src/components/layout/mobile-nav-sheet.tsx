@@ -174,15 +174,38 @@ export function MobileNavSheet({
 					) : null}
 				</nav>
 
-				<div className="flex items-center justify-between border-t border-border p-4">
-					<ThemeToggle variant="outline" size="icon-sm" />
-					<a
-						href={ROUTES.AUTH_LOGOUT}
-						className="inline-flex h-9 items-center gap-2 px-3 text-sm text-muted-foreground no-underline hover:text-foreground"
-					>
-						<LogOut className="size-4" aria-hidden />
-						Abmelden
-					</a>
+				<div className="space-y-3 border-t border-border p-4">
+					<div className="flex min-w-0 items-center gap-3">
+						<div className="flex size-9 shrink-0 items-center justify-center bg-primary/10 text-xs font-semibold text-primary">
+							{(user.name || user.email)
+								.trim()
+								.split(/\s+/)
+								.filter(Boolean)
+								.slice(0, 2)
+								.map((part) => part[0]?.toUpperCase() ?? "")
+								.join("") || "?"}
+						</div>
+						<div className="min-w-0 leading-tight">
+							<p className="truncate text-sm font-semibold text-foreground">
+								{user.name || user.email}
+							</p>
+							{user.name && user.email ? (
+								<p className="truncate text-xs text-muted-foreground">
+									{user.email}
+								</p>
+							) : null}
+						</div>
+					</div>
+					<div className="flex items-center justify-between">
+						<ThemeToggle variant="outline" size="icon-sm" />
+						<a
+							href={ROUTES.AUTH_LOGOUT}
+							className="inline-flex h-9 items-center gap-2 px-3 text-sm text-muted-foreground no-underline hover:text-foreground"
+						>
+							<LogOut className="size-4" aria-hidden />
+							Abmelden
+						</a>
+					</div>
 				</div>
 			</SheetContent>
 		</Sheet>

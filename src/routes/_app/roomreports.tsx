@@ -19,7 +19,7 @@ function RoomReportsPage() {
 		<>
 			<PageHeader
 				title="Raummeldungen"
-				lead="Meldungen zu Rauminformationen prüfen und auflösen."
+				lead="Meldungen zu Rauminformationen prüfen und erledigen."
 			/>
 			<RoomReportsTable reports={reports} />
 		</>

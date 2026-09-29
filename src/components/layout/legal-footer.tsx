@@ -37,17 +37,7 @@ export function LegalFooter({ className }: { className?: string }) {
 					{BUILD_COMMIT}
 				</span>
 			</p>
-			<p className="mt-2">
-				© Neuland Ingolstadt e.V. ·{" "}
-				<a
-					href={EXTERNAL_LINKS.EGGL_DEV}
-					target="_blank"
-					rel="noopener noreferrer"
-					className="transition-colors hover:text-foreground"
-				>
-					Robert Eggl
-				</a>
-			</p>
+			<p className="mt-2">© Neuland Ingolstadt e.V.</p>
 		</footer>
 	);
 }

@@ -7,7 +7,6 @@ export const EXTERNAL_LINKS = {
 	ANALYTICS: "https://grafana.neuland.ing/d/aptabase-overview",
 	STATUS: "https://status.neuland.ing",
 	CAMPUS_LIFE: "https://cl.neuland-ingolstadt.de/",
-	EGGL_DEV: "https://eggl.dev",
 } as const;
 
 export const ROUTES = {

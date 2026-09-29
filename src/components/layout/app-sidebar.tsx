@@ -17,6 +17,13 @@ import { cn } from "#/lib/utils";
 
 const appRouteApi = getRouteApi("/_app");
 
+function userInitials(name: string): string {
+	const parts = name.trim().split(/\s+/).filter(Boolean);
+	if (parts.length === 0) return "?";
+	if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+	return `${parts[0][0] ?? ""}${parts[parts.length - 1][0] ?? ""}`.toUpperCase();
+}
+
 type AppSidebarProps = {
 	collapsed?: boolean;
 	onCollapsedChange?: (collapsed: boolean) => void;
@@ -234,21 +241,46 @@ export function AppSidebar({
 			<div
 				className={cn(
 					"mt-auto border-t border-border",
-					collapsed ? "flex flex-col items-center gap-1 p-2" : "p-2",
+					collapsed ? "flex flex-col items-center gap-1 p-2" : "space-y-2 p-3",
 				)}
 			>
-				{collapsed ? null : (
-					<p
-						data-sidebar-label
-						className="truncate px-2 pb-1 text-xs text-muted-foreground"
+				{collapsed ? (
+					<Tooltip
+						label={user.name || user.email}
+						side="right"
+						enabled
 					>
-						{user.name || user.email}
-					</p>
+						<span
+							className="flex size-9 items-center justify-center bg-primary/10 text-xs font-semibold text-primary"
+							aria-hidden
+						>
+							{userInitials(user.name || user.email)}
+						</span>
+					</Tooltip>
+				) : (
+					<div
+						data-sidebar-label
+						className="flex min-w-0 items-center gap-3 px-1"
+					>
+						<div className="flex size-9 shrink-0 items-center justify-center bg-primary/10 text-xs font-semibold text-primary">
+							{userInitials(user.name || user.email)}
+						</div>
+						<div className="min-w-0 leading-tight">
+							<p className="truncate text-sm font-semibold text-foreground">
+								{user.name || user.email}
+							</p>
+							{user.name && user.email ? (
+								<p className="truncate text-xs text-muted-foreground">
+									{user.email}
+								</p>
+							) : null}
+						</div>
+					</div>
 				)}
 				<div
 					className={cn(
 						"flex items-center text-muted-foreground",
-						collapsed ? "flex-col gap-0.5" : "gap-0.5 px-1",
+						collapsed ? "flex-col gap-0.5" : "gap-0.5",
 					)}
 				>
 					<Tooltip label="Theme" side="right" enabled={collapsed}>
