@@ -32,7 +32,7 @@ export function AnnouncementsTable({
 			{
 				id: "status",
 				accessorFn: (row) => getAnnouncementStatus(row),
-				size: 110,
+				size: 130,
 				header: ({ column }) => (
 					<DataTableColumnHeader column={column} title="Status" />
 				),
@@ -41,13 +41,10 @@ export function AnnouncementsTable({
 					const { icon: Icon, className } = getAnnouncementStatusMeta(status);
 					const label = announcementStatus[status];
 					return (
-						<span
-							className="inline-flex items-center justify-center"
-							title={label}
-						>
-							<Icon className={cn("size-4", className)} aria-label={label} />
-							<span className="sr-only">{label}</span>
-						</span>
+						<Badge variant="outline" className={cn("gap-1.5", className)}>
+							<Icon className="size-3.5 shrink-0" aria-hidden />
+							{label}
+						</Badge>
 					);
 				},
 				sortingFn: (
@@ -72,13 +69,20 @@ export function AnnouncementsTable({
 				header: "Plattform",
 				filterFn: "arrIncludesSome",
 				cell({ row: { original } }) {
+					const allSelected = PLATFORM_OPTIONS.every((o) =>
+						original.platform.includes(o.value),
+					);
 					return (
 						<div className="flex flex-wrap gap-1.5">
-							{original.platform.map((platform) => (
-								<Badge key={platform} variant="outline">
-									{platformLabel(platform)}
-								</Badge>
-							))}
+							{allSelected ? (
+								<Badge variant="outline">Alle</Badge>
+							) : (
+								original.platform.map((platform) => (
+									<Badge key={platform} variant="outline">
+										{platformLabel(platform)}
+									</Badge>
+								))
+							)}
 						</div>
 					);
 				},
@@ -89,13 +93,20 @@ export function AnnouncementsTable({
 				header: "Zielgruppe",
 				filterFn: "arrIncludesSome",
 				cell({ row: { original } }) {
+					const allSelected = USER_KIND_OPTIONS.every((o) =>
+						original.userKind.includes(o.value),
+					);
 					return (
 						<div className="flex flex-wrap gap-1.5">
-							{original.userKind.map((kind) => (
-								<Badge key={kind} variant="outline">
-									{userKindLabel(kind)}
-								</Badge>
-							))}
+							{allSelected ? (
+								<Badge variant="outline">Alle</Badge>
+							) : (
+								original.userKind.map((kind) => (
+									<Badge key={kind} variant="outline">
+										{userKindLabel(kind)}
+									</Badge>
+								))
+							)}
 						</div>
 					);
 				},
