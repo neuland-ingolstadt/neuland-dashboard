@@ -6,7 +6,7 @@ import type { RoomReport } from "#/lib/schemas/room-reports";
 export const listRoomReportsFn = createServerFn({ method: "GET" }).handler(
 	async (): Promise<RoomReport[]> => {
 		const { accessToken } = await requireAccessToken();
-		await requireCapability("reports", { asJson: true });
+		await requireCapability("reports");
 		return getRoomReports(accessToken);
 	},
 );
@@ -19,7 +19,7 @@ export const resolveRoomReportFn = createServerFn({ method: "POST" })
 		return { id: data.id };
 	})
 	.handler(async ({ data }) => {
-		const { accessToken } = await requireAccessToken();
+		const { accessToken } = await requireAccessToken({ asJson: true });
 		await requireCapability("reports", { asJson: true });
 		await resolveRoomReport(data.id, accessToken);
 		return { ok: true as const };

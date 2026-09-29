@@ -35,7 +35,7 @@ export const getSportFn = createServerFn({ method: "GET" })
 export const createSportFn = createServerFn({ method: "POST" })
 	.validator((data: NewSportsEvent) => newSportsEventSchema.parse(data))
 	.handler(async ({ data }) => {
-		const { accessToken } = await requireAccessToken();
+		const { accessToken } = await requireAccessToken({ asJson: true });
 		await requireCapability("sports", { asJson: true });
 		await createSportsEvent(data, accessToken);
 		return { ok: true as const };
@@ -50,7 +50,7 @@ export const updateSportFn = createServerFn({ method: "POST" })
 		return { id, event: newSportsEventSchema.parse(rest) };
 	})
 	.handler(async ({ data }) => {
-		const { accessToken } = await requireAccessToken();
+		const { accessToken } = await requireAccessToken({ asJson: true });
 		await requireCapability("sports", { asJson: true });
 		await updateSportsEvent(data.event, data.id, accessToken);
 		return { ok: true as const };
@@ -64,7 +64,7 @@ export const deleteSportFn = createServerFn({ method: "POST" })
 		return { id: data.id };
 	})
 	.handler(async ({ data }) => {
-		const { accessToken } = await requireAccessToken();
+		const { accessToken } = await requireAccessToken({ asJson: true });
 		await requireCapability("sports", { asJson: true });
 		await deleteSportsEvent(data.id, accessToken);
 		return { ok: true as const };

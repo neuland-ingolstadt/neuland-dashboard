@@ -1,5 +1,5 @@
+import { redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { setResponseStatus } from "@tanstack/react-start/server";
 import {
 	type AnnouncementStatus,
 	getAnnouncementStatus,
@@ -86,8 +86,7 @@ export const getDashboardSummaryFn = createServerFn({ method: "GET" }).handler(
 		if (canAccessReports(caps)) {
 			accessToken = await getAccessToken();
 			if (!accessToken) {
-				setResponseStatus(401);
-				throw new Error("Sitzung abgelaufen");
+				throw redirect({ to: "/login" });
 			}
 		}
 

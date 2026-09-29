@@ -73,7 +73,7 @@ export const uploadImageFn = createServerFn({ method: "POST" })
 		return data;
 	})
 	.handler(async ({ data }) => {
-		const { user } = await requireAccessToken();
+		const { user } = await requireAccessToken({ asJson: true });
 		await requireCapability("announcements", { asJson: true });
 
 		const file = data.get("image");

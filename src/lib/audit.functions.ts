@@ -17,6 +17,6 @@ export const listAuditLogFn = createServerFn({ method: "GET" })
 	})
 	.handler(async ({ data }): Promise<AuditLogEntry[]> => {
 		const { accessToken } = await requireAccessToken();
-		await requireCapability("audit", { asJson: true });
+		await requireCapability("audit");
 		return getAuditLog(accessToken, data.limit, data.offset);
 	});

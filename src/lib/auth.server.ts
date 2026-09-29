@@ -208,11 +208,20 @@ export async function handleOidcCallback(
 async function refreshAccessToken(): Promise<string | null> {
 	const session = await getAppSession();
 	const refreshToken = session.data.refreshToken;
-	if (!refreshToken || !isAuthConfigured()) return null;
+	if (!refreshToken || !isAuthConfigured()) {
+		await session.clear();
+		return null;
+	}
 
 	try {
 		const config = await getOidcConfig();
 		const tokens = await client.refreshTokenGrant(config, refreshToken);
+		if (!tokens.access_token) {
+			console.error("[auth] refresh returned no access_token");
+			await session.clear();
+			return null;
+		}
+
 		const expiresIn =
 			typeof tokens.expires_in === "number" ? tokens.expires_in : 3600;
 
@@ -223,7 +232,7 @@ async function refreshAccessToken(): Promise<string | null> {
 			idToken: tokens.id_token ?? session.data.idToken,
 		});
 
-		return tokens.access_token ?? null;
+		return tokens.access_token;
 	} catch (err) {
 		console.error("[auth] refresh failed", err);
 		await session.clear();
@@ -245,6 +254,15 @@ export async function getAccessToken(): Promise<string | null> {
 	}
 
 	return refreshAccessToken();
+}
+
+/** Drop the cookie session and send the user back to login. */
+function throwSessionExpired(options?: { asJson?: boolean }): never {
+	if (options?.asJson) {
+		setResponseStatus(401);
+		throw new Error("Sitzung abgelaufen");
+	}
+	throw redirect({ to: "/login" });
 }
 
 export async function buildLogoutRedirectUrl(): Promise<string> {
@@ -279,6 +297,11 @@ export async function getSessionUser(): Promise<SessionUser | null> {
 	const session = await getAppSession();
 	const user = session.data.user;
 	if (!user) return null;
+
+	// Ensure the OIDC access token is still usable (refresh via offline_access).
+	// Clears the cookie when refresh is impossible so routes redirect to login.
+	const accessToken = await getAccessToken();
+	if (!accessToken) return null;
 
 	return {
 		sub: user.sub,
@@ -344,15 +367,16 @@ export async function requireCapability(
 	return user;
 }
 
-export async function requireAccessToken(): Promise<{
+export async function requireAccessToken(options?: {
+	asJson?: boolean;
+}): Promise<{
 	user: SessionUser;
 	accessToken: string;
 }> {
-	const user = await requireAppAccess({ asJson: true });
+	const user = await requireAppAccess(options);
 	const accessToken = await getAccessToken();
 	if (!accessToken) {
-		setResponseStatus(401);
-		throw new Error("Sitzung abgelaufen");
+		throwSessionExpired(options);
 	}
 	return { user, accessToken };
 }

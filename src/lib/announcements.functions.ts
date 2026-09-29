@@ -51,7 +51,7 @@ export const getAnnouncementFn = createServerFn({ method: "GET" })
 export const createAnnouncementFn = createServerFn({ method: "POST" })
 	.validator((data: NewAnnouncement) => newAnnouncementSchema.parse(data))
 	.handler(async ({ data }) => {
-		const { accessToken } = await requireAccessToken();
+		const { accessToken } = await requireAccessToken({ asJson: true });
 		await requireCapability("announcements", { asJson: true });
 		await createAnnouncement(toGraphqlAnnouncement(data), accessToken);
 		return { ok: true as const };
@@ -66,7 +66,7 @@ export const updateAnnouncementFn = createServerFn({ method: "POST" })
 		return { id, announcement: newAnnouncementSchema.parse(rest) };
 	})
 	.handler(async ({ data }) => {
-		const { accessToken } = await requireAccessToken();
+		const { accessToken } = await requireAccessToken({ asJson: true });
 		await requireCapability("announcements", { asJson: true });
 		await updateAnnouncement(
 			toGraphqlAnnouncement(data.announcement),
@@ -84,7 +84,7 @@ export const deleteAnnouncementFn = createServerFn({ method: "POST" })
 		return { id: data.id };
 	})
 	.handler(async ({ data }) => {
-		const { accessToken } = await requireAccessToken();
+		const { accessToken } = await requireAccessToken({ asJson: true });
 		await requireCapability("announcements", { asJson: true });
 		await deleteAnnouncement(data.id, accessToken);
 		return { ok: true as const };
