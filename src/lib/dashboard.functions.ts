@@ -6,14 +6,12 @@ import {
 } from "#/lib/announcement-status";
 import {
 	canAccessAnnouncements,
-	canAccessAudit,
 	canAccessReports,
 	canAccessSports,
 } from "#/lib/auth";
 import { getAccessToken, requireAppAccess } from "#/lib/auth.server";
 import {
 	getAnnouncements,
-	getAuditLog,
 	getRoomReports,
 	getSportsEvents,
 } from "#/lib/graphql.server";
@@ -34,14 +32,6 @@ export type DashboardReportItem = {
 	createdAt: string;
 };
 
-export type DashboardAuditItem = {
-	id: string;
-	entity: string;
-	operation: string;
-	name: string;
-	createdAt: string;
-};
-
 export type DashboardSummary = {
 	sports: { total: number } | null;
 	announcements: {
@@ -53,7 +43,6 @@ export type DashboardSummary = {
 		open: number;
 		recentOpen: DashboardReportItem[];
 	} | null;
-	audit: { recent: DashboardAuditItem[] } | null;
 };
 
 function emptySummary(): DashboardSummary {
@@ -61,7 +50,6 @@ function emptySummary(): DashboardSummary {
 		sports: null,
 		announcements: null,
 		reports: null,
-		audit: null,
 	};
 }
 
@@ -71,9 +59,8 @@ export const getDashboardSummaryFn = createServerFn({ method: "GET" }).handler(
 		const caps = user.capabilities;
 		const summary = emptySummary();
 
-		const needToken = canAccessReports(caps) || canAccessAudit(caps);
 		let accessToken: string | null = null;
-		if (needToken) {
+		if (canAccessReports(caps)) {
 			accessToken = await getAccessToken();
 			if (!accessToken) {
 				setResponseStatus(401);
@@ -81,14 +68,11 @@ export const getDashboardSummaryFn = createServerFn({ method: "GET" }).handler(
 			}
 		}
 
-		const [sports, announcements, reports, audit] = await Promise.all([
+		const [sports, announcements, reports] = await Promise.all([
 			canAccessSports(caps) ? getSportsEvents() : Promise.resolve(null),
 			canAccessAnnouncements(caps) ? getAnnouncements() : Promise.resolve(null),
 			canAccessReports(caps) && accessToken
 				? getRoomReports(accessToken)
-				: Promise.resolve(null),
-			canAccessAudit(caps) && accessToken
-				? getAuditLog(accessToken, QUEUE_LIMIT, 0)
 				: Promise.resolve(null),
 		]);
 
@@ -139,18 +123,6 @@ export const getDashboardSummaryFn = createServerFn({ method: "GET" }).handler(
 			summary.reports = {
 				open: open.length,
 				recentOpen,
-			};
-		}
-
-		if (audit) {
-			summary.audit = {
-				recent: audit.map(({ id, entity, operation, name, createdAt }) => ({
-					id,
-					entity,
-					operation,
-					name,
-					createdAt,
-				})),
 			};
 		}
 

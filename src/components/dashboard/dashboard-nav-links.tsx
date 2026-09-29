@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ExternalLink } from "lucide-react";
 import {
-	bottomNavItems,
 	externalAdminLinks,
 	featureItems,
 	type NavItem,
@@ -16,9 +15,8 @@ export function DashboardNavLinks({
 }) {
 	const features = navItemsForCapabilities(featureItems, capabilities);
 	const extern = navItemsForCapabilities(externalAdminLinks, capabilities);
-	const bottom = navItemsForCapabilities(bottomNavItems, capabilities);
 
-	if (features.length === 0 && extern.length === 0 && bottom.length === 0) {
+	if (features.length === 0 && extern.length === 0) {
 		return (
 			<p className="text-sm text-muted-foreground">
 				Für dein Konto sind derzeit keine Funktionen freigeschaltet.
@@ -32,9 +30,6 @@ export function DashboardNavLinks({
 				<LinkSection title="Verwaltung" items={features} />
 			) : null}
 			{extern.length > 0 ? <LinkSection title="Extern" items={extern} /> : null}
-			{bottom.length > 0 ? (
-				<LinkSection title="Protokoll" items={bottom} />
-			) : null}
 		</>
 	);
 }

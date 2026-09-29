@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "@tanstack/react-router";
-import { useMemo, useState, useTransition } from "react";
+import { Loader2, Upload } from "lucide-react";
+import { useMemo, useRef, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { AnnouncementPreviewCard } from "#/components/announcements/announcement-preview-card";
 import { ImageSelector } from "#/components/announcements/image-selector";
@@ -22,6 +23,7 @@ import {
 	type NewAnnouncement,
 	newAnnouncementSchema,
 } from "#/lib/schemas/announcements";
+import { cn } from "#/lib/utils";
 
 const PLATFORMS = PLATFORM_OPTIONS;
 const USER_KINDS = USER_KIND_OPTIONS;
@@ -44,6 +46,7 @@ export function AnnouncementForm({
 	announcement,
 }: AnnouncementFormProps) {
 	const router = useRouter();
+	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [uploadPending, setUploadPending] = useState(false);
 	const [pending, startTransition] = useTransition();
@@ -328,37 +331,86 @@ export function AnnouncementForm({
 
 				<section className="space-y-3">
 					<Label>Bild</Label>
-					<div className="flex flex-wrap items-center gap-3">
-						<ImageSelector
-							currentImageUrl={imageUrl}
-							onSelectImage={(image) => {
-								form.setValue("imageUrl", image.url, { shouldValidate: true });
-							}}
-						/>
-						<div className="flex items-center gap-2">
-							<Input
+					<div
+						className={cn(
+							"flex flex-col gap-3 border border-dashed border-border/60 bg-muted/20 p-4",
+							uploadPending && "opacity-60",
+						)}
+					>
+						{imageUrl ? (
+							<div className="flex items-center gap-3">
+								<img
+									src={imageUrl}
+									alt="Ausgewähltes Ankündigungsbild"
+									className="h-14 w-20 shrink-0 object-cover"
+								/>
+								<div className="min-w-0 flex-1">
+									<p className="truncate text-sm font-medium">
+										Bild ausgewählt
+									</p>
+									<p className="text-xs text-muted-foreground">
+										Ersetzen per Upload oder Auswahl aus der Bibliothek
+									</p>
+								</div>
+							</div>
+						) : (
+							<div className="flex flex-col items-center gap-1.5 py-3 text-center">
+								<Upload className="size-5 text-muted-foreground" aria-hidden />
+								<p className="text-sm text-muted-foreground">
+									Bild hochladen oder aus der Bibliothek wählen
+								</p>
+								<p className="text-xs text-muted-foreground/80">
+									PNG, JPG oder WebP
+								</p>
+							</div>
+						)}
+
+						<div className="flex flex-wrap items-center gap-2">
+							<ImageSelector
+								currentImageUrl={imageUrl}
+								onSelectImage={(image) => {
+									form.setValue("imageUrl", image.url, {
+										shouldValidate: true,
+									});
+								}}
+							/>
+							<Button
+								type="button"
+								variant="outline"
+								disabled={uploadPending}
+								onClick={() => fileInputRef.current?.click()}
+							>
+								{uploadPending ? (
+									<Loader2 className="animate-spin" aria-hidden />
+								) : (
+									<Upload aria-hidden />
+								)}
+								{uploadPending ? "Upload läuft…" : "Hochladen"}
+							</Button>
+							{imageUrl ? (
+								<Button
+									type="button"
+									variant="ghost"
+									onClick={() =>
+										form.setValue("imageUrl", null, { shouldValidate: true })
+									}
+								>
+									Entfernen
+								</Button>
+							) : null}
+							<input
+								ref={fileInputRef}
 								id="imageFile"
 								type="file"
 								accept="image/*"
 								disabled={uploadPending}
-								className="max-w-xs"
-								onChange={(e) => onUpload(e.target.files?.[0] ?? null)}
+								className="sr-only"
+								onChange={(e) => {
+									void onUpload(e.target.files?.[0] ?? null);
+									e.target.value = "";
+								}}
 							/>
-							{uploadPending ? (
-								<p className="text-xs text-muted-foreground">Upload läuft…</p>
-							) : null}
 						</div>
-						{imageUrl ? (
-							<Button
-								type="button"
-								variant="ghost"
-								onClick={() =>
-									form.setValue("imageUrl", null, { shouldValidate: true })
-								}
-							>
-								Bild entfernen
-							</Button>
-						) : null}
 					</div>
 				</section>
 

@@ -245,11 +245,7 @@ export function AppSidebar({
 				)}
 			>
 				{collapsed ? (
-					<Tooltip
-						label={user.name || user.email}
-						side="right"
-						enabled
-					>
+					<Tooltip label={user.name || user.email} side="right" enabled>
 						<span
 							className="flex size-9 items-center justify-center bg-primary/10 text-xs font-semibold text-primary"
 							aria-hidden
