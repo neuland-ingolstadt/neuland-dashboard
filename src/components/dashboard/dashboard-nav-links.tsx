@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ExternalLink, type LucideIcon } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import {
 	bottomNavItems,
 	externalAdminLinks,
@@ -53,7 +53,7 @@ function LinkSection({ title, items }: { title: string; items: NavItem[] }) {
 }
 
 function NavCardLink({ item }: { item: NavItem }) {
-	const Icon = item.icon as LucideIcon;
+	const Icon = item.icon;
 	const className =
 		"surface-panel flex h-full items-center gap-3 p-4 transition-colors hover:bg-muted/40";
 

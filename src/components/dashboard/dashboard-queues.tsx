@@ -17,11 +17,9 @@ export function DashboardQueues({ summary }: { summary: DashboardSummary }) {
 	const hasAudit = summary.audit && summary.audit.recent.length > 0;
 
 	if (!hasReports && !hasAnnouncements && !hasAudit) {
-		const hasAnyDomain =
-			summary.reports !== null ||
-			summary.announcements !== null ||
-			summary.sports !== null;
-		if (!hasAnyDomain) return null;
+		const hasAttentionDomains =
+			summary.reports !== null || summary.announcements !== null;
+		if (!hasAttentionDomains) return null;
 
 		return (
 			<section className="space-y-3">
