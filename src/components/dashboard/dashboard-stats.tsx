@@ -39,11 +39,12 @@ export function DashboardStats({ summary }: { summary: DashboardSummary }) {
 	}
 
 	if (summary.sports) {
+		const { Ingolstadt, Neuburg } = summary.sports.byCampus;
 		tiles.push({
 			key: "sports",
 			label: "Sportangebote",
 			value: summary.sports.total,
-			hint: "Gesamt",
+			hint: `${Ingolstadt} Ingolstadt · ${Neuburg} Neuburg`,
 			href: ROUTES.SPORTS,
 			icon: Dumbbell,
 		});

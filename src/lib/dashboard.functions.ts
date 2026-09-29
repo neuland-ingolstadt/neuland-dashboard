@@ -16,8 +16,11 @@ import {
 	getSportsEvents,
 } from "#/lib/graphql.server";
 import type { RoomReport } from "#/lib/schemas/room-reports";
+import type { Weekday } from "#/lib/utils";
+import { weekdays } from "#/lib/utils";
 
 const QUEUE_LIMIT = 5;
+const SPORTS_PREVIEW_LIMIT = 8;
 
 export type DashboardAnnouncementItem = {
 	id: string;
@@ -32,8 +35,24 @@ export type DashboardReportItem = {
 	createdAt: string;
 };
 
+export type DashboardSportsItem = {
+	id: string;
+	title: string;
+	campus: "Ingolstadt" | "Neuburg";
+	weekday: Weekday;
+	startTime: string;
+	endTime: string | null;
+	location: string;
+	updatedAt: string;
+};
+
 export type DashboardSummary = {
-	sports: { total: number } | null;
+	sports: {
+		total: number;
+		byCampus: { Ingolstadt: number; Neuburg: number };
+		recent: DashboardSportsItem[];
+		lastUpdated: string | null;
+	} | null;
 	announcements: {
 		active: number;
 		upcoming: number;
@@ -53,6 +72,10 @@ function emptySummary(): DashboardSummary {
 	};
 }
 
+function weekdayOrder(weekday: Weekday): number {
+	return weekdays[weekday]?.order ?? 99;
+}
+
 export const getDashboardSummaryFn = createServerFn({ method: "GET" }).handler(
 	async (): Promise<DashboardSummary> => {
 		const user = await requireAppAccess();
@@ -68,16 +91,63 @@ export const getDashboardSummaryFn = createServerFn({ method: "GET" }).handler(
 			}
 		}
 
-		const [sports, announcements, reports] = await Promise.all([
+		const [sports, announcements, reportsResult] = await Promise.all([
 			canAccessSports(caps) ? getSportsEvents() : Promise.resolve(null),
 			canAccessAnnouncements(caps) ? getAnnouncements() : Promise.resolve(null),
 			canAccessReports(caps) && accessToken
 				? getRoomReports(accessToken)
+						.then((data) => ({ ok: true as const, data }))
+						.catch(() => ({ ok: false as const, data: null }))
 				: Promise.resolve(null),
 		]);
 
+		const reports =
+			reportsResult === null
+				? null
+				: reportsResult.ok
+					? reportsResult.data
+					: [];
+
 		if (sports) {
-			summary.sports = { total: sports.length };
+			const byCampus = { Ingolstadt: 0, Neuburg: 0 };
+			let lastUpdated: string | null = null;
+
+			for (const event of sports) {
+				if (event.campus === "Ingolstadt" || event.campus === "Neuburg") {
+					byCampus[event.campus] += 1;
+				}
+				if (
+					!lastUpdated ||
+					new Date(event.updatedAt).getTime() > new Date(lastUpdated).getTime()
+				) {
+					lastUpdated = event.updatedAt;
+				}
+			}
+
+			const recent = [...sports]
+				.sort((a, b) => {
+					const day = weekdayOrder(a.weekday) - weekdayOrder(b.weekday);
+					if (day !== 0) return day;
+					return a.startTime.localeCompare(b.startTime);
+				})
+				.slice(0, SPORTS_PREVIEW_LIMIT)
+				.map((event) => ({
+					id: event.id,
+					title: event.title.de,
+					campus: event.campus,
+					weekday: event.weekday,
+					startTime: event.startTime,
+					endTime: event.endTime ?? null,
+					location: event.location,
+					updatedAt: event.updatedAt,
+				}));
+
+			summary.sports = {
+				total: sports.length,
+				byCampus,
+				recent,
+				lastUpdated,
+			};
 		}
 
 		if (announcements) {
