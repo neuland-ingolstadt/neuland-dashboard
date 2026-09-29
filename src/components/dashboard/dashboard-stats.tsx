@@ -21,7 +21,7 @@ export function DashboardStats({ summary }: { summary: DashboardSummary }) {
 			key: "reports",
 			label: "Offene Raummeldungen",
 			value: summary.reports.open,
-			hint: "Noch nicht aufgelöst",
+			hint: "Noch zu erledigen",
 			href: ROUTES.ROOM_REPORTS,
 			icon: DoorOpen,
 		});

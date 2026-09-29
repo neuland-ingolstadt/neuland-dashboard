@@ -47,17 +47,20 @@ export function AnnouncementPreviewCard({
 					<div className="mt-4 overflow-hidden rounded-md">
 						{!imageError ? (
 							<img
+								key={imageUrl}
 								src={imageUrl}
 								className="h-[130px] w-full object-cover"
 								onError={() => setImageError(true)}
 								alt="Ankündigungsbild Vorschau"
 							/>
 						) : (
-							<div className="flex h-[130px] w-full flex-col items-center justify-center bg-muted/50 text-center text-red-600">
+							<div className="flex h-[130px] w-full flex-col items-center justify-center gap-0.5 bg-muted/50 px-3 text-center text-red-600">
 								<AlertTriangle className="mb-1 h-6 w-6" />
 								<p className="text-xs">Bild konnte nicht geladen werden.</p>
 								<p className="text-[10px] text-muted-foreground">
-									(Mögliche CSP-Verletzung)
+									{imageUrl.includes("assets.neuland.app")
+										? "Alte assets.neuland.app-URL ist nicht öffentlich erreichbar. Bitte ein Bild aus der Bibliothek wählen."
+										: "URL liefert keinen öffentlichen Zugriff (z. B. HTTP 403)."}
 								</p>
 							</div>
 						)}
