@@ -29,6 +29,9 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      - name: Generate routes
+        run: bun run generate-routes
+
       - name: Run Biome
         run: bunx biome ci .
 

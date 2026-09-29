@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
+# syntax=docker/dockerfile:1
 
 ARG BUN_VERSION
 FROM oven/bun:${BUN_VERSION}-alpine AS base
@@ -8,39 +8,42 @@ FROM base AS deps
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
-FROM base AS proddeps
-COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile --production
-
-FROM base AS builder
-ENV NODE_ENV=production \
-    NEXT_TELEMETRY_DISABLED=1
+FROM base AS build
+ARG VITE_BUILD_COMMIT=dev
+ENV VITE_BUILD_COMMIT=$VITE_BUILD_COMMIT
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN bun run build
+RUN bun run generate-routes && bun run build
 
 FROM base AS runner
-ENV NODE_ENV=production \
-    NEXT_TELEMETRY_DISABLED=1 \
-    PORT=3000 \
-    HOSTNAME="0.0.0.0"
+ENV NODE_ENV=production
+ENV PORT=3000
+
+ENV APP_URL=""
+ENV SESSION_SECRET=""
+ENV AUTHENTIK_ISSUER=""
+ENV AUTHENTIK_CLIENT_ID=""
+ENV AUTHENTIK_CLIENT_SECRET=""
+ENV GRAPHQL_URL=""
+ENV DEV_GRAPHQL_URL=""
+ENV S3_REGION="nbg1"
+ENV S3_ENDPOINT=""
+ENV S3_BUCKET_NAME=""
+ENV S3_ACCESS_KEY_ID=""
+ENV S3_SECRET_ACCESS_KEY=""
+ENV AUTH_MOCK=""
 
 RUN addgroup --system --gid 1001 nodejs \
-  && adduser --system --uid 1001 --ingroup nodejs nextjs \
-  && mkdir -p .next \
-  && chown nextjs:nodejs .next
+  && adduser --system --uid 1001 --ingroup nodejs nodejs
 
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-# bun-based next build breaks output file tracing; overlay full prod node_modules
-COPY --from=proddeps --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --from=build --chown=nodejs:nodejs /app/.output ./.output
+COPY --from=build /app/package.json ./package.json
 
-USER nextjs
+USER nodejs
 
 EXPOSE 3000
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=5 \
-  CMD wget -qO- "http://127.0.0.1:${PORT}/" > /dev/null || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget -qO- "http://127.0.0.1:${PORT}/api/health" > /dev/null || exit 1
 
-CMD ["bun", "server.js"]
+CMD ["bun", ".output/server/index.mjs"]

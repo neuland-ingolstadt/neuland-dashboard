@@ -1,0 +1,52 @@
+function optional(name: string, fallback = ""): string {
+	return process.env[name] ?? fallback;
+}
+
+const sessionSecret =
+	process.env.SESSION_SECRET ?? "dev-only-session-secret-change-me-32chars!!";
+
+export const serverConfig = {
+	appUrl: optional("APP_URL", "http://127.0.0.1:43127"),
+	sessionSecret,
+	authentik: {
+		issuer: optional("AUTHENTIK_ISSUER"),
+		clientId: optional("AUTHENTIK_CLIENT_ID", optional("AUTHENTIK_ID")),
+		clientSecret: optional(
+			"AUTHENTIK_CLIENT_SECRET",
+			optional("AUTHENTIK_SECRET"),
+		),
+	},
+	groups: {
+		sports: optional("SPORTS_GROUP_NAME", "next-dashboard-sports"),
+		announcements: optional(
+			"ANNOUNCEMENTS_GROUP_NAME",
+			"next-dashboard-announcements",
+		),
+		reports: optional("REPORTS_GROUP_NAME", "next-dashboard-reports"),
+		admin: optional("ADMIN_GROUP_NAME", "next-dashboard-admin"),
+	},
+	graphql: {
+		url: optional("GRAPHQL_URL", "https://api.neuland.app/graphql"),
+		devUrl: optional("DEV_GRAPHQL_URL", "https://api.dev.neuland.app/graphql"),
+	},
+	s3: {
+		region: optional("S3_REGION", "nbg1"),
+		endpoint: optional("S3_ENDPOINT", "https://nbg1.your-objectstorage.com"),
+		bucket: optional("S3_BUCKET_NAME"),
+		accessKeyId: optional("S3_ACCESS_KEY_ID"),
+		secretAccessKey: optional("S3_SECRET_ACCESS_KEY"),
+	},
+	authMock: optional("AUTH_MOCK", "false") === "true",
+} as const;
+
+export function getCallbackUrl(): string {
+	return new URL("/api/auth/callback", serverConfig.appUrl).toString();
+}
+
+export function assertSessionSecret(): string {
+	const value = process.env.SESSION_SECRET ?? sessionSecret;
+	if (!value) {
+		throw new Error("Missing required environment variable: SESSION_SECRET");
+	}
+	return value;
+}
