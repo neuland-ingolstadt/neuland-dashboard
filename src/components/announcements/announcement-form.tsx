@@ -2,11 +2,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "@tanstack/react-router";
 import { useMemo, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
+import { AnnouncementPreviewCard } from "#/components/announcements/announcement-preview-card";
 import { ImageSelector } from "#/components/announcements/image-selector";
 import { Button } from "#/components/ui/button";
 import { Checkbox } from "#/components/ui/checkbox";
 import { Input } from "#/components/ui/input";
 import { Label } from "#/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
 import {
 	createAnnouncementFn,
 	deleteAnnouncementFn,
@@ -377,28 +379,31 @@ export function AnnouncementForm({
 				</div>
 			</form>
 
-			<aside className="surface-panel p-4">
-				<p className="mb-3 text-xs font-semibold text-muted-foreground">
-					Vorschau
-				</p>
-				{imageUrl ? (
-					<img
-						src={imageUrl}
-						alt=""
-						className="mb-3 aspect-video w-full object-cover"
-					/>
-				) : (
-					<div className="mb-3 flex aspect-video items-center justify-center bg-muted text-xs text-muted-foreground">
-						Kein Bild
-					</div>
-				)}
-				<h3 className="text-base font-semibold">{title?.de || "Titel (DE)"}</h3>
-				<p className="mt-2 text-sm text-muted-foreground">
-					{description?.de || "Beschreibung (DE)"}
-				</p>
-				{url ? (
-					<p className="mt-3 truncate text-xs text-primary">{url}</p>
-				) : null}
+			<aside className="md:mt-[calc(2rem+24px)]">
+				<Tabs defaultValue="de">
+					<TabsList className="w-full">
+						<TabsTrigger className="w-full" value="de">
+							Deutsch
+						</TabsTrigger>
+						<TabsTrigger className="w-full" value="en">
+							English
+						</TabsTrigger>
+					</TabsList>
+
+					<TabsContent value="de">
+						<AnnouncementPreviewCard
+							formData={{ title, description, imageUrl, url }}
+							displayLanguage="de"
+						/>
+					</TabsContent>
+
+					<TabsContent value="en">
+						<AnnouncementPreviewCard
+							formData={{ title, description, imageUrl, url }}
+							displayLanguage="en"
+						/>
+					</TabsContent>
+				</Tabs>
 			</aside>
 		</div>
 	);
