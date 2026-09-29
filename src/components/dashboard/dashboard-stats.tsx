@@ -61,9 +61,9 @@ export function DashboardStats({ summary }: { summary: DashboardSummary }) {
 						<Link
 							key={tile.key}
 							to={tile.href}
-							className="surface-panel flex items-start gap-3 p-4 transition-colors hover:bg-muted/40"
+							className="surface-panel flex items-center gap-3 p-4 transition-colors hover:bg-muted/40"
 						>
-							<span className="flex size-9 shrink-0 items-center justify-center border border-primary/35 bg-primary/10 text-primary">
+							<span className="flex size-9 shrink-0 items-center justify-center border border-foreground/20 text-foreground">
 								<Icon className="size-4" aria-hidden />
 							</span>
 							<div className="min-w-0 flex-1 space-y-1">
@@ -71,7 +71,7 @@ export function DashboardStats({ summary }: { summary: DashboardSummary }) {
 									<span className="text-sm font-medium text-muted-foreground">
 										{tile.label}
 									</span>
-									<Badge variant="default">{tile.value}</Badge>
+									<Badge variant="outline">{tile.value}</Badge>
 								</div>
 								<p className="text-xs text-muted-foreground">{tile.hint}</p>
 							</div>

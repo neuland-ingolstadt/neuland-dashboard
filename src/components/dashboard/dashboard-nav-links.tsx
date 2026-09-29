@@ -54,7 +54,7 @@ function NavCardLink({ item }: { item: NavItem }) {
 
 	const content = (
 		<>
-			<span className="flex size-9 shrink-0 items-center justify-center border border-primary/35 bg-primary/10 text-primary">
+			<span className="flex size-9 shrink-0 items-center justify-center border border-foreground/20 text-foreground">
 				<Icon className="size-4" aria-hidden />
 			</span>
 			<span className="min-w-0 flex-1 font-semibold">{item.label}</span>
