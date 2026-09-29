@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
-import { DashboardNavLinks } from "#/components/dashboard/dashboard-nav-links";
+import { DashboardPlaceholder } from "#/components/dashboard/dashboard-placeholder";
 import { DashboardQueues } from "#/components/dashboard/dashboard-queues";
 import { DashboardStats } from "#/components/dashboard/dashboard-stats";
 import { PageHeader } from "#/components/layout/page-header";
@@ -52,7 +52,7 @@ function HomePage() {
 
 			<DashboardStats summary={summary} />
 			<DashboardQueues summary={summary} />
-			<DashboardNavLinks capabilities={caps} />
+			<DashboardPlaceholder />
 		</>
 	);
 }
