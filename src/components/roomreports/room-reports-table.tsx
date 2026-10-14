@@ -1,6 +1,5 @@
 import { useRouter } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
 import {
 	Check,
 	MapPinMinus,
@@ -59,17 +58,6 @@ export function RoomReportsTable({ reports }: { reports: RoomReport[] }) {
 
 	const columns: ColumnDef<RoomReport>[] = useMemo(
 		() => [
-			{
-				accessorKey: "createdAt",
-				header: ({ column }) => (
-					<DataTableColumnHeader column={column} title="Erstellt am" />
-				),
-				size: 200,
-				cell({ row: { original } }) {
-					const date = new Date(original.createdAt);
-					return `${format(date, "dd.MM.yyyy")} um ${format(date, "HH:mm")} Uhr`;
-				},
-			},
 			{
 				accessorKey: "reason",
 				size: 180,
@@ -178,7 +166,6 @@ export function RoomReportsTable({ reports }: { reports: RoomReport[] }) {
 				enableFilter
 				enablePagination
 				initialPageSize={10}
-				initialSorting={[{ id: "createdAt", desc: true }]}
 				filterOptions={{
 					searchFilter: {
 						column: "description",

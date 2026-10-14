@@ -10,7 +10,8 @@ import {
 	canAccessSports,
 } from "#/lib/auth";
 import { getAccessToken, requireAppAccess } from "#/lib/auth.server";
-import { getAnnouncements, getRoomReports } from "#/lib/graphql.server";
+import { getAnnouncements } from "#/lib/graphql.server";
+import { getRoomReports } from "#/lib/room-reports.functions";
 import type { RoomReport } from "#/lib/schemas/room-reports";
 import { getSportsEvents } from "#/lib/sports.functions";
 import type { Weekday } from "#/lib/utils";
@@ -29,7 +30,6 @@ export type DashboardReportItem = {
 	id: string;
 	room: string;
 	reason: RoomReport["reason"];
-	createdAt: string;
 };
 
 export type DashboardSportsItem = {
@@ -162,17 +162,12 @@ export const getDashboardSummaryFn = createServerFn({ method: "GET" }).handler(
 
 		if (reports) {
 			const open = reports.filter((r) => r.resolvedAt === null);
-			const recentOpen = [...open]
-				.sort(
-					(a, b) =>
-						new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-				)
+			const recentOpen = open
 				.slice(0, QUEUE_LIMIT)
-				.map(({ id, room, reason, createdAt }) => ({
+				.map(({ id, room, reason }) => ({
 					id,
 					room,
 					reason,
-					createdAt,
 				}));
 
 			summary.reports = {

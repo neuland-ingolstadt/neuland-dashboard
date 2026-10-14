@@ -1,6 +1,5 @@
 export type RoomReport = {
 	id: string;
-	createdAt: string;
 	description: string;
 	reason:
 		| "WRONG_DESCRIPTION"

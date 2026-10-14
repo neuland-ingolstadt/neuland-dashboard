@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { format } from "date-fns";
 import {
 	ArrowRight,
 	DoorOpen,
@@ -268,7 +267,7 @@ function ReportsFocus({
 			</section>
 
 			<PreviewPanel
-				title="Neueste offene Meldungen"
+				title="Offene Meldungen"
 				href={ROUTES.ROOM_REPORTS}
 				empty={reports.recentOpen.length === 0}
 				emptyLabel="Keine offenen Raummeldungen."
@@ -285,9 +284,6 @@ function ReportsFocus({
 									{roomReasonLabel(item.reason)}
 								</p>
 							</div>
-							<span className="shrink-0 text-xs text-muted-foreground">
-								{format(new Date(item.createdAt), "dd.MM.yyyy")}
-							</span>
 						</Link>
 					</li>
 				))}
