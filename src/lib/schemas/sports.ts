@@ -79,14 +79,9 @@ export const sportsEventSchema = z.object({
 	sportsCategory: z.enum(sportsCategoriesKeys, {
 		required_error: 'Bitte eine Sportart wählen oder "Sonstiges"',
 	}),
-	createdAt: z.string(),
-	updatedAt: z.string(),
 });
 
-export const updateSportsEventSchema = sportsEventSchema.omit({
-	createdAt: true,
-	updatedAt: true,
-});
+export const updateSportsEventSchema = sportsEventSchema;
 
 export const newSportsEventSchema = updateSportsEventSchema.omit({
 	id: true,

@@ -13,7 +13,7 @@ Internal admin UI for Neuland Next (Hochschulsport, Ankündigungen, Raum-Meldung
 
 ```bash
 cp .env.example .env.local
-# fill AUTHENTIK_*, SESSION_SECRET, GRAPHQL_URL, optional S3_*
+# fill AUTHENTIK_*, SESSION_SECRET, CORE_APU_URL, optional S3_*
 bun install
 bun run dev
 ```
@@ -41,4 +41,4 @@ Mock auth (local only): `AUTH_MOCK=true`
 bun run docker:build
 ```
 
-Runtime env: `APP_URL`, `SESSION_SECRET`, `AUTHENTIK_*`, `GRAPHQL_URL`, `DEV_GRAPHQL_URL`, `S3_*`.
+Runtime env: `APP_URL`, `SESSION_SECRET`, `AUTHENTIK_*`, `CORE_API_URL`, `S3_*`.

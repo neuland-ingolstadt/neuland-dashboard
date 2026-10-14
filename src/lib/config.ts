@@ -25,9 +25,8 @@ export const serverConfig = {
 		reports: optional("REPORTS_GROUP_NAME", "next-dashboard-reports"),
 		admin: optional("ADMIN_GROUP_NAME", "next-dashboard-admin"),
 	},
-	graphql: {
-		url: optional("GRAPHQL_URL", "https://api.neuland.app/graphql"),
-		devUrl: optional("DEV_GRAPHQL_URL", "https://api.dev.neuland.app/graphql"),
+	coreapi: {
+		url: optional("CORE_API_URL", "https://core.api.neuland.app"),
 	},
 	s3: {
 		region: optional("S3_REGION", "nbg1"),

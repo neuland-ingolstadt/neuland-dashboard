@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { format, formatDistanceToNow } from "date-fns";
-import { de } from "date-fns/locale";
+import { format } from "date-fns";
 import {
 	ArrowRight,
 	DoorOpen,
@@ -73,13 +72,6 @@ function SportsFocus({
 }: {
 	sports: NonNullable<DashboardSummary["sports"]>;
 }) {
-	const lastUpdatedLabel = sports.lastUpdated
-		? formatDistanceToNow(new Date(sports.lastUpdated), {
-				addSuffix: true,
-				locale: de,
-			})
-		: null;
-
 	return (
 		<div className="space-y-4 sm:space-y-5">
 			<section className="grid gap-4 lg:grid-cols-[minmax(0,1.55fr)_minmax(16rem,1fr)]">
@@ -118,23 +110,6 @@ function SportsFocus({
 						value={sports.byCampus.Neuburg}
 						icon={School}
 					/>
-					{lastUpdatedLabel ? (
-						<div className="surface-panel flex flex-col justify-center gap-1 p-5 sm:col-span-2 lg:col-span-1">
-							<p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-								Zuletzt aktualisiert
-							</p>
-							<p className="text-sm font-medium text-foreground">
-								{lastUpdatedLabel}
-							</p>
-							{sports.lastUpdated ? (
-								<p className="text-xs text-muted-foreground">
-									{format(new Date(sports.lastUpdated), "dd.MM.yyyy, HH:mm", {
-										locale: de,
-									})}
-								</p>
-							) : null}
-						</div>
-					) : null}
 				</div>
 			</section>
 
