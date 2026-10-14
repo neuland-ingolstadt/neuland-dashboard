@@ -240,7 +240,7 @@ async function refreshAccessToken(): Promise<string | null> {
 	}
 }
 
-/** Returns a valid GraphQL bearer token, refreshing if needed. */
+/** Returns a valid OIDC access token, refreshing if needed. */
 export async function getAccessToken(): Promise<string | null> {
 	const session = await getAppSession();
 	const { accessToken, accessTokenExpires } = session.data;

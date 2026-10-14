@@ -4,13 +4,13 @@ import {
 	type AnnouncementStatus,
 	getAnnouncementStatus,
 } from "#/lib/announcement-status";
+import { getAnnouncements } from "#/lib/announcements.functions";
 import {
 	canAccessAnnouncements,
 	canAccessReports,
 	canAccessSports,
 } from "#/lib/auth";
 import { getAccessToken, requireAppAccess } from "#/lib/auth.server";
-import { getAnnouncements } from "#/lib/graphql.server";
 import { getRoomReports } from "#/lib/room-reports.functions";
 import type { RoomReport } from "#/lib/schemas/room-reports";
 import { getSportsEvents } from "#/lib/sports.functions";

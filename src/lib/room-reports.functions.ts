@@ -1,7 +1,7 @@
 import type { components } from "@neuland-ingolstadt/backend-core-api";
 import { createServerFn } from "@tanstack/react-start";
 import { requireAccessToken, requireCapability } from "#/lib/auth.server";
-import { coreApiClient } from "#/lib/core-api.server";
+import { getCoreApiClient } from "#/lib/core-api";
 import type { RoomReport } from "#/lib/schemas/room-reports";
 
 function toCoreRoomReportId(id: string): number {
@@ -27,6 +27,7 @@ function toDashboardRoomReport(
 export async function getRoomReports(
 	accessToken: string,
 ): Promise<RoomReport[]> {
+	const coreApiClient = await getCoreApiClient();
 	const { data, error } = await coreApiClient.GET("/room-reports", {
 		headers: { Authorization: `Bearer ${accessToken}` },
 	});
@@ -54,6 +55,7 @@ export const resolveRoomReportFn = createServerFn({ method: "POST" })
 	.handler(async ({ data }) => {
 		const { accessToken } = await requireAccessToken({ asJson: true });
 		await requireCapability("reports", { asJson: true });
+		const coreApiClient = await getCoreApiClient();
 		const { error } = await coreApiClient.PATCH(
 			"/room-reports/{roomReportId}",
 			{

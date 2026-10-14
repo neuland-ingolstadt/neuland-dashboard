@@ -10,7 +10,7 @@ export type AppSessionData = {
 	user?: SessionUser;
 	/** OIDC ID token - server-only, used for logout id_token_hint. */
 	idToken?: string;
-	/** GraphQL bearer token - server-only. Never send to client. */
+	/** OIDC access token - server-only. Never send to client. */
 	accessToken?: string;
 	accessTokenExpires?: number;
 	refreshToken?: string;

@@ -1,7 +1,7 @@
 import type { components } from "@neuland-ingolstadt/backend-core-api";
 import { createServerFn } from "@tanstack/react-start";
 import { requireAccessToken, requireCapability } from "#/lib/auth.server";
-import { coreApiClient } from "#/lib/core-api.server";
+import { getCoreApiClient } from "#/lib/core-api";
 import {
 	type NewSportsEvent,
 	newSportsEventSchema,
@@ -209,6 +209,7 @@ function toDashboardSportsEvent(
 }
 
 export async function getSportsEvents(): Promise<SportsEvent[]> {
+	const coreApiClient = await getCoreApiClient();
 	const { data, error } = await coreApiClient.GET("/university-sports");
 
 	if (error || !data) {
@@ -234,6 +235,7 @@ export const getSportFn = createServerFn({ method: "GET" })
 	})
 	.handler(async ({ data }): Promise<SportsEvent> => {
 		await requireCapability("sports");
+		const coreApiClient = await getCoreApiClient();
 		const { data: sport, error } = await coreApiClient.GET(
 			"/university-sports/{sportsId}",
 			{
@@ -257,6 +259,7 @@ export const createSportFn = createServerFn({ method: "POST" })
 	.handler(async ({ data }) => {
 		const { accessToken } = await requireAccessToken({ asJson: true });
 		await requireCapability("sports", { asJson: true });
+		const coreApiClient = await getCoreApiClient();
 		const { error } = await coreApiClient.POST("/university-sports", {
 			headers: { Authorization: `Bearer ${accessToken}` },
 			body: toCoreSportsWrite(data),
@@ -278,6 +281,7 @@ export const updateSportFn = createServerFn({ method: "POST" })
 	.handler(async ({ data }) => {
 		const { accessToken } = await requireAccessToken({ asJson: true });
 		await requireCapability("sports", { asJson: true });
+		const coreApiClient = await getCoreApiClient();
 		const { error } = await coreApiClient.PATCH(
 			"/university-sports/{sportsId}",
 			{
@@ -308,6 +312,7 @@ export const deleteSportFn = createServerFn({ method: "POST" })
 	.handler(async ({ data }) => {
 		const { accessToken } = await requireAccessToken({ asJson: true });
 		await requireCapability("sports", { asJson: true });
+		const coreApiClient = await getCoreApiClient();
 		const { error } = await coreApiClient.DELETE(
 			"/university-sports/{sportsId}",
 			{

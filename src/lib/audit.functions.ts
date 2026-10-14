@@ -1,7 +1,7 @@
 import type { components } from "@neuland-ingolstadt/backend-core-api";
 import { createServerFn } from "@tanstack/react-start";
 import { requireAccessToken, requireCapability } from "#/lib/auth.server";
-import { coreApiClient } from "#/lib/core-api.server";
+import { getCoreApiClient } from "#/lib/core-api";
 import type { AuditLogEntry } from "#/lib/schemas/audit-log";
 
 const auditOperationByCoreValue = {
@@ -45,6 +45,7 @@ export const listAuditLogFn = createServerFn({ method: "GET" })
 	.handler(async ({ data }): Promise<AuditLogEntry[]> => {
 		const { accessToken } = await requireAccessToken();
 		await requireCapability("audit");
+		const coreApiClient = await getCoreApiClient();
 		const { data: auditLog, error } = await coreApiClient.GET("/audit-logs", {
 			params: {
 				query: {

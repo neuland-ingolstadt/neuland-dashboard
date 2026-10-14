@@ -64,8 +64,6 @@ export const announcementSchema = z.object({
 		})
 		.default(0),
 	url: z.string().nullable(),
-	createdAt: z.date(),
-	updatedAt: z.date(),
 	platform: z.enum(["WEB", "WEB_DEV", "IOS", "ANDROID"]).array().min(1, {
 		message: "Bitte wählen Sie mindestens eine Plattform aus",
 	}),
@@ -75,10 +73,7 @@ export const announcementSchema = z.object({
 	imageUrl: z.string().nullable(),
 });
 
-export const updateAnnouncementSchema = announcementSchema.omit({
-	createdAt: true,
-	updatedAt: true,
-});
+export const updateAnnouncementSchema = announcementSchema;
 
 export const newAnnouncementSchema = updateAnnouncementSchema.omit({
 	id: true,

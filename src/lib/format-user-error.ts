@@ -1,14 +1,12 @@
-/** Map thrown errors to short German UI messages (no raw GraphQL dumps). */
+/** Map thrown errors to short German UI messages. */
 export function formatUserError(
 	err: unknown,
 	fallback = "Speichern fehlgeschlagen",
 ): string {
 	if (!err) return fallback;
 
-	const graphqlMessage = extractGraphqlMessage(err);
 	const raw =
-		graphqlMessage ||
-		(err instanceof Error
+		err instanceof Error
 			? err.message
 			: typeof err === "string"
 				? err
@@ -17,7 +15,7 @@ export function formatUserError(
 						"message" in err &&
 						typeof (err as { message: unknown }).message === "string"
 					? (err as { message: string }).message
-					: "");
+					: "";
 
 	const message = raw.trim();
 	if (!message) return fallback;
@@ -60,7 +58,6 @@ export function formatUserError(
 		return "Netzwerkfehler. Bitte später erneut versuchen.";
 	}
 
-	// Prefer the clean GraphQL first-line if present before JSON noise
 	const beforeJson = message.split(/:\s*\{/)[0]?.trim();
 	if (beforeJson && beforeJson.length > 0 && beforeJson.length <= 160) {
 		return beforeJson;
@@ -75,27 +72,4 @@ export function formatUserError(
 	}
 
 	return message;
-}
-
-function extractGraphqlMessage(err: unknown): string | null {
-	if (!err || typeof err !== "object") return null;
-
-	const response = (
-		err as { response?: { errors?: Array<{ message?: string }> } }
-	).response;
-	const fromResponse = response?.errors?.[0]?.message;
-	if (fromResponse) return fromResponse;
-
-	const message =
-		err instanceof Error
-			? err.message
-			: "message" in err &&
-					typeof (err as { message: unknown }).message === "string"
-				? (err as { message: string }).message
-				: null;
-	if (!message) return null;
-
-	// ClientError format: "<graphql message>: {\"response\":...}"
-	const match = message.match(/^(.+?):\s*\{"response"/);
-	return match?.[1]?.trim() || null;
 }
