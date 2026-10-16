@@ -4,18 +4,16 @@ import {
 	type AnnouncementStatus,
 	getAnnouncementStatus,
 } from "#/lib/announcement-status";
+import { getAnnouncements } from "#/lib/announcements.functions";
 import {
 	canAccessAnnouncements,
 	canAccessReports,
 	canAccessSports,
 } from "#/lib/auth";
 import { getAccessToken, requireAppAccess } from "#/lib/auth.server";
-import {
-	getAnnouncements,
-	getRoomReports,
-	getSportsEvents,
-} from "#/lib/graphql.server";
+import { getRoomReports } from "#/lib/room-reports.functions";
 import type { RoomReport } from "#/lib/schemas/room-reports";
+import { getSportsEvents } from "#/lib/sports.functions";
 import type { Weekday } from "#/lib/utils";
 import { weekdays } from "#/lib/utils";
 
@@ -32,7 +30,6 @@ export type DashboardReportItem = {
 	id: string;
 	room: string;
 	reason: RoomReport["reason"];
-	createdAt: string;
 };
 
 export type DashboardSportsItem = {
@@ -43,7 +40,6 @@ export type DashboardSportsItem = {
 	startTime: string;
 	endTime: string | null;
 	location: string;
-	updatedAt: string;
 };
 
 export type DashboardSummary = {
@@ -51,7 +47,6 @@ export type DashboardSummary = {
 		total: number;
 		byCampus: { Ingolstadt: number; Neuburg: number };
 		recent: DashboardSportsItem[];
-		lastUpdated: string | null;
 	} | null;
 	announcements: {
 		active: number;
@@ -109,17 +104,10 @@ export const getDashboardSummaryFn = createServerFn({ method: "GET" }).handler(
 
 		if (sports) {
 			const byCampus = { Ingolstadt: 0, Neuburg: 0 };
-			let lastUpdated: string | null = null;
 
 			for (const event of sports) {
 				if (event.campus === "Ingolstadt" || event.campus === "Neuburg") {
 					byCampus[event.campus] += 1;
-				}
-				if (
-					!lastUpdated ||
-					new Date(event.updatedAt).getTime() > new Date(lastUpdated).getTime()
-				) {
-					lastUpdated = event.updatedAt;
 				}
 			}
 
@@ -138,14 +126,12 @@ export const getDashboardSummaryFn = createServerFn({ method: "GET" }).handler(
 					startTime: event.startTime,
 					endTime: event.endTime ?? null,
 					location: event.location,
-					updatedAt: event.updatedAt,
 				}));
 
 			summary.sports = {
 				total: sports.length,
 				byCampus,
 				recent,
-				lastUpdated,
 			};
 		}
 
@@ -176,17 +162,12 @@ export const getDashboardSummaryFn = createServerFn({ method: "GET" }).handler(
 
 		if (reports) {
 			const open = reports.filter((r) => r.resolvedAt === null);
-			const recentOpen = [...open]
-				.sort(
-					(a, b) =>
-						new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-				)
+			const recentOpen = open
 				.slice(0, QUEUE_LIMIT)
-				.map(({ id, room, reason, createdAt }) => ({
+				.map(({ id, room, reason }) => ({
 					id,
 					room,
 					reason,
-					createdAt,
 				}));
 
 			summary.reports = {
