@@ -13,7 +13,7 @@ Internal admin UI for Neuland Next (Hochschulsport, Ankündigungen, Raum-Meldung
 
 ```bash
 cp .env.example .env.local
-# fill AUTHENTIK_*, SESSION_SECRET, CORE_APU_URL, optional S3_*
+# fill AUTHENTIK_*, SESSION_SECRET, CORE_API_URL, optional S3_*
 bun install
 bun run dev
 ```

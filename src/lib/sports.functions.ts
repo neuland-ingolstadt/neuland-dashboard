@@ -130,7 +130,7 @@ const coreSportsCategoryByValue = {
 function toCoreTime(value: string | null | undefined): string | null {
 	if (!value) return null;
 	const time = formatTime(value);
-	return time ? `${time}:00` : null;
+	return time ? `${time}:00Z` : null;
 }
 
 function toCoreSportsId(id: string): number {
