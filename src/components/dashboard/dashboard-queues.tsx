@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { format } from "date-fns";
 import type { ReactNode } from "react";
 import {
 	announcementStatus,
@@ -57,9 +56,6 @@ export function DashboardQueues({ summary }: { summary: DashboardSummary }) {
 											{roomReasonLabel(item.reason)}
 										</p>
 									</div>
-									<span className="shrink-0 text-xs text-muted-foreground">
-										{format(new Date(item.createdAt), "dd.MM.yyyy")}
-									</span>
 								</Link>
 							</li>
 						))}

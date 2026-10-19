@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_app/auditlog")({
 	beforeLoad: ({ context }) => {
 		requireAuditUser(context.user);
 	},
-	loader: () => listAuditLogFn({ data: { limit: 100, offset: 0 } }),
+	loader: () => listAuditLogFn({ data: { limit: 100 } }),
 	component: AuditLogPage,
 });
 
