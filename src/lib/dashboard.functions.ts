@@ -77,8 +77,7 @@ export const getDashboardSummaryFn = createServerFn({ method: "GET" }).handler(
 		const caps = user.capabilities;
 		const summary = emptySummary();
 
-		const needsToken =
-			canAccessAnnouncements(caps) || canAccessReports(caps);
+		const needsToken = canAccessAnnouncements(caps) || canAccessReports(caps);
 		const accessToken = needsToken ? await getAccessToken() : null;
 		if (needsToken && !accessToken) {
 			throw redirect({ to: "/login" });
