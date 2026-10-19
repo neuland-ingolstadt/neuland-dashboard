@@ -63,7 +63,9 @@ function toDashboardAnnouncement(
 	};
 }
 
-export async function getAnnouncements(): Promise<Announcement[]> {
+export async function getAnnouncements(
+	accessToken: string,
+): Promise<Announcement[]> {
 	const coreApiClient = await getCoreApiClient();
 	const { data, error } = await coreApiClient.GET("/announcements", {
 		params: {
@@ -71,6 +73,8 @@ export async function getAnnouncements(): Promise<Announcement[]> {
 				includeInactive: true,
 			},
 		},
+		// Core rejects unauthenticated includeInactive=true (drafts/expired).
+		headers: { Authorization: `Bearer ${accessToken}` },
 	});
 	if (error || !data) {
 		throw new Error("Ankündigungen konnten nicht geladen werden.");
@@ -80,8 +84,9 @@ export async function getAnnouncements(): Promise<Announcement[]> {
 
 export const listAnnouncementsFn = createServerFn({ method: "GET" }).handler(
 	async (): Promise<Announcement[]> => {
+		const { accessToken } = await requireAccessToken();
 		await requireCapability("announcements");
-		return getAnnouncements();
+		return getAnnouncements(accessToken);
 	},
 );
 

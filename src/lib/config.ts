@@ -1,5 +1,8 @@
 function optional(name: string, fallback = ""): string {
-	return process.env[name] ?? fallback;
+	const value = process.env[name];
+	// Dockerfile sets empty ENV placeholders; treat "" like unset.
+	if (value == null || value.trim() === "") return fallback;
+	return value;
 }
 
 const sessionSecret =

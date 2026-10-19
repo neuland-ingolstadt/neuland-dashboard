@@ -77,17 +77,18 @@ export const getDashboardSummaryFn = createServerFn({ method: "GET" }).handler(
 		const caps = user.capabilities;
 		const summary = emptySummary();
 
-		let accessToken: string | null = null;
-		if (canAccessReports(caps)) {
-			accessToken = await getAccessToken();
-			if (!accessToken) {
-				throw redirect({ to: "/login" });
-			}
+		const needsToken =
+			canAccessAnnouncements(caps) || canAccessReports(caps);
+		const accessToken = needsToken ? await getAccessToken() : null;
+		if (needsToken && !accessToken) {
+			throw redirect({ to: "/login" });
 		}
 
 		const [sports, announcements, reportsResult] = await Promise.all([
 			canAccessSports(caps) ? getSportsEvents() : Promise.resolve(null),
-			canAccessAnnouncements(caps) ? getAnnouncements() : Promise.resolve(null),
+			canAccessAnnouncements(caps) && accessToken
+				? getAnnouncements(accessToken)
+				: Promise.resolve(null),
 			canAccessReports(caps) && accessToken
 				? getRoomReports(accessToken)
 						.then((data) => ({ ok: true as const, data }))
