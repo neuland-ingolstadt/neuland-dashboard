@@ -57,7 +57,7 @@
 		"zod": "^3.24.2"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.5.14",
+		"@biomejs/biome": "2.6.0",
 		"@tanstack/router-cli": "^1.167.39",
 		"@types/bun": "^1.4.2",
 		"@types/node": "^26.6.3",
