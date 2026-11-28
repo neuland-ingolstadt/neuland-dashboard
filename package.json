@@ -2,7 +2,7 @@
 	"name": "neuland-dashboard",
 	"private": true,
 	"license": "AGPL-3.0-only",
-	"packageManager": "bun@1.4.2",
+	"packageManager": "bun@1.4.5",
 	"type": "module",
 	"imports": {
 		"#/*": "./src/*"
@@ -59,7 +59,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "2.6.9",
 		"@tanstack/router-cli": "^1.167.39",
-		"@types/bun": "^1.4.2",
+		"@types/bun": "1.4.5",
 		"@types/node": "^26.6.3",
 		"@types/react": "^19.3.0",
 		"@types/react-dom": "^19.3.0",
